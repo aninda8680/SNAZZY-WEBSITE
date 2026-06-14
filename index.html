@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SNAZZY — Luxury Fashion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-scene">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="gradient-mesh"></div>
+  </div>
+
+  <!-- Mouse Light -->
+  <div class="mouse-light" id="mouseLight"></div>
+
+  <!-- ═══ NAVBAR ═══ -->
+  <nav class="glass-nav" id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">SNAZZY</div>
+      <ul class="nav-links">
+        <li><a href="#collections">Collections</a></li>
+        <li><a href="#editorial">Editorial</a></li>
+        <li><a href="#atelier">Atelier</a></li>
+        <li><a href="#about">Maison</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="glass-btn-sm">Search</button>
+        <button class="glass-btn-sm accent">Reserve</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-content glass-panel">
+      <span class="hero-eyebrow">Autumn / Winter 2025</span>
+      <h1 class="hero-title">
+        <span class="line-1">THE ART OF</span>
+        <span class="line-2 italic-gold">BECOMING</span>
+      </h1>
+      <p class="hero-sub">Draped in silence. Sculpted in light.<br/>A collection for those who speak without speaking.</p>
+      <div class="hero-cta">
+        <button class="glass-btn primary">Explore Collection</button>
+        <button class="glass-btn ghost">Watch Film</button>
+      </div>
+      <div class="hero-meta">
+        <div class="meta-item">
+          <span class="meta-number">47</span>
+          <span class="meta-label">Pieces</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-number">12</span>
+          <span class="meta-label">Looks</span>
+        </div>
+        <div class="meta-divider"></div>
+        <div class="meta-item">
+          <span class="meta-number">AW25</span>
+          <span class="meta-label">Season</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-image-frame glass-frame">
+        <div class="hero-image-placeholder">
+          <div class="silhouette"></div>
+        </div>
+        <div class="frame-label">Look 01 — Emerald Reverie</div>
+      </div>
+      <div class="floating-tag glass-tag">
+        <span>New Arrival</span>
+        <span class="tag-dot"></span>
+      </div>
+    </div>
+
+    <div class="scroll-cue">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ═══ MARQUEE ═══ -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span>Handcrafted Luxury</span>
+      <span class="dot">◆</span>
+      <span>Timeless Elegance</span>
+      <span class="dot">◆</span>
+      <span>Curated Silence</span>
+      <span class="dot">◆</span>
+      <span>Italian Ateliers</span>
+      <span class="dot">◆</span>
+      <span>Handcrafted Luxury</span>
+      <span class="dot">◆</span>
+      <span>Timeless Elegance</span>
+      <span class="dot">◆</span>
+      <span>Curated Silence</span>
+      <span class="dot">◆</span>
+      <span>Italian Ateliers</span>
+      <span class="dot">◆</span>
+    </div>
+  </div>
+
+  <!-- ═══ COLLECTIONS ═══ -->
+  <section class="collections-section" id="collections">
+    <div class="section-header">
+      <span class="section-tag">AW25 Collection</span>
+      <h2 class="section-title">Signature Looks</h2>
+    </div>
+
+    <div class="cards-grid">
+
+      <div class="product-card glass-card" data-tilt>
+        <div class="card-image">
+          <div class="card-img-placeholder img-1"></div>
+          <div class="card-overlay">
+            <button class="glass-btn-sm">Quick View</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Outerwear</span>
+          <h3 class="card-name">The Obsidian Coat</h3>
+          <p class="card-desc">Structured wool-cashmere, midnight drape</p>
+          <div class="card-footer">
+            <span class="card-price">£4,200</span>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card glass-card featured" data-tilt>
+        <div class="card-badge">Editor's Pick</div>
+        <div class="card-image">
+          <div class="card-img-placeholder img-2"></div>
+          <div class="card-overlay">
+            <button class="glass-btn-sm">Quick View</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Evening</span>
+          <h3 class="card-name">Reverie Gown</h3>
+          <p class="card-desc">Bias-cut silk charmeuse, emerald depths</p>
+          <div class="card-footer">
+            <span class="card-price">£6,800</span>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card glass-card" data-tilt>
+        <div class="card-image">
+          <div class="card-img-placeholder img-3"></div>
+          <div class="card-overlay">
+            <button class="glass-btn-sm">Quick View</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Tailoring</span>
+          <h3 class="card-name">The Ivory Suit</h3>
+          <p class="card-desc">Double-breasted Savile Row wool</p>
+          <div class="card-footer">
+            <span class="card-price">£3,600</span>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card glass-card" data-tilt>
+        <div class="card-image">
+          <div class="card-img-placeholder img-4"></div>
+          <div class="card-overlay">
+            <button class="glass-btn-sm">Quick View</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <span class="card-tag">Accessories</span>
+          <h3 class="card-name">Aurum Clutch</h3>
+          <p class="card-desc">Hand-stitched in Florentine leather</p>
+          <div class="card-footer">
+            <span class="card-price">£1,950</span>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="collections-footer">
+      <button class="glass-btn primary large">View Full Collection</button>
+    </div>
+  </section>
+
+  <!-- ═══ EDITORIAL ═══ -->
+  <section class="editorial-section" id="editorial">
+    <div class="editorial-inner">
+      <div class="editorial-text glass-panel">
+        <span class="section-tag">The Story</span>
+        <h2 class="editorial-title">Between shadow<br/><em>and light</em></h2>
+        <p class="editorial-body">
+          The Autumn/Winter collection finds its muse in the liminal hour — 
+          that breath between dusk and dark when the world suspends itself 
+          in amber and emerald. Each piece is a meditation on restraint. 
+          On the beauty of the unuttered.
+        </p>
+        <p class="editorial-body">
+          Crafted across four ateliers in Paris, Milan, and Kyoto, 
+          every silhouette is born from a singular obsession: 
+          that luxury is felt, never announced.
+        </p>
+        <button class="glass-btn ghost mt-lg">Read the Full Story</button>
+      </div>
+
+      <div class="editorial-visual">
+        <div class="editorial-frame glass-frame large">
+          <div class="editorial-placeholder">
+            <div class="editorial-shapes">
+              <div class="shape shape-1"></div>
+              <div class="shape shape-2"></div>
+              <div class="shape shape-3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="editorial-stats">
+          <div class="stat-card glass-stat">
+            <span class="stat-n">1972</span>
+            <span class="stat-l">Founded</span>
+          </div>
+          <div class="stat-card glass-stat">
+            <span class="stat-n">4</span>
+            <span class="stat-l">Ateliers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ATELIER / PROCESS ═══ -->
+  <section class="atelier-section" id="atelier">
+    <div class="section-header center">
+      <span class="section-tag">Craftsmanship</span>
+      <h2 class="section-title">The Atelier</h2>
+      <p class="section-sub">Every stitch a decision. Every seam a statement.</p>
+    </div>
+
+    <div class="process-steps">
+      <div class="step glass-step" data-step="01">
+        <div class="step-icon">✦</div>
+        <h3 class="step-title">Conception</h3>
+        <p class="step-desc">Ideas emerge from mood, memory, and the architecture of light.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step glass-step" data-step="02">
+        <div class="step-icon">✦</div>
+        <h3 class="step-title">Material</h3>
+        <p class="step-desc">Only the finest wools, silks, and cashmeres from heritage mills.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step glass-step" data-step="03">
+        <div class="step-icon">✦</div>
+        <h3 class="step-title">Craft</h3>
+        <p class="step-desc">Constructed by artisans with decades of mastery, each by hand.</p>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step glass-step" data-step="04">
+        <div class="step-icon">✦</div>
+        <h3 class="step-title">Delivery</h3>
+        <p class="step-desc">Delivered as a ritual — white-glove, unhurried, perfect.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ QUOTE ═══ -->
+  <section class="quote-section">
+    <div class="quote-inner glass-panel large-panel">
+      <div class="quote-mark">"</div>
+      <blockquote class="quote-text">
+        Elegance is refusal.
+      </blockquote>
+      <cite class="quote-cite">— Coco Chanel</cite>
+      <div class="quote-deco"></div>
+    </div>
+  </section>
+
+  <!-- ═══ NEWSLETTER ═══ -->
+  <section class="newsletter-section" id="about">
+    <div class="newsletter-inner glass-panel">
+      <span class="section-tag">Join the Circle</span>
+      <h2 class="nl-title">Private Access</h2>
+      <p class="nl-sub">Invitations, early access, and the silence between collections.</p>
+      <div class="nl-form">
+        <input type="email" class="glass-input" placeholder="your@email.com" />
+        <button class="glass-btn primary">Request Access</button>
+      </div>
+      <p class="nl-disclaimer">By joining, you agree to our privacy policy. Unsubscribe at any time.</p>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer glass-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">SNAZZY</div>
+        <p class="footer-tagline">Luxury, distilled.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Maison</h4>
+          <a href="#">Our Story</a>
+          <a href="#">Ateliers</a>
+          <a href="#">Careers</a>
+        </div>
+        <div class="footer-col">
+          <h4>Collections</h4>
+          <a href="#">Women</a>
+          <a href="#">Men</a>
+          <a href="#">Accessories</a>
+        </div>
+        <div class="footer-col">
+          <h4>Client</h4>
+          <a href="#">Private Appointments</a>
+          <a href="#">Returns</a>
+          <a href="#">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 SNAZZY. All rights reserved.</span>
+      <span>Milan · Paris · London · Tokyo</span>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
