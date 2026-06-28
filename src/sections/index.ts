@@ -1,0 +1,7 @@
+export { default as Home } from './Home'
+export { default as CollectionsShowcase } from './CollectionsShowcase'
+export { default as Shop } from './Shop'
+export { default as Heritage } from './Heritage'
+export { default as Craftsmanship } from './Craftsmanship'
+export { default as Gallery } from './Gallery'
+export { default as Contact } from './Contact'
