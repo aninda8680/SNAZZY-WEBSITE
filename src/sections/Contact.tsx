@@ -1,17 +1,17 @@
-import { useRef, useState } from 'react'
+﻿import { useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { motion } from 'framer-motion'
-import { Instagram, Mail, MapPin } from 'lucide-react'
+import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react'
 
 const fadeUp = {
-  hidden: { y: 30, opacity: 0 },
-  visible: { y: 0, opacity: 1, transition: { duration: 0.7, ease: 'easeOut' } },
+  hidden: { y: 24, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.65, ease: 'easeOut' } },
 }
 
 export default function Contact() {
   const [sent, setSent] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
-  const { ref, inView } = useInView({ threshold: 0.2, triggerOnce: true })
+  const { ref, inView } = useInView({ threshold: 0.15, triggerOnce: true })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,90 +22,95 @@ export default function Contact() {
 
   return (
     <>
-      {/* Contact section */}
-      <section id="contact" className="bg-[#050505] py-24 md:py-36">
-        <div className="max-w-7xl mx-auto px-6">
+      <section id="contact" className="bg-[#FAF5E8] md:bg-white py-14 md:py-36 border-t border-[#1B3C34]/10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8">
+
+          {/* Heading */}
           <motion.div
             ref={ref}
             variants={fadeUp}
             initial="hidden"
             animate={inView ? 'visible' : 'hidden'}
-            className="max-w-2xl mb-16"
+            className="mb-6 md:mb-16"
           >
-            <p className="font-inter text-xs tracking-[0.5em] uppercase text-amber-400 mb-6">
+            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#555] md:text-[#1B3C34]/35 mb-4">
               Get In Touch
             </p>
-            <h2 className="font-bodoni font-black text-5xl md:text-7xl text-white leading-tight">
-              Start Your<br />
-              <em className="italic text-white/50">Order</em>
-            </h2>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-6">
+              <h2 className="font-inter font-light text-[1.6rem] md:text-5xl text-[#111] md:text-[#1B3C34] leading-tight tracking-tight">
+                Start Your Order
+              </h2>
+              <p className="font-inter text-xs text-[#555] md:text-[#1B3C34]/35 tracking-wide">
+                We'll get back to you within 24 hours.
+              </p>
+            </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24">
+
             {/* Form */}
             <motion.form
               ref={formRef}
               variants={fadeUp}
               initial="hidden"
               animate={inView ? 'visible' : 'hidden'}
-              transition={{ delay: 0.15 }}
+              transition={{ delay: 0.1 }}
               onSubmit={handleSubmit}
-              className="flex flex-col gap-8"
+              className="flex flex-col gap-6 md:gap-8"
             >
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-xs tracking-[0.3em] uppercase text-white/40">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
                   Full Name
                 </label>
                 <input
                   type="text"
                   required
                   placeholder="Your name"
-                  className="bg-transparent border-b border-white/20 pb-3 text-white font-inter font-light placeholder:text-white/20 focus:outline-none focus:border-amber-400 transition-colors duration-300"
+                  className="bg-transparent border-b border-[#1B3C34]/15 pt-3 pb-3 md:pt-0 text-[#1B3C34] font-inter font-light text-sm placeholder:text-[#1B3C34]/20 focus:outline-none focus:border-[#1B3C34] transition-colors duration-300"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-xs tracking-[0.3em] uppercase text-white/40">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
                   Email Address
                 </label>
                 <input
                   type="email"
                   required
                   placeholder="your@email.com"
-                  className="bg-transparent border-b border-white/20 pb-3 text-white font-inter font-light placeholder:text-white/20 focus:outline-none focus:border-amber-400 transition-colors duration-300"
+                  className="bg-transparent border-b border-[#1B3C34]/15 pt-3 pb-3 md:pt-0 text-[#1B3C34] font-inter font-light text-sm placeholder:text-[#1B3C34]/20 focus:outline-none focus:border-[#1B3C34] transition-colors duration-300"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-xs tracking-[0.3em] uppercase text-white/40">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
                   Collection Interest
                 </label>
                 <select
-                  className="bg-transparent border-b border-white/20 pb-3 text-white/80 font-inter font-light focus:outline-none focus:border-amber-400 transition-colors duration-300 appearance-none"
+                  className="bg-transparent border-b border-[#1B3C34]/15 pt-3 pb-3 md:pt-0 text-[#1B3C34]/70 font-inter font-light text-sm focus:outline-none focus:border-[#1B3C34] transition-colors duration-300 appearance-none"
                 >
-                  <option value="" className="bg-black">Select a collection</option>
-                  <option value="pure-luxe" className="bg-black">Pure Luxe — Gold Thread</option>
-                  <option value="bloom" className="bg-black">Bloom Series — Floral</option>
-                  <option value="midnight" className="bg-black">Midnight Edge — Geometric</option>
-                  <option value="earth" className="bg-black">Earth Roots — Heritage</option>
-                  <option value="custom" className="bg-black">Custom Design</option>
+                  <option value="" className="bg-white text-[#1B3C34]">Select a collection</option>
+                  <option value="pure-luxe" className="bg-white text-[#1B3C34]">Pure Luxe — Gold Thread</option>
+                  <option value="bloom" className="bg-white text-[#1B3C34]">Bloom Series — Floral</option>
+                  <option value="midnight" className="bg-white text-[#1B3C34]">Midnight Edge — Geometric</option>
+                  <option value="earth" className="bg-white text-[#1B3C34]">Earth Roots — Heritage</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-xs tracking-[0.3em] uppercase text-white/40">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
                   Message
                 </label>
                 <textarea
                   rows={4}
                   placeholder="Tell us about your vision..."
-                  className="bg-transparent border-b border-white/20 pb-3 text-white font-inter font-light placeholder:text-white/20 focus:outline-none focus:border-amber-400 transition-colors duration-300 resize-none"
+                  className="bg-transparent border-b border-[#1B3C34]/15 pt-3 pb-3 md:pt-0 text-[#1B3C34] font-inter font-light text-sm placeholder:text-[#1B3C34]/20 focus:outline-none focus:border-[#1B3C34] transition-colors duration-300 resize-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className="mt-4 font-inter font-bold text-xs tracking-[0.25em] uppercase px-10 py-4 bg-white text-black rounded-full hover:scale-105 transition-transform duration-300 self-start"
+                className="mt-2 font-inter text-[11px] tracking-[0.3em] uppercase px-10 py-4 bg-[#1B3C34] text-white hover:bg-black transition-colors w-full sm:w-auto sm:self-start"
               >
                 {sent ? 'Message Sent ✓' : 'Send Message'}
               </button>
@@ -116,38 +121,36 @@ export default function Contact() {
               variants={fadeUp}
               initial="hidden"
               animate={inView ? 'visible' : 'hidden'}
-              transition={{ delay: 0.3 }}
-              className="flex flex-col gap-12"
+              transition={{ delay: 0.2 }}
+              className="flex flex-col gap-8"
             >
-              <div>
-                <p className="font-bodoni italic text-3xl md:text-4xl text-white/70 leading-relaxed mb-8">
-                  "Wear something the world has never seen before."
-                </p>
-              </div>
+              <p className="font-inter font-light italic text-lg md:text-3xl text-[#1B3C34]/40 leading-relaxed">
+                "Wear something the world has never seen before."
+              </p>
 
-              <div className="flex flex-col gap-6">
-                <div className="flex items-center gap-4 text-white/50">
-                  <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span className="font-inter font-light text-sm">hello@snazzy.co</span>
+              <div className="flex flex-col gap-5">
+                <div className="flex items-center gap-4 min-h-[44px] md:min-h-0 text-gray-500 md:text-[#1B3C34]/40">
+                  <MapPin className="w-4 h-4 text-[#1B3C34]/30 flex-shrink-0" />
+                  <span className="font-inter font-light text-sm">Vizianagram, India</span>
                 </div>
-                <div className="flex items-center gap-4 text-white/50">
-                  <MapPin className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span className="font-inter font-light text-sm">Hyderabad, India</span>
+                <div className="flex items-center gap-4 min-h-[44px] md:min-h-0 text-gray-500 md:text-[#1B3C34]/40">
+                  <Mail className="w-4 h-4 text-[#1B3C34]/30 flex-shrink-0" />
+                  <a href="mailto:snazzydot.co@gmail.com" className="font-inter font-light text-sm hover:text-[#1B3C34] transition-colors">
+                    snazzydot.co@gmail.com
+                  </a>
                 </div>
-                <div className="flex items-center gap-4 text-white/50">
-                  <Instagram className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span className="font-inter font-light text-sm">@snazzy.embroidery</span>
+                <div className="flex items-center gap-4 min-h-[44px] md:min-h-0 text-gray-500 md:text-[#1B3C34]/40">
+                  <Instagram className="w-4 h-4 text-[#1B3C34]/30 flex-shrink-0" />
+                  <a href="https://instagram.com/snazzy.dot" target="_blank" rel="noopener noreferrer" className="font-inter font-light text-sm hover:text-[#1B3C34] transition-colors">
+                    @snazzy.dot
+                  </a>
                 </div>
-              </div>
-
-              <div className="border border-white/10 rounded-sm p-8">
-                <p className="font-inter text-xs tracking-[0.3em] uppercase text-amber-400 mb-4">
-                  Custom Orders
-                </p>
-                <p className="font-inter font-light text-white/60 text-sm leading-7">
-                  Have a design in mind? We bring it to life. Minimum order of 10 pieces for custom
-                  embroidery. Samples available within 7 working days.
-                </p>
+                <div className="flex items-center gap-4 min-h-[44px] md:min-h-0 text-gray-500 md:text-[#1B3C34]/40">
+                  <MessageCircle className="w-4 h-4 text-[#1B3C34]/30 flex-shrink-0" />
+                  <a href="https://wa.me/916281113614" target="_blank" rel="noopener noreferrer" className="font-inter font-light text-sm hover:text-[#1B3C34] transition-colors">
+                    +91 6281113614
+                  </a>
+                </div>
               </div>
             </motion.div>
           </div>
@@ -155,15 +158,15 @@ export default function Contact() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-white/10 py-10">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-bodoni text-lg tracking-[0.3em] text-white font-bold">SNAZZY</p>
-          <div className="flex items-center gap-8 font-inter text-xs tracking-[0.2em] uppercase text-white/40">
-            <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">Journal</a>
-            <a href="#" className="hover:text-white transition-colors">Legal</a>
+      <footer className="bg-[#1B3C34] py-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="font-inter text-sm tracking-[0.4em] text-white/80 uppercase">SNAZZY</p>
+          <div className="flex items-center gap-8 font-inter text-[10px] tracking-[0.25em] uppercase text-white/30">
+            <a href="https://instagram.com/snazzy.dot" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">Instagram</a>
+            <a href="#" className="hover:text-white/70 transition-colors">Journal</a>
+            <a href="#" className="hover:text-white/70 transition-colors">Legal</a>
           </div>
-          <p className="font-inter text-xs text-white/30">
+          <p className="font-inter text-[10px] text-white/25 tracking-wide">
             © {new Date().getFullYear()} SNAZZY. All rights reserved.
           </p>
         </div>
@@ -171,3 +174,4 @@ export default function Contact() {
     </>
   )
 }
+

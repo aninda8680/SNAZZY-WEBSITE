@@ -2,225 +2,265 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ShoppingBag, Sparkles } from 'lucide-react'
+import { Heart, ShoppingBag } from 'lucide-react'
+import { useCart } from '../context/CartContext'
+import ProductModal, { type ProductDetail } from '../components/ProductModal'
 
 gsap.registerPlugin(ScrollTrigger)
 
-type Category = 'All' | 'Pure Luxe' | 'Bloom Series' | 'Midnight Edge' | 'Earth Roots'
+type Category = 'All' | "Men's T-Shirts" | "Women's T-Shirts" | 'Hoodies' | 'Sweatshirts'
 
-interface Product {
-  id: number
-  name: string
-  tagline: string
-  category: Exclude<Category, 'All'>
-  price: string
-  originalPrice?: string
-  image: string
-  bgFrom: string
-  bgTo: string
-  accent: string
-  textAccent: string
-  badge: string
-  badgeBg: string
-}
+const SIZES_TEE     = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_HOODIE  = ['S', 'M', 'L', 'XL', 'XXL']
 
-const products: Product[] = [
+const products: ProductDetail[] = [
   {
     id: 1,
-    name: 'Pure Luxe Classic',
-    tagline: 'Gold metallic embroidery on Pima cotton',
-    category: 'Pure Luxe',
+    name: 'Snazzy Tee — T1',
+    tagline: 'Premium embroidered cotton tee',
+    category: "Men's T-Shirts",
     price: '₹1,499',
-    image: '/images/tshirt-luxe.png',
-    bgFrom: '#1A0F00',
-    bgTo: '#3D2800',
-    accent: '#F59E0B',
-    textAccent: '#FDE68A',
+    priceNum: 1499,
+    image: '/images/t1-front.png',
+    hoverImage: '/images/t1-back.png',
     badge: 'Bestseller',
-    badgeBg: '#F59E0B20',
+    description:
+      'Our signature piece — a 220gsm heavyweight cotton tee with precision embroidery across the chest. Designed for those who believe clothing should say something. Structured fit that holds its shape wash after wash.',
+    sizes: SIZES_TEE,
+    material: '100% combed ring-spun cotton, 220gsm. Ribbed crew neck. Pre-shrunk fabric.',
+    care: 'Machine wash cold (30°C), inside out. Do not tumble dry. Iron on reverse. Do not bleach.',
   },
   {
     id: 2,
-    name: 'Pure Luxe Premium',
-    tagline: 'Limited run — 50 pieces worldwide',
-    category: 'Pure Luxe',
-    price: '₹1,999',
-    originalPrice: '₹2,499',
-    image: '/images/tshirt-luxe.png',
-    bgFrom: '#1A0F00',
-    bgTo: '#4A3200',
-    accent: '#F59E0B',
-    textAccent: '#FDE68A',
+    name: 'Snazzy Tee — T2',
+    tagline: 'Signature streetwear drop',
+    category: "Men's T-Shirts",
+    price: '₹1,499',
+    priceNum: 1499,
+    image: '/images/t2-front.png',
+    hoverImage: '/images/t2-back.png',
     badge: 'New',
-    badgeBg: '#F59E0B20',
+    description:
+      'From the latest streetwear drop — bold embroidered branding on a relaxed-fit silhouette. The dropped shoulder and boxy cut make this an instant wardrobe anchor for any season.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 220gsm. Boxy oversized fit. Reinforced seams.',
+    care: 'Machine wash cold. Turn inside out before washing. Hang to dry. Do not iron directly on embroidery.',
   },
   {
     id: 3,
-    name: 'Bloom Floral Tee',
-    tagline: 'Japanese botanical motifs in satin stitch',
-    category: 'Bloom Series',
-    price: '₹1,599',
-    image: '/images/tshirt-bloom.png',
-    bgFrom: '#2D0A1E',
-    bgTo: '#5C1A3A',
-    accent: '#F9A8D4',
-    textAccent: '#FBCFE8',
-    badge: 'Limited',
-    badgeBg: '#F9A8D420',
+    name: 'Snazzy Tee — T3',
+    tagline: 'Bold graphic on 220gsm cotton',
+    category: "Men's T-Shirts",
+    price: '₹1,499',
+    priceNum: 1499,
+    image: '/images/t3-front.png',
+    hoverImage: '/images/t3-back.png',
+    badge: 'Popular',
+    description:
+      'Statement embroidery meets everyday comfort. The T3 features a bold graphic design rendered in high-density thread on 220gsm cotton. A piece that gets better with every wear.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 220gsm. Regular fit. Double-stitched hems for durability.',
+    care: 'Cold machine wash. Turn inside out. Hang dry. Iron on low heat avoiding embroidered areas.',
   },
   {
     id: 4,
-    name: 'Bloom Garden',
-    tagline: 'Dense floral bloom on 220gsm jersey',
-    category: 'Bloom Series',
-    price: '₹1,799',
-    image: '/images/tshirt-bloom.png',
-    bgFrom: '#2D0A1E',
-    bgTo: '#6B1F45',
-    accent: '#F9A8D4',
-    textAccent: '#FBCFE8',
-    badge: 'Popular',
-    badgeBg: '#F9A8D420',
+    name: 'Snazzy Tee — T4',
+    tagline: 'Limited season drop',
+    category: "Men's T-Shirts",
+    price: '₹1,499',
+    priceNum: 1499,
+    image: '/images/t4-front.png',
+    hoverImage: '/images/t4-back.png',
+    badge: 'Limited',
+    description:
+      'Part of our limited seasonal run — once it\'s gone, it\'s gone. The T4 features exclusive embroidery artwork produced in a single run of 100 units. No restocks, no second chances.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 220gsm. Slim regular fit. Pre-washed for minimal shrinkage.',
+    care: 'Hand wash or gentle cycle cold. Lay flat to dry. Do not wring or bleach.',
   },
   {
     id: 5,
-    name: 'Midnight Edge Geo',
-    tagline: 'High-contrast geometric on 280gsm cotton',
-    category: 'Midnight Edge',
-    price: '₹1,699',
-    image: '/images/tshirt-midnight.png',
-    bgFrom: '#020617',
-    bgTo: '#0F172A',
-    accent: '#93C5FD',
-    textAccent: '#BFDBFE',
+    name: 'Snazzy Tee — T5',
+    tagline: 'Heavyweight oversized fit',
+    category: "Men's T-Shirts",
+    price: '₹1,499',
+    priceNum: 1499,
+    image: '/images/t5-front.png',
+    hoverImage: '/images/t5-back.png',
     badge: 'Bold',
-    badgeBg: '#93C5FD20',
+    description:
+      'Our heaviest tee — 260gsm fabric with a structured boxy silhouette. The oversized cut is intentional, not accidental. Embroidery on chest and sleeve for full coverage brand expression.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 260gsm. Oversized boxy fit. Extended back hem. Thick ribbed collar.',
+    care: 'Machine wash 30°C. Turn inside out. Do not tumble dry. Steam press if needed — avoid embroidery.',
   },
   {
     id: 6,
-    name: 'Earth Roots Heritage',
-    tagline: 'Kantha & zardozi on organic cotton',
-    category: 'Earth Roots',
-    price: '₹1,499',
-    image: '/images/tshirt-earth.png',
-    bgFrom: '#1A0E07',
-    bgTo: '#3D2010',
-    accent: '#D4A574',
-    textAccent: '#E5C5A0',
+    name: "Women's Tee — G1",
+    tagline: 'Relaxed fit, premium cotton',
+    category: "Women's T-Shirts",
+    price: '₹1,399',
+    priceNum: 1399,
+    image: '/images/grl-t1-front.png',
+    hoverImage: '/images/grl-t1-back.png',
+    badge: 'New',
+    description:
+      'Designed for her. A relaxed-fit tee in our softest cotton fabric, with delicate embroidery that elevates without overpowering. The silhouette is slightly cropped with a curved hem.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 180gsm. Relaxed cropped fit. Curved hem. Soft-touch finish.',
+    care: 'Machine wash cold, gentle cycle. Reshape while damp. Do not tumble dry. Cool iron on reverse.',
+  },
+  {
+    id: 7,
+    name: "Women's Tee — G2",
+    tagline: 'Soft drop-shoulder silhouette',
+    category: "Women's T-Shirts",
+    price: '₹1,399',
+    priceNum: 1399,
+    image: '/images/grl-t2-front.png',
+    hoverImage: '/images/grl-t2-back.png',
+    badge: 'Popular',
+    description:
+      'A wardrobe essential reimagined. The dropped shoulder gives an effortless off-duty feel while the embroidered detail keeps it distinctly Snazzy. Pairs with everything.',
+    sizes: SIZES_TEE,
+    material: '100% combed cotton, 180gsm. Drop-shoulder construction. Slightly oversized.',
+    care: 'Machine wash cold. Hang to dry. Iron on low on the back. Do not bleach.',
+  },
+  {
+    id: 8,
+    name: 'Snazzy Hoodie',
+    tagline: 'Fleece-lined premium embroidered hoodie',
+    category: 'Hoodies',
+    price: '₹2,499',
+    priceNum: 2499,
+    image: '/images/hoodie-front.png',
+    hoverImage: '/images/hoodie-back.png',
+    badge: 'Bestseller',
+    description:
+      'The hoodie that redefines casual. 380gsm fleece-lined fabric with precision chest embroidery, an adjustable drawstring hood, and a kangaroo pocket finished with a woven brand label inside.',
+    sizes: SIZES_HOODIE,
+    material: '80% cotton, 20% polyester, 380gsm. Fleece-lined interior. Ribbed cuffs and hem. Metal eyelets.',
+    care: 'Machine wash 30°C. Turn inside out. Do not tumble dry on high heat. Steam iron if needed.',
+  },
+  {
+    id: 9,
+    name: 'Snazzy Sweatshirt',
+    tagline: '320gsm French terry, embroidered chest',
+    category: 'Sweatshirts',
+    price: '₹1,999',
+    priceNum: 1999,
+    image: '/images/sweatshirt-front.png',
+    hoverImage: '/images/sweatshirt-back.png',
     badge: 'Artisan',
-    badgeBg: '#D4A57420',
+    description:
+      'French terry construction meets artisan embroidery. The crewneck silhouette is clean and versatile — dress it up or down. The 320gsm weight means it keeps its shape without feeling heavy.',
+    sizes: SIZES_HOODIE,
+    material: '80% cotton, 20% polyester, 320gsm. French terry loopback. Ribbed crew neck, cuffs and waistband.',
+    care: 'Machine wash cold, inside out. Reshape while damp. Do not bleach. Cool tumble dry or hang dry.',
   },
 ]
 
-const categories: Category[] = ['All', 'Pure Luxe', 'Bloom Series', 'Midnight Edge', 'Earth Roots']
+const categories: Category[] = ['All', "Men's T-Shirts", "Women's T-Shirts", 'Hoodies', 'Sweatshirts']
 
-function ProductCard({ product, index }: { product: Product; index: number }) {
-  const [hovered, setHovered] = useState(false)
+function ProductCard({
+  product,
+  index,
+  onOpen,
+}: {
+  product: ProductDetail
+  index: number
+  onOpen: (p: ProductDetail) => void
+}) {
+  const { addItem } = useCart()
+
+  function handleAddToCart(e: React.MouseEvent) {
+    e.stopPropagation()
+    addItem({
+      id: String(product.id),
+      name: product.name,
+      price: product.price,
+      priceNum: product.priceNum,
+      accent: '#1B3C34',
+    })
+  }
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative flex flex-col rounded-sm overflow-hidden"
-      style={{ border: '1px solid rgba(255,255,255,0.07)' }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative flex flex-col cursor-pointer bg-[#FAF5E8] md:bg-transparent"
+      onClick={() => onOpen(product)}
     >
-      {/* Image area */}
-      <div
-        className="relative aspect-[3/4] overflow-hidden"
-        style={{ background: `linear-gradient(160deg, ${product.bgFrom} 0%, ${product.bgTo} 100%)` }}
-      >
-        {/* Radial glow */}
-        <div
-          className="absolute inset-0 opacity-40 transition-opacity duration-500"
-          style={{
-            background: `radial-gradient(ellipse at 50% 60%, ${product.accent}33, transparent 70%)`,
-            opacity: hovered ? 0.7 : 0.3,
-          }}
-        />
-
+      {/* Image area — full-bleed, no side gaps */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF5E8]">
         <img
           src={product.image}
           alt={product.name}
-          className="absolute inset-0 w-full h-full object-contain p-8 transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
           onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
         />
+        {product.hoverImage && (
+          <img
+            src={product.hoverImage}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
+          />
+        )}
 
-        {/* Badge */}
-        <span
-          className="absolute top-4 left-4 font-inter text-[10px] tracking-[0.2em] uppercase px-3 py-1.5 rounded-full"
-          style={{
-            background: product.badgeBg,
-            color: product.accent,
-            border: `1px solid ${product.accent}30`,
-          }}
+        {/* Wishlist — desktop only */}
+        <button
+          className="hidden md:flex absolute top-3 right-3 p-1.5 text-[#1B3C34]/40 hover:text-[#1B3C34] transition-colors z-10"
+          onClick={(e) => e.stopPropagation()}
         >
-          {product.badge}
-        </span>
+          <Heart className="w-4 h-4" />
+        </button>
 
-        {/* Hover: CTA slide up */}
-        <div className="absolute inset-x-4 bottom-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400 ease-out">
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(`Hi! I'd like to order the ${product.name} (${product.price}). Please share availability & sizes.`)}`}
-            target="_blank"
-            rel="noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center justify-center gap-2 w-full py-3.5 rounded-full font-inter font-bold text-xs tracking-[0.15em] uppercase transition-opacity duration-300"
-            style={{ background: product.accent, color: '#000' }}
+        {/* Badge — desktop only (no clutter on mobile) */}
+        {product.badge && (
+          <span className="hidden md:block absolute top-3 left-3 font-inter text-[9px] tracking-[0.25em] uppercase text-[#1B3C34]/60">
+            {product.badge}
+          </span>
+        )}
+
+        {/* Quick Add — desktop hover only */}
+        <div className="hidden md:block absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+          <button
+            onClick={handleAddToCart}
+            className="w-full py-3.5 bg-white/95 backdrop-blur-sm font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] font-medium hover:bg-[#1B3C34] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            Order on WhatsApp
-          </a>
+            Quick Add
+          </button>
         </div>
-
-        {/* Dark scrim at bottom for readability */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
-          style={{ background: `linear-gradient(to top, ${product.bgFrom}cc, transparent)` }}
-        />
       </div>
 
-      {/* Info row */}
-      <div
-        className="flex items-start justify-between gap-4 px-5 py-4"
-        style={{ background: `linear-gradient(180deg, ${product.bgFrom}ee 0%, #080808 100%)` }}
-      >
-        <div className="min-w-0">
-          <p
-            className="font-inter text-[9px] tracking-[0.35em] uppercase mb-1 truncate"
-            style={{ color: product.accent + '99' }}
-          >
-            {product.category}
-          </p>
-          <h3 className="font-bodoni font-bold text-white text-lg leading-tight truncate">
+      {/* Info */}
+      <div className="pt-3 pb-3 px-3 md:px-0">
+        <div className="flex items-start justify-between gap-2">
+          {/* Bodoni Moda serif name on mobile — editorial Zara look */}
+          <h3 className="font-bodoni md:font-inter text-[13px] md:text-[13px] font-normal text-[#1B3C34] leading-snug tracking-[0.04em] uppercase">
             {product.name}
           </h3>
-          <p className="font-inter font-light text-white/35 text-xs leading-5 mt-1 line-clamp-1">
-            {product.tagline}
-          </p>
-        </div>
-
-        <div className="text-right flex-shrink-0 pt-1">
-          <p className="font-bodoni font-bold text-xl" style={{ color: product.textAccent }}>
+          <p className="font-inter text-[11px] md:text-[13px] text-[#1B3C34]/70 md:text-[#1B3C34] flex-shrink-0">
             {product.price}
           </p>
-          {product.originalPrice && (
-            <p className="font-inter text-xs text-white/25 line-through mt-0.5">
-              {product.originalPrice}
-            </p>
-          )}
         </div>
+        <p className="font-inter text-[10px] text-[#1B3C34]/40 mt-1 tracking-wide hidden md:block">
+          View details →
+        </p>
       </div>
+
     </motion.article>
   )
 }
 
 export default function Shop() {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const headingRef = useRef<HTMLDivElement>(null)
-  const [active, setActive] = useState<Category>('All')
+  const sectionRef  = useRef<HTMLDivElement>(null)
+  const headingRef  = useRef<HTMLDivElement>(null)
+  const [active, setActive]       = useState<Category>('All')
+  const [modalProduct, setModal]  = useState<ProductDetail | null>(null)
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -242,100 +282,71 @@ export default function Shop() {
   const filtered = active === 'All' ? products : products.filter((p) => p.category === active)
 
   return (
-    <section ref={sectionRef} id="shop" className="relative bg-[#080808] py-24 md:py-36 overflow-hidden">
-      {/* Subtle grid texture */}
-      <div
-        className="absolute inset-0 opacity-[0.025] pointer-events-none"
-        style={{
-          backgroundImage:
-            'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-          backgroundSize: '72px 72px',
-        }}
-      />
-      {/* Amber ambient glow top-right */}
-      <div className="absolute -top-40 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, #F59E0B08 0%, transparent 70%)' }}
-      />
+    <>
+      <section ref={sectionRef} id="shop" className="relative bg-[#FAF5E8] py-12 md:py-24">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-
-        {/* Heading */}
-        <div
-          ref={headingRef}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14"
-        >
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              <p className="font-inter text-xs tracking-[0.5em] uppercase text-amber-400">
-                Shop The Collection
+          {/* Heading */}
+          <div ref={headingRef} className="mb-6 md:mb-10">
+            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#555] md:text-[#1B3C34]/50 mb-3">
+              Shop The Collection
+            </p>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-6">
+              <h2 className="font-bodoni md:font-inter font-light text-[1.6rem] md:text-4xl tracking-tight text-[#1B3C34] uppercase">
+                New Season
+              </h2>
+              <p className="font-inter text-xs text-[#555] md:text-[#1B3C34]/40 tracking-wide">
+                {products.length} pieces
               </p>
             </div>
-            <h2 className="font-bodoni font-black text-5xl md:text-7xl text-white leading-[1.05]">
-              Find Your<br />
-              <em className="italic text-white/35">Statement</em>
-            </h2>
           </div>
-          <div className="md:text-right max-w-xs">
-            <p className="font-inter font-light text-white/40 text-sm leading-7">
-              Every piece is crafted to order.
-              <br />
-              Limited quantities per season.
-            </p>
+
+          {/* Filter tabs — horizontal scroll row on mobile, wrapping row on desktop */}
+          <div className="flex md:flex-wrap gap-5 md:gap-6 mb-8 md:mb-10 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-3 md:pb-4 overflow-x-auto md:overflow-visible scrollbar-none">
+            {categories.map((cat) => {
+              const isActive = active === cat
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActive(cat)}
+                  className={`font-inter text-[11px] tracking-[0.3em] md:tracking-[0.25em] uppercase whitespace-nowrap flex-shrink-0 py-3 md:py-0 md:pb-1 transition-all duration-200 ${
+                    isActive
+                      ? 'text-[#111] border-b-2 border-[#111] md:text-[#1B3C34] md:border-b-[1.5px] md:border-[#1B3C34]'
+                      : 'text-[#555] md:text-[#1B3C34]/40 hover:text-[#1B3C34]/70'
+                  }`}
+                >
+                  {cat}
+                </button>
+              )
+            })}
           </div>
-        </div>
 
-        {/* Filter pills */}
-        <div className="flex flex-wrap gap-2.5 mb-12">
-          {categories.map((cat) => {
-            const isActive = active === cat
-            return (
-              <button
-                key={cat}
-                onClick={() => setActive(cat)}
-                className="relative font-inter text-[11px] tracking-[0.2em] uppercase px-5 py-2.5 rounded-full transition-all duration-300 hover:border-white/30"
-                style={{
-                  color: isActive ? '#000' : 'rgba(255,255,255,0.45)',
-                  background: isActive ? '#F59E0B' : 'transparent',
-                  border: isActive ? '1px solid transparent' : '1px solid rgba(255,255,255,0.1)',
-                  fontWeight: isActive ? 700 : 400,
-                }}
-              >
-                <span className="relative z-10">{cat}</span>
-              </button>
-            )
-          })}
-        </div>
+          {/* Product grid — hairline gap on mobile (Zara style), spaced on desktop */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-px bg-[#1B3C34]/10 -mx-4 md:mx-0 md:bg-transparent md:gap-x-4 md:gap-y-10"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+            >
+              {filtered.map((product, i) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  index={i}
+                  onOpen={setModal}
+                />
+              ))}
+            </motion.div>
+          </AnimatePresence>
 
-        {/* Product grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={active}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            {filtered.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Bottom bar */}
-        <div className="mt-16 pt-16 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-5">
-          <p className="font-inter text-xs text-white/30 tracking-wider text-center sm:text-left">
-            Can't find what you're looking for? We do fully custom embroidery.
-          </p>
-          <a
-            href="#contact"
-            className="flex-shrink-0 font-inter font-bold text-xs tracking-[0.25em] uppercase px-8 py-3.5 rounded-full border border-white/15 text-white/70 hover:bg-white hover:text-black transition-all duration-300"
-          >
-            Request Custom Order
-          </a>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Product detail modal */}
+      <ProductModal product={modalProduct} onClose={() => setModal(null)} />
+    </>
   )
 }

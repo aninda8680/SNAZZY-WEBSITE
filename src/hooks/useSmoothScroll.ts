@@ -12,16 +12,23 @@ export const useSmoothScroll = () => {
       smoothWheel: ANIMATION_CONFIG.SMOOTH_WHEEL,
     })
 
-    // Keep ScrollTrigger in sync with Lenis's virtual scroll position
     lenis.on('scroll', ScrollTrigger.update)
 
     const rafCb = (time: number) => lenis.raf(time * 1000)
     gsap.ticker.add(rafCb)
     gsap.ticker.lagSmoothing(0)
 
+    // Allow modals/overlays to pause and resume Lenis via custom events
+    const pause  = () => lenis.stop()
+    const resume = () => lenis.start()
+    window.addEventListener('lenis-pause',  pause)
+    window.addEventListener('lenis-resume', resume)
+
     return () => {
       gsap.ticker.remove(rafCb)
       lenis.destroy()
+      window.removeEventListener('lenis-pause',  pause)
+      window.removeEventListener('lenis-resume', resume)
     }
   }, [])
 }

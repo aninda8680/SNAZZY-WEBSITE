@@ -5,3 +5,10 @@ declare module '*.svg'
 declare module '*.gif'
 declare module '*.webp'
 declare module '*.mp4'
+
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string
+}
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

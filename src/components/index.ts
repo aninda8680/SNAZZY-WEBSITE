@@ -1,2 +1,5 @@
 export { default as Navbar } from './Navbar'
 export { default as CustomCursor } from './CustomCursor'
+export { default as Cart } from './Cart'
+export { default as ProductModal } from './ProductModal'
+export { default as ViewToggle } from './ViewToggle'

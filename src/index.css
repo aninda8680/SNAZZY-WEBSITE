@@ -47,6 +47,11 @@
   }
 }
 
+/* Mobile preview mode — desktop only, toggled by ViewToggle */
+body.mobile-preview {
+  background-color: #555;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #000; }
