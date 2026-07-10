@@ -30,13 +30,19 @@ router.get('/', async (req, res) => {
 
 // GET /api/orders/user/addresses  — list saved addresses (must be before /:id)
 router.get('/user/addresses', async (req, res) => {
-  const { data: addresses } = await supabase
-    .from('addresses')
-    .select('*')
-    .eq('user_id', req.user.id)
-    .order('is_default', { ascending: false })
+  try {
+    const { data: addresses, error } = await supabase
+      .from('addresses')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .order('is_default', { ascending: false })
 
-  res.json({ addresses: addresses || [] })
+    if (error) throw error
+    res.json({ addresses: addresses || [] })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Failed to fetch addresses' })
+  }
 })
 
 // GET /api/orders/:id

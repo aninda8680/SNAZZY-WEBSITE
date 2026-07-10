@@ -62,7 +62,7 @@ export default function ProductFeature() {
       <div className="md:hidden">
 
         {/* Full-width image — tall and impactful */}
-        <div className="pf-img-mob relative w-full overflow-hidden" style={{ height: '55vh', minHeight: 240 }}>
+        <div className="pf-img-mob relative w-full overflow-hidden" style={{ height: '62vw', minHeight: 220 }}>
           <img
             src={bgImage}
             alt="Snazzy embroidered garment"
@@ -72,21 +72,21 @@ export default function ProductFeature() {
         </div>
 
         {/* Text block */}
-        <div className="pf-text-mob bg-[#FAF5E8] px-5 pt-7 pb-8">
-          <p className="font-inter text-[9px] tracking-[0.5em] uppercase text-[#555] mb-4">
+        <div className="pf-text-mob bg-[#FAF5E8] px-6 pt-10 pb-12">
+          <p className="font-inter text-[9px] tracking-[0.5em] uppercase text-[#1B3C34]/40 mb-5">
             Premium Embroidered Streetwear
           </p>
-          <h2 className="font-inter font-bold text-[1.75rem] leading-[1.15] tracking-tight text-[#111] mb-4">
+          <h2 className="font-bodoni text-[2rem] leading-[1.1] tracking-tight text-[#1B3C34] uppercase mb-5">
             Crafted to<br />Be Remembered.
           </h2>
-          <div className="w-8 h-px bg-[#111]/20 mb-5" />
-          <p className="font-inter font-light text-[#555] text-sm leading-[1.75] mb-7">
+          <div className="w-10 h-px bg-[#1B3C34]/20 mb-5" />
+          <p className="font-inter font-light text-[#1B3C34]/55 text-[13px] leading-[1.85] mb-8">
             Every Snazzy piece is thoughtfully embroidered, produced in limited
             quantities, and created to celebrate craftsmanship over fast fashion.
           </p>
           <a
             href="#shop"
-            className="flex w-full items-center justify-center gap-3 font-inter text-[10px] tracking-[0.4em] uppercase px-7 py-4 bg-[#111] text-[#FAF5E8] active:bg-black transition-colors"
+            className="flex w-full items-center justify-center gap-3 font-inter text-[10px] tracking-[0.4em] uppercase py-[18px] bg-[#1B3C34] text-[#FAF5E8] active:bg-[#0D2A23] transition-colors"
           >
             Shop Collection
             <span className="text-xs leading-none">→</span>
@@ -114,7 +114,7 @@ export default function ProductFeature() {
           </p>
           <a
             href="#shop"
-            className="inline-flex items-center gap-3 font-inter text-[11px] tracking-[0.3em] uppercase px-8 py-4 bg-[#1B3C34] text-white hover:bg-black transition-colors w-fit"
+            className="inline-flex items-center gap-3 font-inter text-[11px] tracking-[0.3em] uppercase px-8 py-4 bg-[#1B3C34] text-white hover:bg-[#0D2A23] transition-colors w-fit"
           >
             Shop Collection
             <span className="text-sm leading-none">→</span>
@@ -132,18 +132,29 @@ export default function ProductFeature() {
         </div>
       </div>
 
-      {/* Pillars bar — dark 2×2 hairline grid on mobile, 4-col cream hairline on md+ */}
-      <div className="pf-pillars bg-[#111] md:bg-[#FAF5E8] border-t border-white/10 md:border-[#1B3C34]/10">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 md:bg-[#1B3C34]/10">
+      {/* Pillars bar — horizontal scroll on mobile, 4-col grid on desktop */}
+      <div className="pf-pillars border-t border-[#1B3C34]/10">
+
+        {/* Mobile: horizontal scroll strip */}
+        <div className="md:hidden overflow-x-auto"
+          style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' } as React.CSSProperties}>
+          <div className="flex divide-x divide-[#1B3C34]/10" style={{ minWidth: 'max-content' }}>
+            {pillars.map((item) => (
+              <div key={item.label} className="pf-pillar px-6 py-6 flex-shrink-0 w-[62vw]"
+                style={{ scrollSnapAlign: 'start' }}>
+                <p className="font-inter text-[10px] tracking-[0.25em] uppercase text-[#1B3C34] mb-2">{item.label}</p>
+                <p className="font-inter text-[#1B3C34]/45 text-[12px] leading-[1.7]">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop: 4-col grid */}
+        <div className="hidden md:grid grid-cols-4 gap-px bg-[#1B3C34]/10 max-w-[1400px] mx-auto">
           {pillars.map((item) => (
-            <div
-              key={item.label}
-              className="pf-pillar bg-[#111] md:bg-[#FAF5E8] px-4 py-4 md:px-8 md:py-5"
-            >
-              <p className="font-inter text-[10px] tracking-[0.25em] uppercase text-[#FAF5E8] md:text-gray-700 mb-1">
-                {item.label}
-              </p>
-              <p className="font-inter text-[#FAF5E8]/50 md:text-gray-400 text-xs leading-5">{item.desc}</p>
+            <div key={item.label} className="pf-pillar bg-[#FAF5E8] px-8 py-5">
+              <p className="font-inter text-[10px] tracking-[0.25em] uppercase text-gray-700 mb-2">{item.label}</p>
+              <p className="font-inter text-gray-400 text-xs leading-[1.6]">{item.desc}</p>
             </div>
           ))}
         </div>

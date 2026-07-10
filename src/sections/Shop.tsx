@@ -172,16 +172,30 @@ function ProductCard({
   onOpen: (p: ProductDetail) => void
 }) {
   const { addItem } = useCart()
+  const [picking, setPicking] = useState(false)
+  const [added, setAdded] = useState<string | null>(null)
 
-  function handleAddToCart(e: React.MouseEvent) {
+  function handleQuickAdd(e: React.MouseEvent) {
+    e.stopPropagation()
+    setPicking(true)
+  }
+
+  function handlePickSize(e: React.MouseEvent, size: string) {
     e.stopPropagation()
     addItem({
-      id: String(product.id),
-      name: product.name,
+      id: `${product.id}-${size}`,
+      name: `${product.name} / ${size}`,
       price: product.price,
       priceNum: product.priceNum,
       accent: '#1B3C34',
     })
+    setAdded(size)
+    setTimeout(() => { setPicking(false); setAdded(null) }, 1200)
+  }
+
+  function handleCancel(e: React.MouseEvent) {
+    e.stopPropagation()
+    setPicking(false)
   }
 
   return (
@@ -190,7 +204,7 @@ function ProductCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       className="group relative flex flex-col cursor-pointer bg-[#FAF5E8] md:bg-transparent"
-      onClick={() => onOpen(product)}
+      onClick={() => !picking && onOpen(product)}
     >
       {/* Image area — full-bleed, no side gaps */}
       <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF5E8]">
@@ -224,26 +238,63 @@ function ProductCard({
           </span>
         )}
 
-        {/* Quick Add — desktop hover only */}
-        <div className="hidden md:block absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <button
-            onClick={handleAddToCart}
-            className="w-full py-3.5 bg-white/95 backdrop-blur-sm font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] font-medium hover:bg-[#1B3C34] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
-          >
-            <ShoppingBag className="w-3.5 h-3.5" />
-            Quick Add
-          </button>
+        {/* Quick Add / Size picker — desktop hover only */}
+        <div className={`hidden md:block absolute inset-x-0 bottom-0 transition-transform duration-300 ease-out ${
+          picking || false ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'
+        }`}>
+          {!picking ? (
+            <button
+              onClick={handleQuickAdd}
+              className="w-full py-3.5 bg-white/95 backdrop-blur-sm font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] font-medium hover:bg-[#1B3C34] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              Quick Add
+            </button>
+          ) : (
+            <div className="bg-white/97 backdrop-blur-sm px-3 pt-2.5 pb-3" onClick={e => e.stopPropagation()}>
+              {added ? (
+                <p className="text-center font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] py-2">
+                  Size {added} added ✓
+                </p>
+              ) : (
+                <>
+                  <p className="font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/40 text-center mb-2">
+                    Select Size
+                  </p>
+                  <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                    {product.sizes.map(size => (
+                      <button
+                        key={size}
+                        onClick={(e) => handlePickSize(e, size)}
+                        className="w-9 h-9 border border-[#1B3C34]/20 font-inter text-[11px] text-[#1B3C34] hover:bg-[#1B3C34] hover:text-white hover:border-[#1B3C34] transition-colors duration-150"
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={handleCancel}
+                    className="w-full mt-2 font-inter text-[9px] tracking-[0.3em] uppercase text-[#1B3C34]/30 hover:text-[#1B3C34]/60 transition-colors py-1"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Info */}
-      <div className="pt-3 pb-3 px-3 md:px-0">
-        <div className="flex items-start justify-between gap-2">
-          {/* Bodoni Moda serif name on mobile — editorial Zara look */}
-          <h3 className="font-bodoni md:font-inter text-[13px] md:text-[13px] font-normal text-[#1B3C34] leading-snug tracking-[0.04em] uppercase">
-            {product.name}
-          </h3>
-          <p className="font-inter text-[11px] md:text-[13px] text-[#1B3C34]/70 md:text-[#1B3C34] flex-shrink-0">
+      <div className="pt-3 pb-4 px-3 md:px-0">
+        <h3 className="font-bodoni md:font-inter text-[13px] font-normal text-[#1B3C34] leading-snug tracking-[0.04em] uppercase mb-1">
+          {product.name}
+        </h3>
+        <div className="flex items-center justify-between gap-2">
+          <p className="font-inter text-[11px] text-[#1B3C34]/50 tracking-wide">
+            {product.category}
+          </p>
+          <p className="font-inter text-[12px] md:text-[13px] text-[#1B3C34] flex-shrink-0 font-medium">
             {product.price}
           </p>
         </div>
@@ -288,31 +339,31 @@ export default function Shop() {
 
           {/* Heading */}
           <div ref={headingRef} className="mb-6 md:mb-10">
-            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#555] md:text-[#1B3C34]/50 mb-3">
+            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#1B3C34]/50 mb-3">
               Shop The Collection
             </p>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-6">
-              <h2 className="font-bodoni md:font-inter font-light text-[1.6rem] md:text-4xl tracking-tight text-[#1B3C34] uppercase">
+            <div className="flex items-end justify-between gap-4 border-b border-[#1B3C34]/10 pb-5">
+              <h2 className="font-bodoni md:font-inter font-light text-[1.8rem] md:text-4xl tracking-tight text-[#1B3C34] uppercase">
                 New Season
               </h2>
-              <p className="font-inter text-xs text-[#555] md:text-[#1B3C34]/40 tracking-wide">
+              <p className="font-inter text-[10px] text-[#1B3C34]/40 tracking-wide pb-1 hidden sm:block">
                 {products.length} pieces
               </p>
             </div>
           </div>
 
-          {/* Filter tabs — horizontal scroll row on mobile, wrapping row on desktop */}
-          <div className="flex md:flex-wrap gap-5 md:gap-6 mb-8 md:mb-10 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-3 md:pb-4 overflow-x-auto md:overflow-visible scrollbar-none">
+          {/* Filter tabs */}
+          <div className="flex flex-wrap gap-x-5 gap-y-2 md:gap-6 mb-8 md:mb-10 border-b border-[#1B3C34]/10 pb-4">
             {categories.map((cat) => {
               const isActive = active === cat
               return (
                 <button
                   key={cat}
                   onClick={() => setActive(cat)}
-                  className={`font-inter text-[11px] tracking-[0.3em] md:tracking-[0.25em] uppercase whitespace-nowrap flex-shrink-0 py-3 md:py-0 md:pb-1 transition-all duration-200 ${
+                  className={`font-inter text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase py-2 md:py-0 md:pb-1 transition-all duration-200 ${
                     isActive
-                      ? 'text-[#111] border-b-2 border-[#111] md:text-[#1B3C34] md:border-b-[1.5px] md:border-[#1B3C34]'
-                      : 'text-[#555] md:text-[#1B3C34]/40 hover:text-[#1B3C34]/70'
+                      ? 'text-[#1B3C34] border-b-2 border-[#1B3C34]'
+                      : 'text-[#1B3C34]/40 hover:text-[#1B3C34]/70'
                   }`}
                 >
                   {cat}
@@ -321,7 +372,7 @@ export default function Shop() {
             })}
           </div>
 
-          {/* Product grid — hairline gap on mobile (Zara style), spaced on desktop */}
+          {/* Product grid */}
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
@@ -345,7 +396,6 @@ export default function Shop() {
         </div>
       </section>
 
-      {/* Product detail modal */}
       <ProductModal product={modalProduct} onClose={() => setModal(null)} />
     </>
   )

@@ -369,7 +369,7 @@ export default function ProductModal({ product, onClose }: Props) {
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/80 hover:bg-white transition-colors"
                     aria-label="Previous photo"
                   >
-                    <ChevronLeft className="w-5 h-5 text-black/70" />
+                    <ChevronLeft className="w-5 h-5 text-[#1B3C34]/70" />
                   </button>
                 )}
                 {imgIndex < images.length - 1 && (
@@ -378,7 +378,7 @@ export default function ProductModal({ product, onClose }: Props) {
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white/80 hover:bg-white transition-colors"
                     aria-label="Next photo"
                   >
-                    <ChevronRight className="w-5 h-5 text-black/70" />
+                    <ChevronRight className="w-5 h-5 text-[#1B3C34]/70" />
                   </button>
                 )}
 
@@ -389,7 +389,7 @@ export default function ProductModal({ product, onClose }: Props) {
                         key={i}
                         onClick={() => setImgIndex(i)}
                         className="w-1.5 h-1.5 rounded-full transition-all duration-200"
-                        style={{ background: i === imgIndex ? '#000' : 'rgba(0,0,0,0.2)' }}
+                        style={{ background: i === imgIndex ? EMERALD : `${EMERALD}40` }}
                         aria-label={`Photo ${i + 1}`}
                       />
                     ))}
@@ -398,7 +398,7 @@ export default function ProductModal({ product, onClose }: Props) {
 
                 {images.length > 1 && (
                   <div className="absolute bottom-4 right-5">
-                    <span className="font-inter text-[9px] tracking-[0.35em] uppercase text-black/30">
+                    <span className="font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/30">
                       {imgIndex === 0 ? 'Front' : 'Back'} · {imgIndex + 1}/{images.length}
                     </span>
                   </div>
@@ -406,15 +406,15 @@ export default function ProductModal({ product, onClose }: Props) {
               </div>
 
               {/* Right: product details */}
-              <div className="flex flex-col flex-1 min-h-0 overflow-y-auto bg-white">
+              <div className="flex flex-col flex-1 min-h-0 overflow-y-auto bg-[#FAF5E8]">
 
                 <div className="flex items-center justify-between px-7 pt-6 pb-3 flex-shrink-0">
-                  <p className="font-inter text-[9px] tracking-[0.45em] uppercase text-black/35">
+                  <p className="font-inter text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/35">
                     {product.category}
                   </p>
                   <button
                     onClick={onClose}
-                    className="p-2.5 -m-1 text-black/40 hover:text-black transition-colors"
+                    className="p-2.5 -m-1 text-[#1B3C34]/40 hover:text-[#1B3C34] transition-colors"
                     aria-label="Close"
                   >
                     <X className="w-4 h-4" />
@@ -423,25 +423,25 @@ export default function ProductModal({ product, onClose }: Props) {
 
                 <div className="px-7 pb-10 flex flex-col">
 
-                  <h2 className="font-bodoni text-2xl uppercase tracking-wide text-black leading-tight mt-1 mb-3">
+                  <h2 className="font-bodoni text-2xl uppercase tracking-wide text-[#1B3C34] leading-tight mt-1 mb-3">
                     {product.name}
                   </h2>
 
-                  <p className="font-inter text-xl text-black mb-0.5">{product.price}</p>
-                  <p className="font-inter text-[10px] tracking-[0.2em] uppercase text-black/35 mb-5">
+                  <p className="font-inter text-xl text-[#1B3C34] mb-0.5">{product.price}</p>
+                  <p className="font-inter text-[10px] tracking-[0.2em] uppercase text-[#1B3C34]/35 mb-5">
                     MRP Incl. of all taxes
                   </p>
 
                   <div className="border-t border-[#1B3C34]/10 mb-6" />
 
-                  <p className="font-inter font-light text-sm leading-7 text-black/55 mb-6">
+                  <p className="font-inter font-light text-sm leading-7 text-[#1B3C34]/55 mb-6">
                     {product.description}
                   </p>
 
                   {/* Desktop: horizontal size bubbles */}
                   <div className="mb-5">
                     <div className="flex items-center justify-between mb-3">
-                      <p className="font-inter text-[10px] tracking-[0.35em] uppercase text-black/50">Size</p>
+                      <p className="font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34]/50">Size</p>
                       {sizeError && (
                         <span className="font-inter text-[10px] text-red-500 tracking-wide animate-pulse">
                           Please select a size
@@ -457,9 +457,9 @@ export default function ProductModal({ product, onClose }: Props) {
                             onClick={() => { setSelectedSize(size); setSizeError(false) }}
                             className="h-11 px-4 min-w-[44px] font-inter text-xs tracking-wider uppercase transition-all duration-150 border"
                             style={{
-                              borderColor: sel ? EMERALD : 'rgba(0,0,0,0.15)',
+                              borderColor: sel ? EMERALD : `${EMERALD}25`,
                               background:  sel ? EMERALD : 'transparent',
-                              color:       sel ? CREAM   : 'rgba(0,0,0,0.6)',
+                              color:       sel ? CREAM   : `${EMERALD}80`,
                             }}
                           >
                             {size}

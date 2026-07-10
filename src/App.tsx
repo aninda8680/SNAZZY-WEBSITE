@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -15,6 +16,9 @@ import Register from './pages/auth/Register'
 // Shop pages
 import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
+import Orders from './pages/Orders'
+import About from './pages/About'
+import Account from './pages/Account'
 
 // Admin pages
 import AdminLayout from './pages/admin/AdminLayout'
@@ -26,12 +30,16 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function App() {
   return (
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID ?? ''}>
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
           <Routes>
             {/* Main storefront */}
             <Route path="/" element={<MainLayout />} />
+
+            {/* About */}
+            <Route path="/about" element={<About />} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
@@ -47,6 +55,22 @@ export default function App() {
               }
             />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRoute>
+                  <Orders />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <Account />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin (requires admin role) */}
             <Route
@@ -62,8 +86,9 @@ export default function App() {
               <Route path="orders" element={<AdminOrders />} />
             </Route>
           </Routes>
-        </CartProvider>
+          </CartProvider>
       </AuthProvider>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   )
 }

@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useSmoothScroll } from '../hooks'
-import { Navbar, CustomCursor, Cart, ViewToggle } from '../components'
+import { Navbar, Cart, ViewToggle } from '../components'
 import {
   Home,
   CollectionsShowcase,
   Shop,
-  ProductFeature,
-  Craftsmanship,
   Gallery,
   Contact,
 } from '../sections'
@@ -29,14 +27,11 @@ export default function MainLayout() {
             : ''
         }`}
       >
-        <CustomCursor />
         <Navbar />
         <Cart />
         <Home />
         <Shop />
         <CollectionsShowcase />
-        <ProductFeature />
-        <Craftsmanship />
         <Gallery />
         <Contact />
       </div>

@@ -89,24 +89,24 @@ export default function Gallery() {
     <>
       {/* ══ MOBILE — native snap scroll ══ */}
       {isMobile && (
-        <section id="gallery" className="bg-[#111] py-10">
+        <section id="gallery" className="bg-[#1B3C34] pt-14 pb-10">
 
           {/* Header */}
-          <div className="px-6 mb-6">
+          <div className="px-6 mb-7">
             <p className="font-inter text-[10px] tracking-[0.4em] uppercase text-[#FAF5E8]/40 mb-3">
               The Gallery
             </p>
-            <h2 className="font-inter font-light text-[1.6rem] text-[#FAF5E8] leading-tight tracking-tight">
+            <h2 className="font-bodoni text-[1.8rem] text-[#FAF5E8] leading-tight tracking-tight uppercase">
               Craft in <span className="text-[#FAF5E8]/30">Motion</span>
             </h2>
-            <p className="font-inter text-[#FAF5E8]/40 text-xs mt-3 leading-[1.8]">
+            <p className="font-inter text-[#FAF5E8]/40 text-[13px] mt-3 leading-[1.8]">
               Every image a testament to the detail that goes into every SNAZZY piece.
             </p>
           </div>
 
           {/* Horizontal snap strip */}
           <div
-            className="flex overflow-x-auto pb-4 px-6 gap-3"
+            className="flex overflow-x-auto pb-5 px-6 gap-3"
             style={{
               scrollSnapType: 'x mandatory',
               WebkitOverflowScrolling: 'touch',
@@ -117,8 +117,8 @@ export default function Gallery() {
             {galleryItems.map((item, i) => (
               <div
                 key={item.id}
-                className="flex-shrink-0 relative overflow-hidden cursor-pointer active:opacity-80 bg-[#1a1a1a]"
-                style={{ width: '64vw', height: '72vw', scrollSnapAlign: 'start' }}
+                className="flex-shrink-0 relative overflow-hidden cursor-pointer active:opacity-80 bg-[#1a3a30]"
+                style={{ width: '70vw', height: '88vw', scrollSnapAlign: 'start' }}
                 onClick={() => setModalIndex(i)}
               >
                 {/* alt="" prevents browser alt-text from duplicating the overlay label */}

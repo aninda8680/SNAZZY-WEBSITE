@@ -54,36 +54,69 @@ export default function Craftsmanship() {
     <section
       ref={sectionRef}
       id="craft"
-      className="bg-[#FAF5E8] py-12 md:py-36"
+      className="bg-[#FAF5E8] py-16 md:py-36"
     >
-      <div className="max-w-[1400px] mx-auto px-6 md:px-8">
+      <div className="max-w-[1400px] mx-auto px-6 md:px-8 overflow-hidden">
 
-        {/* Heading — hidden on mobile */}
-        <div ref={headingRef} className="hidden md:block mb-7 md:mb-16">
+        {/* Heading — compact on mobile, full on desktop */}
+        <div ref={headingRef} className="mb-7 md:mb-16">
           <p className="font-inter text-[10px] tracking-[0.5em] uppercase text-[#1B3C34]/40 mb-3">
             The Process
           </p>
           <div className="border-b border-[#1B3C34]/10 pb-5">
-            <h2 className="font-inter font-light text-[1.7rem] md:text-5xl text-[#1B3C34] leading-tight tracking-tight">
+            <h2 className="font-bodoni md:font-inter font-light text-[1.6rem] md:text-5xl text-[#1B3C34] leading-tight tracking-tight uppercase md:normal-case">
               Unseen Precision
             </h2>
           </div>
         </div>
 
-        {/* Steps — 2×2 dark cards on mobile, 4-col hairline on desktop */}
-        <div className="craft-steps grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-px lg:bg-[#1B3C34]/10">
+        {/* Steps — bold full-width cards on mobile */}
+        <div className="craft-steps md:hidden -mx-6 flex flex-col">
+          {steps.map((step, i) => (
+            <div
+              key={step.num}
+              className="craft-step relative overflow-hidden px-6 py-8 border-b border-[#1B3C34]/10 last:border-0"
+            >
+              {/* Large number watermark */}
+              <span
+                className="absolute right-4 top-1/2 -translate-y-1/2 font-bodoni font-black leading-none select-none pointer-events-none"
+                style={{ fontSize: '22vw', color: 'rgba(27,60,52,0.06)' }}
+              >
+                {step.num}
+              </span>
+
+              {/* Step number pill */}
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-[#1B3C34] text-[#FAF5E8] font-inter text-[10px] font-bold mb-4">
+                {i + 1}
+              </span>
+
+              {/* Title */}
+              <h3 className="font-bodoni text-[1.35rem] text-[#1B3C34] leading-tight tracking-tight mb-3 uppercase">
+                {step.title}
+              </h3>
+
+              {/* Description */}
+              <p className="font-inter text-[13px] text-[#1B3C34]/55 leading-[1.85] max-w-[280px]">
+                {step.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop 4-col grid */}
+        <div className="craft-steps hidden md:grid lg:grid-cols-4 gap-px bg-[#1B3C34]/10">
           {steps.map((step) => (
             <div
               key={step.num}
-              className="craft-step bg-[#111] md:bg-white lg:bg-[#FAF5E8] border border-[#FAF5E8]/10 md:border-[#1B3C34]/10 lg:border-0 p-5 md:p-10 group md:hover:bg-[#FAF5E8] transition-colors duration-300"
+              className="craft-step bg-[#FAF5E8] border-0 p-10 group hover:bg-[#FAF5E8] transition-colors duration-300"
             >
-              <p className="font-inter text-[10px] tracking-widest md:tracking-[0.4em] uppercase text-[#FAF5E8]/25 md:text-[#1B3C34]/40 mb-3 md:mb-6">
+              <p className="font-inter text-[9px] tracking-[0.4em] uppercase text-[#1B3C34]/40 mb-6">
                 {step.num}
               </p>
-              <h3 className="font-inter font-medium text-sm md:text-xl text-[#FAF5E8] md:text-gray-900 mb-2 md:mb-4 tracking-wide">
+              <h3 className="font-inter font-semibold text-xl text-gray-900 mb-4 tracking-wide">
                 {step.title}
               </h3>
-              <p className="font-inter text-[#FAF5E8]/60 md:text-gray-500 text-xs md:text-sm leading-[1.7] md:leading-7">
+              <p className="font-inter text-gray-500 text-sm leading-7">
                 {step.desc}
               </p>
             </div>
@@ -92,10 +125,10 @@ export default function Craftsmanship() {
 
         {/* Quote */}
         <div className="craft-quote mt-8 md:mt-28 text-center border-t border-[#1B3C34]/10 pt-8 md:pt-16">
-          <blockquote className="font-inter font-light italic text-sm md:text-3xl text-[#111] md:text-[#1B3C34]/50 max-w-2xl mx-auto leading-relaxed">
+          <blockquote className="font-inter font-light italic text-sm md:text-3xl text-[#1B3C34]/70 max-w-2xl mx-auto leading-relaxed">
             "Every stitch is a decision. Every thread is a commitment."
           </blockquote>
-          <p className="mt-3 font-inter text-[10px] tracking-[0.4em] uppercase text-[#555] md:text-[#1B3C34]/25">
+          <p className="mt-3 font-inter text-[10px] tracking-[0.4em] uppercase text-[#1B3C34]/30">
             — SNAZZY Craft Philosophy
           </p>
         </div>

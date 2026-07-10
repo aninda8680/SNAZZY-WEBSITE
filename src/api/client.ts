@@ -13,10 +13,13 @@ api.interceptors.request.use((config) => {
 })
 
 // Handle 401 globally — clear bad token and redirect to login
+// Skip redirect when already on auth pages (login/register) to avoid redirect loops
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const onAuthPage = window.location.pathname.startsWith('/login') ||
+                       window.location.pathname.startsWith('/register')
+    if (err.response?.status === 401 && !onAuthPage) {
       localStorage.removeItem('snazzy_token')
       window.location.href = '/login'
     }

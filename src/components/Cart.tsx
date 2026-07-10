@@ -23,12 +23,12 @@ export default function Cart() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-sm z-[70] bg-white border-l border-black/10 flex flex-col transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed top-0 right-0 h-full w-full max-w-sm z-[70] bg-white border-l border-[#1B3C34]/10 flex flex-col transition-transform duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-black/10">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-[#1B3C34]/10">
           <div className="flex items-center gap-3">
             <span className="font-inter text-xs tracking-[0.4em] uppercase text-[#1B3C34]">
               Your Bag
@@ -53,7 +53,7 @@ export default function Cart() {
             </div>
           ) : (
             items.map((item) => (
-              <div key={item.id} className="flex items-center gap-4 py-5 border-b border-black/[0.06]">
+              <div key={item.id} className="flex items-center gap-4 py-5 border-b border-[#1B3C34]/10">
                 <div className="flex-1 min-w-0">
                   <p className="font-inter text-sm text-[#1B3C34] leading-tight truncate">
                     {item.name}
@@ -66,14 +66,14 @@ export default function Cart() {
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <button
                     onClick={() => updateQty(item.id, item.quantity - 1)}
-                    className="w-7 h-7 border border-black/15 flex items-center justify-center text-[#1B3C34]/50 hover:text-[#1B3C34] hover:border-black/40 transition-all"
+                    className="w-7 h-7 border border-[#1B3C34]/20 flex items-center justify-center text-[#1B3C34]/50 hover:text-[#1B3C34] hover:border-[#1B3C34]/50 transition-all"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
                   <span className="font-inter text-sm text-[#1B3C34] w-4 text-center">{item.quantity}</span>
                   <button
                     onClick={() => updateQty(item.id, item.quantity + 1)}
-                    className="w-7 h-7 border border-black/15 flex items-center justify-center text-[#1B3C34]/50 hover:text-[#1B3C34] hover:border-black/40 transition-all"
+                    className="w-7 h-7 border border-[#1B3C34]/20 flex items-center justify-center text-[#1B3C34]/50 hover:text-[#1B3C34] hover:border-[#1B3C34]/50 transition-all"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
@@ -91,7 +91,7 @@ export default function Cart() {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="px-6 py-6 border-t border-black/10 space-y-4">
+          <div className="px-6 py-6 border-t border-[#1B3C34]/10 space-y-4">
             <div className="flex items-center justify-between">
               <span className="font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34]/40">Total</span>
               <span className="font-inter text-lg text-[#1B3C34]">
@@ -100,7 +100,7 @@ export default function Cart() {
             </div>
             <button
               onClick={handleCheckout}
-              className="w-full py-4 bg-[#1B3C34] text-white font-inter text-[11px] tracking-[0.35em] uppercase flex items-center justify-center gap-2 hover:bg-black transition-colors"
+              className="w-full py-4 bg-[#1B3C34] text-white font-inter text-[11px] tracking-[0.35em] uppercase flex items-center justify-center gap-2 hover:bg-[#0D2A23] transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
               Proceed to Checkout

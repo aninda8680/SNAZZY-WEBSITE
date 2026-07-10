@@ -166,31 +166,18 @@ router.post(
         })
         .eq('razorpay_order_id', razorpay_order_id)
 
-      // Decrement stock for each item in the order
+      // Atomically decrement stock — avoids race conditions from concurrent orders
       const { data: orderItems } = await supabase
         .from('order_items')
         .select('product_id, quantity')
         .eq('order_id', order_id)
 
       if (orderItems?.length) {
-        const productIds = orderItems.map((i) => i.product_id)
-        const { data: stockData } = await supabase
-          .from('products')
-          .select('id, stock_quantity')
-          .in('id', productIds)
-
-        if (stockData) {
-          await Promise.all(
-            orderItems.map(({ product_id, quantity }) => {
-              const current = stockData.find((p) => p.id === product_id)?.stock_quantity ?? 0
-              const newQty = Math.max(0, current - quantity)
-              return supabase
-                .from('products')
-                .update({ stock_quantity: newQty, in_stock: newQty > 0 })
-                .eq('id', product_id)
-            })
+        await Promise.all(
+          orderItems.map(({ product_id, quantity }) =>
+            supabase.rpc('decrement_stock', { p_product_id: product_id, p_quantity: quantity })
           )
-        }
+        )
       }
 
       // Clear user's cart after successful payment

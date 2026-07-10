@@ -10,6 +10,7 @@ export const useCursor = () => {
   const ringRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) return
     const dot = dotRef.current
     const ring = ringRef.current
     if (!dot || !ring) return

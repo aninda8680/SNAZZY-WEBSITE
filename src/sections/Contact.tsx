@@ -22,7 +22,7 @@ export default function Contact() {
 
   return (
     <>
-      <section id="contact" className="bg-[#FAF5E8] md:bg-white py-14 md:py-36 border-t border-[#1B3C34]/10">
+      <section id="contact" className="bg-[#FAF5E8] md:bg-white py-20 md:py-36 border-t border-[#1B3C34]/10">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8">
 
           {/* Heading */}
@@ -33,20 +33,20 @@ export default function Contact() {
             animate={inView ? 'visible' : 'hidden'}
             className="mb-6 md:mb-16"
           >
-            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#555] md:text-[#1B3C34]/35 mb-4">
+            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#1B3C34]/35 mb-4">
               Get In Touch
             </p>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#111]/10 md:border-[#1B3C34]/10 pb-6">
-              <h2 className="font-inter font-light text-[1.6rem] md:text-5xl text-[#111] md:text-[#1B3C34] leading-tight tracking-tight">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-[#1B3C34]/10 pb-6">
+              <h2 className="font-inter font-light text-[1.6rem] md:text-5xl text-[#1B3C34] leading-tight tracking-tight">
                 Start Your Order
               </h2>
-              <p className="font-inter text-xs text-[#555] md:text-[#1B3C34]/35 tracking-wide">
+              <p className="font-inter text-xs text-[#1B3C34]/35 tracking-wide">
                 We'll get back to you within 24 hours.
               </p>
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
 
             {/* Form */}
             <motion.form
@@ -56,10 +56,10 @@ export default function Contact() {
               animate={inView ? 'visible' : 'hidden'}
               transition={{ delay: 0.1 }}
               onSubmit={handleSubmit}
-              className="flex flex-col gap-6 md:gap-8"
+              className="flex flex-col gap-8 md:gap-8"
             >
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-[#1B3C34]/40">
                   Full Name
                 </label>
                 <input
@@ -71,7 +71,7 @@ export default function Contact() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-[#1B3C34]/40">
                   Email Address
                 </label>
                 <input
@@ -83,7 +83,7 @@ export default function Contact() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-[#1B3C34]/40">
                   Collection Interest
                 </label>
                 <select
@@ -98,7 +98,7 @@ export default function Contact() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-gray-400 md:text-[#1B3C34]/35">
+                <label className="font-inter text-[10px] tracking-[0.4em] uppercase text-[#1B3C34]/40">
                   Message
                 </label>
                 <textarea
@@ -110,7 +110,7 @@ export default function Contact() {
 
               <button
                 type="submit"
-                className="mt-2 font-inter text-[11px] tracking-[0.3em] uppercase px-10 py-4 bg-[#1B3C34] text-white hover:bg-black transition-colors w-full sm:w-auto sm:self-start"
+                className="mt-2 font-inter text-[11px] tracking-[0.3em] uppercase px-10 py-4 bg-[#1B3C34] text-white hover:bg-[#0D2A23] transition-colors w-full sm:w-auto sm:self-start"
               >
                 {sent ? 'Message Sent ✓' : 'Send Message'}
               </button>
@@ -122,7 +122,7 @@ export default function Contact() {
               initial="hidden"
               animate={inView ? 'visible' : 'hidden'}
               transition={{ delay: 0.2 }}
-              className="flex flex-col gap-8"
+              className="flex flex-col gap-8 pt-10 mt-4 border-t border-[#1B3C34]/10 lg:border-0 lg:pt-0 lg:mt-0"
             >
               <p className="font-inter font-light italic text-lg md:text-3xl text-[#1B3C34]/40 leading-relaxed">
                 "Wear something the world has never seen before."
@@ -160,7 +160,7 @@ export default function Contact() {
       {/* Footer */}
       <footer className="bg-[#1B3C34] py-10">
         <div className="max-w-[1400px] mx-auto px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="font-inter text-sm tracking-[0.4em] text-white/80 uppercase">SNAZZY</p>
+          <p className="font-inter text-sm tracking-[0.4em] text-white/80 uppercase">SNAZZY.</p>
           <div className="flex items-center gap-8 font-inter text-[10px] tracking-[0.25em] uppercase text-white/30">
             <a href="https://instagram.com/snazzy.dot" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors">Instagram</a>
             <a href="#" className="hover:text-white/70 transition-colors">Journal</a>

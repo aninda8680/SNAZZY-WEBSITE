@@ -23,15 +23,20 @@ router.get('/products', async (req, res) => {
 router.post(
   '/products',
   [
-    body('name').trim().notEmpty(),
+    body('name').trim().notEmpty().isLength({ max: 200 }),
     body('price').isInt({ min: 1 }),
     body('category_id').isUUID(),
+    body('description').optional().trim().isLength({ max: 2000 }),
+    body('image_url').optional().trim().isURL(),
+    body('in_stock').optional().isBoolean(),
+    body('stock_quantity').optional().isInt({ min: 0 }),
   ],
   handleValidation,
   async (req, res) => {
+    const { name, description, price, image_url, category_id, in_stock, stock_quantity } = req.body
     const { data, error } = await supabase
       .from('products')
-      .insert(req.body)
+      .insert({ name, description, price, image_url, category_id, in_stock, stock_quantity })
       .select()
       .single()
     if (error) return res.status(400).json({ error: error.message })
@@ -40,16 +45,34 @@ router.post(
 )
 
 // PUT /api/admin/products/:id
-router.put('/products/:id', async (req, res) => {
-  const { data, error } = await supabase
-    .from('products')
-    .update({ ...req.body, updated_at: new Date().toISOString() })
-    .eq('id', req.params.id)
-    .select()
-    .single()
-  if (error) return res.status(400).json({ error: error.message })
-  res.json({ product: data })
-})
+router.put(
+  '/products/:id',
+  [
+    body('name').optional().trim().notEmpty().isLength({ max: 200 }),
+    body('price').optional().isInt({ min: 1 }),
+    body('category_id').optional().isUUID(),
+    body('description').optional().trim().isLength({ max: 2000 }),
+    body('image_url').optional().trim().isURL(),
+    body('in_stock').optional().isBoolean(),
+    body('stock_quantity').optional().isInt({ min: 0 }),
+  ],
+  handleValidation,
+  async (req, res) => {
+    const { name, description, price, image_url, category_id, in_stock, stock_quantity } = req.body
+    const patch = Object.fromEntries(
+      Object.entries({ name, description, price, image_url, category_id, in_stock, stock_quantity })
+        .filter(([, v]) => v !== undefined)
+    )
+    const { data, error } = await supabase
+      .from('products')
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq('id', req.params.id)
+      .select()
+      .single()
+    if (error) return res.status(400).json({ error: error.message })
+    res.json({ product: data })
+  }
+)
 
 // DELETE /api/admin/products/:id
 router.delete('/products/:id', async (req, res) => {

@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { GoogleLogin } from '@react-oauth/google'
 import { useAuth } from '../../context/AuthContext'
 import logo from '../../../assets/logo1.png'
 
@@ -7,7 +8,7 @@ const EMERALD = '#1B3C34'
 const CREAM   = '#FAF5E8'
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -23,6 +24,19 @@ export default function Login() {
       navigate('/')
     } catch (err: any) {
       setError(err.response?.data?.error || 'Login failed. Try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleGoogle(credentialResponse: any) {
+    try {
+      setError('')
+      setLoading(true)
+      await googleLogin(credentialResponse.credential)
+      navigate('/')
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Google sign in failed. Try again.')
     } finally {
       setLoading(false)
     }
@@ -90,6 +104,24 @@ export default function Login() {
             </button>
           </div>
         </form>
+
+        {/* Google Sign In */}
+        <div className="mt-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex-1 h-px" style={{ background: `${EMERALD}15` }} />
+            <span className="font-inter text-[10px] tracking-[0.3em] uppercase" style={{ color: `${EMERALD}35` }}>or</span>
+            <div className="flex-1 h-px" style={{ background: `${EMERALD}15` }} />
+          </div>
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogle}
+              onError={() => setError('Google popup failed — check you are added as a test user in Google Console.')}
+              width="368"
+              shape="rectangular"
+              text="signin_with"
+            />
+          </div>
+        </div>
 
         <p className="mt-8 text-center font-inter text-sm" style={{ color: `${EMERALD}60` }}>
           No account?{' '}

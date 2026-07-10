@@ -17,8 +17,17 @@ const PORT = process.env.PORT || 5000
 
 // ── Security middleware ───────────────────────────────────────────────
 app.use(helmet())
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+].filter(Boolean)
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) cb(null, true)
+    else cb(new Error('Not allowed by CORS'))
+  },
   credentials: true,
 }))
 
@@ -31,7 +40,7 @@ const limiter = rateLimit({
 })
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10, // stricter for auth endpoints
+  max: process.env.NODE_ENV === 'production' ? 20 : 200,
   message: { error: 'Too many requests, please try again later.' },
 })
 app.use(limiter)
