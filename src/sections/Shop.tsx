@@ -21,7 +21,7 @@ const products: ProductDetail[] = [
     category: "Men's T-Shirts",
     price: '₹1,499',
     priceNum: 1499,
-    image: '/images/t1-front.png',
+    image: '/images/T1-FRNT.png',
     hoverImage: '/images/t1-back.png',
     badge: 'Bestseller',
     description:

@@ -38,7 +38,7 @@ const collections: Collection[] = [
       { label: 'Technique', value: 'Multi-Head Digital' },
       { label: 'Care',      value: 'Cold Wash Only' },
     ],
-    image: '/images/t1-front.png',
+    image: '/images/T1-FRNT.png',
     productId: 1,
     price: '₹1,499',
     priceNum: 1499,

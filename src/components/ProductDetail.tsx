@@ -1,0 +1,488 @@
+import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { X, ShoppingBag, Plus, Minus } from 'lucide-react'
+
+// ─── Data Contract ────────────────────────────────────────────────────────────
+
+export interface ProductDetailData {
+  id: number
+  name: string
+  category: string
+  description: string
+  bullets: string[]
+  images: string[]
+  price: string
+  sizes: string[]
+  badge?: string
+}
+
+export interface ProductDetailTheme {
+  bg: string
+  text: string
+  accent: string
+  border: string
+  subtleText: string    // muted version of text (e.g. text/40)
+  font: 'dark' | 'light'
+}
+
+export interface ProductDetailProps {
+  product: ProductDetailData
+  theme: ProductDetailTheme
+  onClose: () => void
+}
+
+// ─── Animation Variants ───────────────────────────────────────────────────────
+
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3, ease: 'easeOut' } },
+  exit: { opacity: 0, transition: { duration: 0.3, ease: 'easeIn', delay: 0.2 } },
+}
+
+const imageVariants = {
+  hidden: { opacity: 0, scale: 0.92 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.92,
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 },
+  },
+}
+
+const leftColVariants = {
+  hidden: { opacity: 0, x: -18 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1], delay: 0.08 },
+  },
+  exit: {
+    opacity: 0,
+    x: -18,
+    transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] },
+  },
+}
+
+const rightColVariants = {
+  hidden: { opacity: 0, x: 18 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1], delay: 0.1 },
+  },
+  exit: {
+    opacity: 0,
+    x: 18,
+    transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] },
+  },
+}
+
+function ImageGallery({
+  images,
+  name,
+  accent,
+}: {
+  images: string[]
+  name: string
+  accent: string
+}) {
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [direction, setDirection] = useState(1)
+  const isAnimating = useRef(false)
+  const wheelTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const prefersReducedMotion = useReducedMotion()
+
+  const changeImage = useCallback((newIdx: number) => {
+    if (newIdx === activeIndex || newIdx < 0 || newIdx >= images.length) return
+    setDirection(newIdx > activeIndex ? 1 : -1)
+    setActiveIndex(newIdx)
+    isAnimating.current = true
+  }, [activeIndex, images.length])
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (isAnimating.current) return
+    
+    // Require a decent delta to avoid triggering on microscopic trackpad movements
+    if (Math.abs(e.deltaY) < 30) return
+
+    if (e.deltaY > 0 && activeIndex < images.length - 1) {
+      changeImage(activeIndex + 1)
+    } else if (e.deltaY < 0 && activeIndex > 0) {
+      changeImage(activeIndex - 1)
+    }
+  }
+
+  const imageSlideVariants = {
+    initial: (dir: number) => ({
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : dir > 0 ? '100%' : '-100%',
+    }),
+    animate: {
+      opacity: 1,
+      y: 0,
+    },
+    exit: (dir: number) => ({
+      opacity: 0,
+      y: prefersReducedMotion ? 0 : dir > 0 ? '-100%' : '100%',
+    }),
+  }
+
+  return (
+    <div 
+      className="relative w-full h-full overflow-hidden flex"
+      onWheel={handleWheel}
+    >
+      {/* Dot indicator */}
+      {images.length > 1 && (
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (!isAnimating.current) changeImage(i)
+              }}
+              className="w-1.5 rounded-full transition-all duration-300 cursor-pointer"
+              style={{
+                height: i === activeIndex ? '24px' : '6px',
+                backgroundColor: i === activeIndex ? accent : `${accent}40`,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Visible Images */}
+      <AnimatePresence custom={direction} initial={false}>
+        <motion.img
+          key={activeIndex}
+          custom={direction}
+          variants={imageSlideVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.8, ease: [0.25, 1, 0.5, 1] }} // smooth, non-bouncy spring-like ease
+          onAnimationComplete={() => { isAnimating.current = false }}
+          src={images[activeIndex]}
+          alt={`${name} — view ${activeIndex + 1}`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{
+            // Creates a sharp white line (1st shadow) and a soft aesthetic glow (2nd shadow) behind the exact shape of the image
+            filter: 'drop-shadow(0 0 1px rgba(255, 255, 255, 1)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.25))'
+          }}
+        />
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ─── Size Selector ────────────────────────────────────────────────────────────
+
+function SizeSelector({
+  sizes,
+  theme,
+}: {
+  sizes: string[]
+  theme: ProductDetailTheme
+}) {
+  const [selected, setSelected] = useState<string | null>(null)
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {sizes.map((size) => {
+        const isActive = selected === size
+        return (
+          <button
+            key={size}
+            onClick={() => setSelected(size)}
+            className="font-inter text-[11px] tracking-wider w-14 h-12 border transition-all duration-200 cursor-pointer"
+            style={{
+              borderColor: isActive ? theme.accent : theme.border,
+              color: isActive ? theme.text : theme.subtleText,
+              backgroundColor: isActive ? `${theme.accent}10` : 'transparent',
+            }}
+          >
+            {size}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
+
+export default function ProductDetail({ product, theme, onClose }: ProductDetailProps) {
+  const prefersReducedMotion = useReducedMotion()
+
+  // Close on Escape key
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
+
+  // Lock body scroll while open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  if (prefersReducedMotion) {
+    return (
+      <div
+        className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
+        style={{ backgroundColor: theme.bg }}
+      >
+        <StaticLayout product={product} theme={theme} onClose={onClose} />
+      </div>
+    )
+  }
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={`pd-${product.id}`}
+        variants={overlayVariants}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
+        style={{ backgroundColor: theme.bg }}
+        onClick={onClose}
+      >
+        {/* ── Inner panel — stops click propagation ── */}
+        <div
+          className="relative flex w-full h-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-8 z-20 cursor-pointer transition-opacity duration-200"
+            style={{ color: `${theme.text}60` }}
+            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = theme.text)}
+            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = `${theme.text}60`)}
+          >
+            <X className="w-5 h-5" strokeWidth={1.5} />
+          </button>
+
+          {/* ── Left Column ── */}
+          <motion.div
+            variants={leftColVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="hidden md:flex flex-col justify-center w-[28%] max-w-sm px-10 lg:px-14 py-16 flex-shrink-0 overflow-y-auto"
+          >
+            {/* Category */}
+            <span
+              className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-6"
+              style={{ color: theme.subtleText }}
+            >
+              {product.category}
+            </span>
+
+            {/* Name */}
+            <h2
+              className="font-bodoni font-bold text-3xl lg:text-4xl uppercase leading-tight mb-6"
+              style={{ color: theme.text }}
+            >
+              {product.name}
+            </h2>
+
+            {/* Description */}
+            <p
+              className="font-inter font-light text-sm leading-relaxed mb-8"
+              style={{ color: theme.subtleText }}
+            >
+              {product.description}
+            </p>
+
+            {/* Bullets */}
+            <ul className="flex flex-col gap-3">
+              {product.bullets.map((bullet, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-3 font-inter text-[12px] leading-relaxed"
+                  style={{ color: `${theme.subtleText}` }}
+                >
+                  <span
+                    className="mt-[5px] w-1.5 h-1.5 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: theme.accent, opacity: 0.5 }}
+                  />
+                  {bullet}
+                </li>
+              ))}
+            </ul>
+
+            {/* Badge if any */}
+            {product.badge && (
+              <span
+                className="mt-10 self-start font-inter text-[8px] tracking-[0.35em] uppercase px-3 py-1.5 border"
+                style={{ color: theme.accent, borderColor: `${theme.accent}30` }}
+              >
+                {product.badge}
+              </span>
+            )}
+          </motion.div>
+
+          {/* ── Center Column — Image ── */}
+          <motion.div
+            variants={imageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="flex-1 relative overflow-hidden pt-12 px-8 lg:pt-20 lg:px-20 pb-0"
+          >
+            <ImageGallery
+              images={product.images}
+              name={product.name}
+              accent={theme.accent}
+            />
+          </motion.div>
+
+          {/* ── Right Column ── */}
+          <motion.div
+            variants={rightColVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="hidden md:flex flex-col justify-center w-[28%] max-w-sm px-10 lg:px-14 py-16 flex-shrink-0"
+          >
+            {/* Drop context */}
+            <span
+              className="font-inter text-[9px] tracking-[0.4em] uppercase block mb-4"
+              style={{ color: theme.subtleText }}
+            >
+              Drop 1 — Wild Instincts
+            </span>
+
+            {/* Price */}
+            <p
+              className="font-bodoni font-bold text-3xl lg:text-4xl mb-10"
+              style={{ color: theme.text }}
+            >
+              {product.price}
+            </p>
+
+            {/* Size */}
+            <div className="mb-10">
+              <span
+                className="font-inter text-[9px] tracking-[0.35em] uppercase block mb-4"
+                style={{ color: theme.subtleText }}
+              >
+                Select Size
+              </span>
+              <SizeSelector sizes={product.sizes} theme={theme} />
+            </div>
+
+            {/* Divider */}
+            <div className="w-full mb-10" style={{ height: '1px', backgroundColor: theme.border }} />
+
+            {/* Add to Bag */}
+            <button
+              className="group relative w-full py-4 font-inter text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
+              style={{
+                border: `1px solid ${theme.accent}50`,
+                color: theme.text,
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.borderColor = theme.accent
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLElement
+                el.style.borderColor = `${theme.accent}50`
+              }}
+            >
+              <span
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                style={{ backgroundColor: `${theme.accent}08` }}
+              />
+              <ShoppingBag className="relative w-4 h-4" strokeWidth={1.5} />
+              <span className="relative">Add to Bag</span>
+            </button>
+
+            {/* Size guide */}
+            <button
+              className="mt-4 font-inter text-[9px] tracking-[0.25em] uppercase text-center transition-opacity duration-200 hover:opacity-100 cursor-pointer"
+              style={{ color: theme.subtleText, opacity: 0.6 }}
+            >
+              Size Guide
+            </button>
+          </motion.div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
+  )
+}
+
+// ─── Reduced-motion fallback (no animations) ──────────────────────────────────
+
+function StaticLayout({
+  product,
+  theme,
+  onClose,
+}: {
+  product: ProductDetailData
+  theme: ProductDetailTheme
+  onClose: () => void
+}) {
+  return (
+    <div className="relative flex w-full h-full">
+      <button
+        onClick={onClose}
+        className="absolute top-6 right-8 z-20 cursor-pointer"
+        style={{ color: `${theme.text}60` }}
+      >
+        <X className="w-5 h-5" strokeWidth={1.5} />
+      </button>
+
+      <div
+        className="hidden md:flex flex-col justify-center w-[28%] px-10 py-16 overflow-y-auto"
+      >
+        <span className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-6" style={{ color: theme.subtleText }}>
+          {product.category}
+        </span>
+        <h2 className="font-bodoni font-bold text-3xl uppercase leading-tight mb-6" style={{ color: theme.text }}>
+          {product.name}
+        </h2>
+        <p className="font-inter font-light text-sm leading-relaxed mb-8" style={{ color: theme.subtleText }}>
+          {product.description}
+        </p>
+        <ul className="flex flex-col gap-3">
+          {product.bullets.map((b, i) => (
+            <li key={i} className="flex items-start gap-3 font-inter text-[12px]" style={{ color: theme.subtleText }}>
+              <span className="mt-[5px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: theme.accent, opacity: 0.5 }} />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="flex-1 relative overflow-hidden">
+        <img
+          src={product.images[0]}
+          alt={product.name}
+          className="w-full h-full object-cover object-center"
+          onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0' }}
+        />
+      </div>
+
+      <div
+        className="hidden md:flex flex-col justify-center w-[28%] px-10 py-16"
+      >
+        <p className="font-bodoni font-bold text-3xl mb-10" style={{ color: theme.text }}>{product.price}</p>
+        <SizeSelector sizes={product.sizes} theme={theme} />
+        <button className="mt-10 w-full py-4 font-inter text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer" style={{ border: `1px solid ${theme.accent}50`, color: theme.text }}>
+          <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
+          Add to Bag
+        </button>
+      </div>
+    </div>
+  )
+}

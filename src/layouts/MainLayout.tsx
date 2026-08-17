@@ -3,10 +3,10 @@ import { useSmoothScroll } from '../hooks'
 import { Navbar, Cart, ViewToggle } from '../components'
 import {
   Home,
-  CollectionsShowcase,
   Shop,
   Gallery,
   Contact,
+  DropsList,
 } from '../sections'
 
 export default function MainLayout() {
@@ -31,7 +31,7 @@ export default function MainLayout() {
         <Cart />
         <Home />
         <Shop />
-        <CollectionsShowcase />
+        <DropsList />
         <Gallery />
         <Contact />
       </div>

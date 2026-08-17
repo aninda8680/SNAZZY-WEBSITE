@@ -8,6 +8,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 
 // Main site
 import MainLayout from './layouts/MainLayout'
+import DropShell from './layouts/DropShell'
+import { TransitionProvider } from './context/TransitionContext'
 
 // Auth pages
 import Login from './pages/auth/Login'
@@ -34,12 +36,16 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <Routes>
-            {/* Main storefront */}
-            <Route path="/" element={<MainLayout />} />
+          <TransitionProvider>
+            <Routes>
+              {/* Main storefront */}
+              <Route path="/" element={<MainLayout />} />
 
-            {/* About */}
-            <Route path="/about" element={<About />} />
+              {/* Drop Experience */}
+              <Route path="/drop/:id" element={<DropShell />} />
+
+              {/* About */}
+              <Route path="/about" element={<About />} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />
@@ -85,7 +91,8 @@ export default function App() {
               <Route path="products" element={<AdminProducts />} />
               <Route path="orders" element={<AdminOrders />} />
             </Route>
-          </Routes>
+            </Routes>
+          </TransitionProvider>
           </CartProvider>
       </AuthProvider>
     </BrowserRouter>
