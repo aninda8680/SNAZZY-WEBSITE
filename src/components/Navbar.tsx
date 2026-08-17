@@ -67,31 +67,34 @@ export default function Navbar() {
         showNavbar || menuOpen ? 'translate-y-0' : '-translate-y-full'
       } ${
         solid
-          ? 'bg-[#FAF5E8] border-b border-[#1B3C34]/10'
+          ? 'bg-[#0A1C17]/95 backdrop-blur-md border-b border-white/10'
           : 'bg-transparent'
       }`}
     >
+      {/* ── Glare Effect Layer ── */}
+      <div className={`absolute top-0 left-0 w-full h-14 md:h-16 overflow-hidden pointer-events-none transition-opacity duration-500 ${solid ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="glare-effect" />
+      </div>
+
       {/* ── Top bar ── */}
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-5 md:py-4 flex items-center justify-between">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <img
-          src={logo}
-          alt="SNAZZY"
-          className="h-12 sm:h-14 md:h-20 w-auto object-contain"
-        />
+        <a href="/" className="flex items-center">
+          <img
+            src={logo}
+            alt="SNAZZY"
+            className="h-10 sm:h-12 md:h-16 w-auto object-contain scale-110 origin-left translate-y-1"
+          />
+        </a>
 
         {/* Desktop nav links */}
-        <ul className={`hidden md:flex items-center gap-10 text-xs tracking-[0.25em] uppercase font-inter font-light transition-colors duration-300 ${
-          solid ? 'text-[#1B3C34]/60' : 'text-white/60'
-        }`}>
+        <ul className="hidden md:flex items-center gap-10 text-xs tracking-[0.25em] uppercase font-inter font-medium transition-colors duration-300 text-white/60">
           {NAVIGATION_ITEMS.map((item) => (
             <li key={item}>
               <a
                 href={`#${item.toLowerCase()}`}
-                className={`transition-colors duration-300 ${
-                  solid ? 'hover:text-[#1B3C34]' : 'hover:text-white'
-                }`}
+                className="transition-colors duration-300 hover:text-white"
               >
                 {item}
               </a>
@@ -100,9 +103,7 @@ export default function Navbar() {
           <li>
             <a
               href="/about"
-              className={`transition-colors duration-300 ${
-                solid ? 'hover:text-[#1B3C34]' : 'hover:text-white'
-              }`}
+              className="transition-colors duration-300 hover:text-white"
             >
               About
             </a>
@@ -117,19 +118,13 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-4">
               <a
                 href="/account"
-                className={`text-xs tracking-[0.2em] uppercase font-inter transition-colors duration-300 ${
-                  solid ? 'text-[#1B3C34]/60 hover:text-[#1B3C34]' : 'text-white/60 hover:text-white'
-                }`}
+                className="text-xs tracking-[0.2em] uppercase font-inter transition-colors duration-300 text-white/60 hover:text-white"
               >
                 Account
               </a>
               <button
                 onClick={logout}
-                className={`hidden md:inline-flex px-6 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 font-inter border ${
-                  solid
-                    ? 'border-[#1B3C34]/25 text-[#1B3C34]/70 hover:bg-[#1B3C34] hover:text-white hover:border-[#1B3C34]'
-                    : 'border-white/25 text-white/80 hover:bg-white hover:text-[#1B3C34]'
-                }`}
+                className="hidden md:inline-flex px-6 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 font-inter border border-white/25 text-white/80 hover:bg-white hover:text-[#1B3C34]"
               >
                 Sign Out
               </button>
@@ -137,11 +132,7 @@ export default function Navbar() {
           ) : (
             <a
               href="/login"
-              className={`hidden md:inline-flex px-6 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 font-inter border ${
-                solid
-                  ? 'border-[#1B3C34]/25 text-[#1B3C34]/70 hover:bg-[#1B3C34] hover:text-white hover:border-[#1B3C34]'
-                  : 'border-white/25 text-white/80 hover:bg-white hover:text-[#1B3C34]'
-              }`}
+              className="hidden md:inline-flex px-6 py-2 text-xs tracking-[0.2em] uppercase transition-all duration-300 font-inter border border-white/25 text-white/80 hover:bg-white hover:text-[#1B3C34]"
             >
               Sign In
             </a>
@@ -151,9 +142,7 @@ export default function Navbar() {
           <a
             href={user ? '#' : '/login'}
             onClick={user ? (e) => { e.preventDefault(); setMenuOpen(true) } : undefined}
-            className={`md:hidden p-4 sm:p-4.5 transition-colors ${
-              solid ? 'text-[#1B3C34]/70' : 'text-white/80'
-            }`}
+            className="md:hidden p-4 sm:p-4.5 transition-colors text-white/80"
             aria-label="Account"
           >
             <User className="w-5 h-5" />
@@ -162,14 +151,12 @@ export default function Navbar() {
           {/* Cart */}
           <button
             onClick={openCart}
-            className={`relative p-4 sm:p-4.5 md:p-2 transition-colors ${
-              solid ? 'text-[#1B3C34]/70 hover:text-[#1B3C34]' : 'text-white/80 hover:text-white'
-            }`}
+            className="relative p-4 sm:p-4.5 md:p-2 transition-colors text-white/80 hover:text-white"
             aria-label="Open cart"
           >
             <ShoppingBag className="w-5 h-5" />
             {count > 0 && (
-              <span className="absolute top-2 right-1.5 md:-top-0.5 md:-right-0.5 w-[18px] h-[18px] bg-[#1B3C34] text-[#FAF5E8] text-[9px] font-bold font-inter flex items-center justify-center leading-none rounded-sm">
+              <span className="absolute top-2 right-1.5 md:-top-0.5 md:-right-0.5 w-[18px] h-[18px] bg-white text-[#1B3C34] text-[9px] font-bold font-inter flex items-center justify-center leading-none rounded-sm">
                 {count}
               </span>
             )}
@@ -182,12 +169,12 @@ export default function Navbar() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
             {menuOpen
-              ? <X className={`w-5 h-5 ${solid ? 'text-[#1B3C34]' : 'text-white'}`} />
+              ? <X className="w-5 h-5 text-white" />
               : (
                 <span className="flex flex-col gap-[5px]">
-                  <span className={`block w-5 h-[1.5px] transition-colors duration-300 ${solid ? 'bg-[#1B3C34]' : 'bg-white'}`} />
-                  <span className={`block w-5 h-[1.5px] transition-colors duration-300 ${solid ? 'bg-[#1B3C34]' : 'bg-white'}`} />
-                  <span className={`block w-3 h-[1.5px] transition-colors duration-300 ${solid ? 'bg-[#1B3C34]' : 'bg-white'}`} />
+                  <span className="block w-5 h-[1.5px] transition-colors duration-300 bg-white" />
+                  <span className="block w-5 h-[1.5px] transition-colors duration-300 bg-white" />
+                  <span className="block w-3 h-[1.5px] transition-colors duration-300 bg-white" />
                 </span>
               )
             }

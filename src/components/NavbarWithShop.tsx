@@ -55,8 +55,10 @@ export default function NavbarWithShop() {
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
-        <img src={logo} alt="SNAZZY Logo" className="h-32 w-auto" />
+      <div className="max-w-7xl mx-auto px-8 md:px-14 h-14 flex items-center justify-between">
+        <a href="/" className="flex items-center">
+          <img src={logo} alt="SNAZZY Logo" className="h-20 w-auto object-contain origin-left translate-y-1" />
+        </a>
 
         <ul className="hidden md:flex items-center gap-10 text-white/60 text-xs tracking-[0.25em] uppercase font-inter font-light">
           {NAVIGATION_ITEMS.map((item) => (

@@ -23,10 +23,11 @@ export interface ProductDetailTheme {
   border: string
   subtleText: string    // muted version of text (e.g. text/40)
   font: 'dark' | 'light'
+  hideShadow?: boolean
 }
 
 export interface ProductDetailProps {
-  product: ProductDetailData
+  product: ProductDetailData | null
   theme: ProductDetailTheme
   onClose: () => void
 }
@@ -85,10 +86,12 @@ function ImageGallery({
   images,
   name,
   accent,
+  hideShadow,
 }: {
   images: string[]
   name: string
   accent: string
+  hideShadow?: boolean
 }) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
@@ -171,7 +174,7 @@ function ImageGallery({
           className="absolute inset-0 w-full h-full object-cover object-center"
           style={{
             // Creates a sharp white line (1st shadow) and a soft aesthetic glow (2nd shadow) behind the exact shape of the image
-            filter: 'drop-shadow(0 0 1px rgba(255, 255, 255, 1)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.25))'
+            filter: hideShadow ? 'none' : 'drop-shadow(0 0 1px rgba(255, 255, 255, 1)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.25))'
           }}
         />
       </AnimatePresence>
@@ -232,6 +235,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
   }, [])
 
   if (prefersReducedMotion) {
+    if (!product) return null
     return (
       <div
         className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
@@ -244,7 +248,8 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
   return (
     <AnimatePresence mode="wait">
-      <motion.div
+      {product && (
+        <motion.div
         key={`pd-${product.id}`}
         variants={overlayVariants}
         initial="hidden"
@@ -288,7 +293,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Name */}
             <h2
-              className="font-bodoni font-bold text-3xl lg:text-4xl uppercase leading-tight mb-6"
+              className="font-cormorant font-semibold text-4xl lg:text-5xl uppercase leading-tight tracking-wide mb-6"
               style={{ color: theme.text }}
             >
               {product.name}
@@ -296,7 +301,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Description */}
             <p
-              className="font-inter font-light text-sm leading-relaxed mb-8"
+              className="font-inter font-medium text-sm leading-relaxed mb-8"
               style={{ color: theme.subtleText }}
             >
               {product.description}
@@ -307,7 +312,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
               {product.bullets.map((bullet, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-3 font-inter text-[12px] leading-relaxed"
+                  className="flex items-start gap-3 font-inter font-medium text-[12px] leading-relaxed"
                   style={{ color: `${theme.subtleText}` }}
                 >
                   <span
@@ -342,6 +347,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
               images={product.images}
               name={product.name}
               accent={theme.accent}
+              hideShadow={theme.hideShadow}
             />
           </motion.div>
 
@@ -363,7 +369,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Price */}
             <p
-              className="font-bodoni font-bold text-3xl lg:text-4xl mb-10"
+              className="font-cormorant font-semibold text-4xl lg:text-5xl tracking-wide mb-10"
               style={{ color: theme.text }}
             >
               {product.price}
@@ -372,7 +378,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             {/* Size */}
             <div className="mb-10">
               <span
-                className="font-inter text-[9px] tracking-[0.35em] uppercase block mb-4"
+                className="font-inter font-semibold text-[9px] tracking-[0.35em] uppercase block mb-4"
                 style={{ color: theme.subtleText }}
               >
                 Select Size
@@ -385,7 +391,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Add to Bag */}
             <button
-              className="group relative w-full py-4 font-inter text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
+              className="group relative w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
               style={{
                 border: `1px solid ${theme.accent}50`,
                 color: theme.text,
@@ -417,6 +423,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
           </motion.div>
         </div>
       </motion.div>
+      )}
     </AnimatePresence>
   )
 }
@@ -448,10 +455,10 @@ function StaticLayout({
         <span className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-6" style={{ color: theme.subtleText }}>
           {product.category}
         </span>
-        <h2 className="font-bodoni font-bold text-3xl uppercase leading-tight mb-6" style={{ color: theme.text }}>
+        <h2 className="font-cormorant font-semibold text-4xl uppercase leading-tight tracking-wide mb-6" style={{ color: theme.text }}>
           {product.name}
         </h2>
-        <p className="font-inter font-light text-sm leading-relaxed mb-8" style={{ color: theme.subtleText }}>
+        <p className="font-inter font-medium text-sm leading-relaxed mb-8" style={{ color: theme.subtleText }}>
           {product.description}
         </p>
         <ul className="flex flex-col gap-3">
@@ -476,7 +483,7 @@ function StaticLayout({
       <div
         className="hidden md:flex flex-col justify-center w-[28%] px-10 py-16"
       >
-        <p className="font-bodoni font-bold text-3xl mb-10" style={{ color: theme.text }}>{product.price}</p>
+        <p className="font-cormorant font-semibold text-4xl mb-10" style={{ color: theme.text }}>{product.price}</p>
         <SizeSelector sizes={product.sizes} theme={theme} />
         <button className="mt-10 w-full py-4 font-inter text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer" style={{ border: `1px solid ${theme.accent}50`, color: theme.text }}>
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />

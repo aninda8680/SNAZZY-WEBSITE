@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import ProductModal, { type ProductDetail } from '../components/ProductModal'
+import ProductDetailComponent from '../components/ProductDetail'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -396,7 +397,35 @@ export default function Shop() {
         </div>
       </section>
 
-      <ProductModal product={modalProduct} onClose={() => setModal(null)} />
+      {/* Product Modal replaced by ProductDetail Component */}
+      <ProductDetailComponent
+        product={
+          modalProduct ? {
+            id: modalProduct.id,
+            name: modalProduct.name,
+            category: modalProduct.category,
+            description: modalProduct.description,
+            bullets: [
+              `Material: ${modalProduct.material}`,
+              `Care: ${modalProduct.care}`,
+            ],
+            images: [modalProduct.image, ...(modalProduct.hoverImage ? [modalProduct.hoverImage] : [])],
+            price: modalProduct.price,
+            sizes: modalProduct.sizes,
+            badge: modalProduct.badge,
+          } : null
+        }
+        theme={{
+          bg: '#FAF5E8', // cream background
+          text: '#1B3C34', // emerald text
+          accent: '#1B3C34',
+          border: 'rgba(27,60,52,0.1)',
+          subtleText: 'rgba(27,60,52,0.6)',
+          font: 'light',
+          hideShadow: true,
+        }}
+        onClose={() => setModal(null)}
+      />
     </>
   )
 }

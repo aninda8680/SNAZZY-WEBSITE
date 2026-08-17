@@ -6,6 +6,7 @@ export default {
       fontFamily: {
         bodoni: ['"Bodoni Moda"', 'serif'],
         inter: ['Inter', 'sans-serif'],
+        cormorant: ['"Cormorant Garamond"', 'serif'],
       },
       colors: {
         luxe:     { light: '#FDE68A', mid: '#D4A96A', dark: '#1A0F00' },
