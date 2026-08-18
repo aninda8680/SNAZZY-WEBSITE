@@ -122,15 +122,15 @@ function ImageGallery({
   const imageSlideVariants = {
     initial: (dir: number) => ({
       opacity: 0,
-      y: prefersReducedMotion ? 0 : dir > 0 ? '100%' : '-100%',
+      x: prefersReducedMotion ? 0 : dir > 0 ? '100%' : '-100%',
     }),
     animate: {
       opacity: 1,
-      y: 0,
+      x: 0,
     },
     exit: (dir: number) => ({
       opacity: 0,
-      y: prefersReducedMotion ? 0 : dir > 0 ? '-100%' : '100%',
+      x: prefersReducedMotion ? 0 : dir > 0 ? '-100%' : '100%',
     }),
   }
 
