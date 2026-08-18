@@ -6,7 +6,6 @@ const CATEGORIES = [
   { label: 'T-Shirts', img: '/images/T1-FRNT.png' },
   { label: 'Hoodies', img: '/images/hoodie-front.png' },
   { label: 'Sweatshirts', img: '/images/sweatshirt-front.png' },
-  { label: 'Accessories', img: '/images/t2-front.png' },
 ]
 
 interface Drop1CollectionPreviewProps {

@@ -29,13 +29,13 @@ function Field({
 }) {
   const [focused, setFocused] = useState(false)
   const sharedClass =
-    'w-full bg-transparent pt-3 pb-2 font-inter text-sm text-[#1B3C34] placeholder:text-[#1B3C34]/35 focus:outline-none resize-none'
+    'w-full bg-transparent pt-3 pb-2 font-inter font-medium text-sm text-[#1B3C34] placeholder:text-[#1B3C34]/60 focus:outline-none resize-none'
 
   return (
     <div className="flex flex-col gap-1.5 group">
       <label
-        className={`font-inter text-[9px] tracking-[0.45em] uppercase transition-colors duration-300 ${
-          focused ? 'text-[#1B3C34]' : 'text-[#1B3C34]/45'
+        className={`font-inter font-semibold text-[10px] tracking-[0.45em] uppercase transition-colors duration-300 ${
+          focused ? 'text-[#1B3C34]' : 'text-[#1B3C34]/70'
         }`}
       >
         {label}
@@ -62,7 +62,7 @@ function Field({
       )}
 
       {/* Animated underline */}
-      <div className="relative h-px bg-[#1B3C34]/15">
+      <div className="relative h-px bg-[#1B3C34]/30">
         <div
           className="absolute inset-0 bg-[#1B3C34] origin-left transition-transform duration-400 ease-out"
           style={{ transform: focused ? 'scaleX(1)' : 'scaleX(0)' }}
@@ -158,13 +158,13 @@ export default function Contact() {
             variants={fadeUp(0)}
             initial="hidden"
             animate={inView ? 'visible' : 'hidden'}
-            className="mb-14 md:mb-20"
+            className="mb-8 md:mb-12"
           >
             <p className="font-inter text-[9px] tracking-[0.5em] uppercase text-[#1B3C34]/40 mb-5">
               Get In Touch
             </p>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
-              <h2 className="font-bodoni font-bold text-4xl md:text-6xl text-[#1B3C34] uppercase leading-none tracking-wide">
+              <h2 className="font-cormorant font-bold text-4xl md:text-6xl text-[#1B3C34] uppercase leading-none tracking-wide">
                 Start a<br className="hidden md:block" /> Conversation
               </h2>
               <p className="font-inter text-xs text-[#1B3C34]/50 tracking-wide max-w-xs leading-relaxed">
@@ -290,7 +290,7 @@ export default function Contact() {
                   </AnimatePresence>
                 </button>
 
-                <p className="font-inter text-[9px] tracking-wide text-[#1B3C34]/35 leading-relaxed hidden sm:block">
+                <p className="font-inter text-[9px] tracking-wide text-[#1B3C34]/60 leading-relaxed hidden sm:block">
                   No spam. Ever.<br />Your data stays with us.
                 </p>
               </div>

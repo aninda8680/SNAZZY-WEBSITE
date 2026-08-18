@@ -27,6 +27,7 @@ export const dropsConfig: DropConfig[] = [
     subcollections: ['PRONOIA', 'VALOR', 'MAVERICK'],
     heroImage: '/images/drop1-hero.png',
   },
+  /*
   {
     id: 'drop-2',
     name: 'Drop 2',
@@ -43,4 +44,5 @@ export const dropsConfig: DropConfig[] = [
     gradientEnd: '#020617',
     status: 'archived',
   },
+  */
 ]
