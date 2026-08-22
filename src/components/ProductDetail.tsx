@@ -236,6 +236,26 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
   if (prefersReducedMotion) {
     if (!product) return null
+
+    const isMissingData = !theme || !product.images || product.images.length === 0 || !product.name;
+    if (isMissingData) {
+      return (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#FAF5E8]" onClick={onClose}>
+          <div className="flex flex-col items-center gap-4">
+            <p className="font-inter text-sm tracking-widest uppercase text-[#1B3C34]/60">
+              Couldn't load product
+            </p>
+            <button
+              onClick={onClose}
+              className="font-inter text-[10px] tracking-widest uppercase border border-[#1B3C34]/20 px-6 py-2 text-[#1B3C34]"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div
         className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
@@ -246,9 +266,32 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
     )
   }
 
+  const isMissingData = product && (!theme || !product.images || product.images.length === 0 || !product.name);
+
   return (
     <AnimatePresence mode="wait">
-      {product && (
+      {isMissingData ? (
+        <motion.div
+          key="pd-fallback"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#FAF5E8]"
+          onClick={onClose}
+        >
+          <div className="flex flex-col items-center gap-4">
+            <p className="font-inter text-sm tracking-widest uppercase text-[#1B3C34]/60">
+              Couldn't load product
+            </p>
+            <button
+              onClick={onClose}
+              className="font-inter text-[10px] tracking-widest uppercase border border-[#1B3C34]/20 px-6 py-2 text-[#1B3C34]"
+            >
+              Go Back
+            </button>
+          </div>
+        </motion.div>
+      ) : product ? (
         <motion.div
         key={`pd-${product.id}`}
         variants={overlayVariants}
@@ -423,7 +466,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
           </motion.div>
         </div>
       </motion.div>
-      )}
+      ) : null}
     </AnimatePresence>
   )
 }

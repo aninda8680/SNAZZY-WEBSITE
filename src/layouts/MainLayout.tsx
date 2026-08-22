@@ -7,6 +7,7 @@ import {
   Gallery,
   Contact,
   DropsList,
+  ProductShowcase,
 } from '../sections'
 
 export default function MainLayout() {
@@ -32,7 +33,8 @@ export default function MainLayout() {
         <Home />
         <Shop />
         <DropsList />
-        <Gallery />
+        <ProductShowcase />
+        {/* <Gallery /> */}
         <Contact />
       </div>
       <ViewToggle active={mobilePreview} onToggle={() => setMobilePreview(p => !p)} />
