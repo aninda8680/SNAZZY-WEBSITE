@@ -474,7 +474,7 @@ function Stage({
   onThumbClick: (i: number) => void
   onWheel: (e: WheelEvent) => void
 }) {
-  const HERO_SIZE = isMobile ? 220 : 380
+  const HERO_SIZE = isMobile ? 190 : 340
   const stageH    = isMobile ? 420 : 760
 
   const stageRef = useRef<HTMLDivElement>(null)
