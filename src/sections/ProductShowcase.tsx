@@ -167,16 +167,14 @@ function normalise(rad: number): number {
   return ((rad % TWO_PI) + TWO_PI) % TWO_PI
 }
 
-/** Index of the thumbnail closest to the 12 o'clock position given current ring rotation (radians) */
-function computeActiveIndex(ringRotRad: number): number {
+/** Index of the thumbnail closest to the targetAngle position given current ring rotation (radians) */
+function computeActiveIndex(ringRotRad: number, targetAngle = Math.PI / 2): number {
   let best = 0
   let bestDist = Infinity
   for (let i = 0; i < N; i++) {
     const naturalAngle = (Math.PI * 2 * i) / N
-    // effective angle of item i in world space (ring rotation applied)
     const effective = normalise(naturalAngle + ringRotRad)
-    // distance from Math.PI/2 (3 o'clock), wrapping
-    let dist = Math.abs(effective - Math.PI / 2)
+    let dist = Math.abs(effective - targetAngle)
     dist = Math.min(dist, Math.PI * 2 - dist)
     if (dist < bestDist) { bestDist = dist; best = i }
   }
@@ -236,6 +234,12 @@ function AnimatedShowcase() {
   const RING_R     = isMobile ? 135 : 290
   const THUMB_SIZE  = isMobile ? 120 : 180
 
+  // Target angle: bottom (Math.PI) on mobile, right (Math.PI/2) on desktop
+  const targetAngleRef = useRef(isMobile ? Math.PI : Math.PI / 2)
+  useEffect(() => {
+    targetAngleRef.current = isMobile ? Math.PI : Math.PI / 2
+  }, [isMobile])
+
   // ── RAF loop ──────────────────────────────────────────────────────────────
   const DEG_PER_FRAME = 0.04 // ~2.4°/s at 60fps → full rotation ≈ 2.5 min
 
@@ -260,7 +264,7 @@ function AnimatedShowcase() {
         wheelVelRef.current *= 0.92
       }
 
-      const newActive = computeActiveIndex(rotRef.current)
+      const newActive = computeActiveIndex(rotRef.current, targetAngleRef.current)
       setActiveIndex(prev => (prev !== newActive ? newActive : prev))
       setRotDeg((rotRef.current * 180) / Math.PI)
 
@@ -282,9 +286,8 @@ function AnimatedShowcase() {
     const naturalAngle = (Math.PI * 2 * targetIdx) / N
     // Current effective angle of this item in world space
     const effective = normalise(naturalAngle + rotRef.current)
-    // How much we need to add to rotRef so item is at Math.PI/2 (right)
-    // Prefer the shortest arc
-    let delta = (Math.PI / 2) - effective
+    // How much we need to rotate so item lands at targetAngle (bottom on mobile, right on desktop)
+    let delta = targetAngleRef.current - effective
     if (delta < -Math.PI) delta += Math.PI * 2
     if (delta > Math.PI) delta -= Math.PI * 2
 
@@ -296,7 +299,7 @@ function AnimatedShowcase() {
       const t = Math.min((now - startTime) / DURATION, 1)
       rotRef.current = startRot + delta * easeInOut(t)
       setRotDeg((rotRef.current * 180) / Math.PI)
-      setActiveIndex(computeActiveIndex(rotRef.current))
+      setActiveIndex(computeActiveIndex(rotRef.current, targetAngleRef.current))
       if (t < 1) {
         rafRef.current = requestAnimationFrame(animate)
       } else {
@@ -312,12 +315,12 @@ function AnimatedShowcase() {
 
   // ── Step prev/next (arrow buttons) ───────────────────────────────────────
   const stepNext = useCallback(() => {
-    const next = (computeActiveIndex(rotRef.current) + 1) % N
+    const next = (computeActiveIndex(rotRef.current, targetAngleRef.current) + 1) % N
     jumpToIndex(next)
   }, [jumpToIndex])
 
   const stepPrev = useCallback(() => {
-    const cur = computeActiveIndex(rotRef.current)
+    const cur = computeActiveIndex(rotRef.current, targetAngleRef.current)
     const prev = (cur - 1 + N) % N
     jumpToIndex(prev)
   }, [jumpToIndex])
