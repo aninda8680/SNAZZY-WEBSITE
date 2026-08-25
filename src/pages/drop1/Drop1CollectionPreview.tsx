@@ -3,9 +3,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
 const CATEGORIES = [
-  { label: 'T-Shirts', img: '/images/T1-FRNT.png' },
-  { label: 'Hoodies', img: '/images/hoodie-front.png' },
-  { label: 'Sweatshirts', img: '/images/sweatshirt-front.png' },
+  { label: 'T-Shirts', img: '/images/nobg/t1-front-nobg.png' },
+  { label: 'Hoodies', img: '/images/nobg/hoodie-front-nobg.png' },
+  { label: 'Sweatshirts', img: '/images/nobg/sweatshirt-front-nobg.png' },
 ]
 
 interface Drop1CollectionPreviewProps {

@@ -28,7 +28,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'Cut for those who move with intention. The T1 is the cornerstone of Wild Instincts — minimal on the surface, deliberate in every seam.',
     bullets: ['100% Organic Pima Cotton', 'Regular fit, slightly dropped shoulder', 'Machine wash cold, tumble dry low', 'Pre-shrunk, stonewash finish'],
-    images: ['/images/T1-FRNT.png', '/images/t1-back.png'],
+    images: ['/images/nobg/t1-front-nobg.png', '/images/nobg/t1-back-nobg.png'],
     badge: 'Bestseller',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   },
@@ -40,7 +40,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'A quiet statement. The T2 carries the same exacting construction as the T1, refined with a slightly longer hem and tighter rib collar.',
     bullets: ['100% Organic Pima Cotton', 'Slim regular fit, longer hem', 'Ribbed crew collar', 'Garment-dyed in small batches'],
-    images: ['/images/t2-front.png', '/images/t2-back.png'],
+    images: ['/images/nobg/t2-front-nobg.png', '/images/nobg/t2-back-nobg.png'],
     badge: 'New',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   },
@@ -52,7 +52,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'The workhorse. The T3 is built for longevity — a heavier weight mid-gauge cotton that softens with every wash without losing its shape.',
     bullets: ['220 GSM mid-weight cotton', 'Boxy, relaxed fit', 'Reinforced side seams', 'Faded ink graphic — limited run'],
-    images: ['/images/t3-front.png', '/images/t3-back.png'],
+    images: ['/images/nobg/t3-front-nobg.png', '/images/nobg/t3-back-nobg.png'],
     badge: 'Popular',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   },
@@ -64,7 +64,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'The weight of purpose. The H1 hoodie is a study in considered construction — brushed inner fleece, an unlined kangaroo pocket, and a hood that actually fits right.',
     bullets: ['380 GSM brushed fleece interior', 'Oversized, structured silhouette', 'Ribbed cuffs and hem, non-stretch', 'Garment-washed for immediate softness'],
-    images: ['/images/hoodie-front.png', '/images/hoodie-back.png'],
+    images: ['/images/nobg/hoodie-front-nobg.png', '/images/nobg/hoodie-back-nobg.png'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
   },
   {
@@ -75,7 +75,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'Between seasons, between moments. The S1 crewneck is the layer that grounds every outfit — an honest sweatshirt with no excess.',
     bullets: ['320 GSM loop-back cotton', 'Classic crewneck, boxy fit', 'Set-in sleeves, clean finish', 'Cold wash recommended to preserve drape'],
-    images: ['/images/sweatshirt-front.png', '/images/sweatshirt-back.png'],
+    images: ['/images/nobg/sweatshirt-front-nobg.png', '/images/nobg/sweatshirt-back-nobg.png'],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
   },
   {
@@ -86,7 +86,7 @@ const DROP1_PRODUCTS: ProductDetailData[] = [
     description:
       'The outlier in the T-series. The T4 features an extended back hem and a subtle tonal graphic across the chest — for when understated becomes a language.',
     bullets: ['180 GSM single jersey cotton', 'Relaxed fit, extended back hem', 'Tonal print — barely-there in daylight', 'Narrow rib collar'],
-    images: ['/images/t4-front.png', '/images/t4-back.png'],
+    images: ['/images/nobg/t4-front-nobg.png', '/images/nobg/t4-back-nobg.png'],
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
   },
 ]

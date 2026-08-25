@@ -16,7 +16,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed ring-spun cotton, 220gsm',
       'Care: Machine wash cold (30°C), inside out. Do not tumble dry.',
     ],
-    images: ['/images/T1-FRNT.png', '/images/t1-back.png'],
+    images: ['/images/nobg/t1-front-nobg.png', '/images/nobg/t1-back-nobg.png'],
     price: '₹1,499',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Bestseller',
@@ -31,7 +31,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed cotton, 220gsm. Boxy oversized fit.',
       'Care: Machine wash cold. Turn inside out before washing. Hang to dry.',
     ],
-    images: ['/images/t2-front.png', '/images/t2-back.png'],
+    images: ['/images/nobg/t2-front-nobg.png', '/images/nobg/t2-back-nobg.png'],
     price: '₹1,499',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'New',
@@ -46,7 +46,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed cotton, 220gsm. Regular fit.',
       'Care: Cold machine wash. Turn inside out. Hang dry.',
     ],
-    images: ['/images/t3-front.png', '/images/t3-back.png'],
+    images: ['/images/nobg/t3-front-nobg.png', '/images/nobg/t3-back-nobg.png'],
     price: '₹1,499',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Popular',
@@ -61,7 +61,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed cotton, 220gsm. Slim regular fit.',
       'Care: Hand wash or gentle cycle cold. Lay flat to dry.',
     ],
-    images: ['/images/t4-front.png', '/images/t4-back.png'],
+    images: ['/images/nobg/t4-front-nobg.png', '/images/nobg/t4-back-nobg.png'],
     price: '₹1,499',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Limited',
@@ -91,7 +91,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed cotton, 180gsm. Relaxed cropped fit.',
       'Care: Machine wash cold, gentle cycle. Reshape while damp.',
     ],
-    images: ['/images/grl-t1-front.png', '/images/grl-t1-back.png'],
+    images: ['/images/nobg/grl-t1-front-nobg.png', '/images/nobg/grl-t1-back-nobg.png'],
     price: '₹1,399',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'New',
@@ -106,7 +106,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 100% combed cotton, 180gsm. Drop-shoulder construction.',
       'Care: Machine wash cold. Hang to dry. Iron on low on the back.',
     ],
-    images: ['/images/grl-t2-front.png', '/images/grl-t2-back.png'],
+    images: ['/images/nobg/grl-t2-front-nobg.png', '/images/nobg/grl-t2-back-nobg.png'],
     price: '₹1,399',
     sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Popular',
@@ -121,7 +121,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 80% cotton, 20% polyester, 380gsm. Fleece-lined interior.',
       'Care: Machine wash 30°C. Turn inside out. Do not tumble dry on high heat.',
     ],
-    images: ['/images/hoodie-front.png', '/images/hoodie-back.png'],
+    images: ['/images/nobg/hoodie-front-nobg.png', '/images/nobg/hoodie-back-nobg.png'],
     price: '₹2,499',
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Bestseller',
@@ -136,7 +136,7 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
       'Material: 80% cotton, 20% polyester, 320gsm. French terry loopback.',
       'Care: Machine wash cold, inside out. Reshape while damp.',
     ],
-    images: ['/images/sweatshirt-front.png', '/images/sweatshirt-back.png'],
+    images: ['/images/nobg/sweatshirt-front-nobg.png', '/images/nobg/sweatshirt-back-nobg.png'],
     price: '₹1,999',
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     badge: 'Artisan',
@@ -161,8 +161,9 @@ function computeActiveIndex(ringRotRad: number): number {
     const naturalAngle = (Math.PI * 2 * i) / N
     // effective angle of item i in world space (ring rotation applied)
     const effective = normalise(naturalAngle + ringRotRad)
-    // distance from 0 (12 o'clock), wrapping
-    const dist = Math.min(effective, Math.PI * 2 - effective)
+    // distance from Math.PI/2 (3 o'clock), wrapping
+    let dist = Math.abs(effective - Math.PI / 2)
+    dist = Math.min(dist, Math.PI * 2 - dist)
     if (dist < bestDist) { bestDist = dist; best = i }
   }
   return best
@@ -219,7 +220,7 @@ function AnimatedShowcase() {
   }, [])
 
   const RING_R     = isMobile ? 135 : 290
-  const THUMB_SIZE  = isMobile ? 80  : 108
+  const THUMB_SIZE  = isMobile ? 120 : 180
 
   // ── RAF loop ──────────────────────────────────────────────────────────────
   const DEG_PER_FRAME = 0.04 // ~2.4°/s at 60fps → full rotation ≈ 2.5 min
@@ -267,9 +268,9 @@ function AnimatedShowcase() {
     const naturalAngle = (Math.PI * 2 * targetIdx) / N
     // Current effective angle of this item in world space
     const effective = normalise(naturalAngle + rotRef.current)
-    // How much we need to subtract from rotRef so item is at 0 (top)
+    // How much we need to add to rotRef so item is at Math.PI/2 (right)
     // Prefer the shortest arc
-    let delta = -effective
+    let delta = (Math.PI / 2) - effective
     if (delta < -Math.PI) delta += Math.PI * 2
     if (delta > Math.PI) delta -= Math.PI * 2
 
@@ -324,7 +325,7 @@ function AnimatedShowcase() {
         className="relative bg-[#FAF5E8] overflow-hidden flex flex-col lg:flex-row items-center justify-center"
         style={{
           paddingTop:    isMobile ? '80px'  : '100px',
-          paddingBottom: isMobile ? '60px'  : '80px',
+          paddingBottom: isMobile ? '100px' : '140px',
         }}
       >
         {/* ── Left content (Desktop absolute left, Mobile stacked top) ── */}
@@ -442,7 +443,7 @@ function Stage({
   return (
     <div
       ref={stageRef}
-      className="relative w-full flex items-center justify-center"
+      className="relative w-full flex items-center justify-center mt-12 lg:mt-20"
       style={{ height: stageH }}
       onMouseEnter={() => { isHovering.current = true }}
       onMouseLeave={() => { isHovering.current = false }}
@@ -478,7 +479,10 @@ function Stage({
           )
           const proximity = 1 - dist / (N / 2) // 1 = top, 0 = bottom
 
-          const scale = 1.0
+          let scale = 1.0
+          if (product.images[0].includes('grl-t1') || product.images[0].includes('grl-t2')) {
+            scale = 0.82
+          }
           const opacity = 0.8 + proximity * 0.2
 
           return (
@@ -497,7 +501,6 @@ function Stage({
                 transformOrigin: 'center center',
                 opacity,
                 willChange: 'transform, opacity',
-                border: isActive ? '1.5px solid rgba(27,60,52,0.3)' : '1px solid rgba(27,60,52,0.1)',
               }}
             >
               <img
@@ -522,7 +525,7 @@ function Stage({
             src={SHOWCASE_PRODUCTS[activeIndex].images[0]}
             alt={SHOWCASE_PRODUCTS[activeIndex].name}
             initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={{ opacity: 1, scale: SHOWCASE_PRODUCTS[activeIndex].name.includes('T3') ? 0.7 : 1 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
             className="w-full h-full object-contain object-center select-none"
@@ -554,13 +557,13 @@ function ProductLabel({ activeIndex, isMobile }: { activeIndex: number; isMobile
         >
           <h3
             className="font-cormorant font-bold text-[#1B3C34] uppercase tracking-wide text-center lg:text-right leading-none"
-            style={{ fontSize: isMobile ? '1.35rem' : '2rem' }}
+            style={{ fontSize: isMobile ? '1.15rem' : '1.6rem' }}
           >
             {product.name}
           </h3>
           <p
             className="font-cormorant font-bold text-[#1B3C34]/70 tracking-wide text-center lg:text-right"
-            style={{ fontSize: isMobile ? '1.25rem' : '1.75rem' }}
+            style={{ fontSize: isMobile ? '1.05rem' : '1.35rem' }}
           >
             {product.price}
           </p>
@@ -591,7 +594,7 @@ function ReducedMotionShowcase() {
   }, [])
 
   const HERO_SIZE = isMobile ? 200 : 300
-  const THUMB = isMobile ? 52 : 70
+  const THUMB = isMobile ? 65 : 90
   const DOT_GAP = isMobile ? 10 : 14
 
   return (
@@ -630,6 +633,9 @@ function ReducedMotionShowcase() {
               src={SHOWCASE_PRODUCTS[activeIndex].images[0]}
               alt={SHOWCASE_PRODUCTS[activeIndex].name}
               className="w-full h-full object-contain"
+              style={{
+                transform: SHOWCASE_PRODUCTS[activeIndex].name.includes('T3') ? 'scale(0.75)' : 'none'
+              }}
             />
           </div>
 
@@ -661,13 +667,15 @@ function ReducedMotionShowcase() {
                   width: THUMB,
                   height: THUMB,
                   opacity: i === activeIndex ? 1 : 0.4,
-                  border: i === activeIndex ? '1.5px solid rgba(27,60,52,0.3)' : '1px solid rgba(27,60,52,0.1)',
                 }}
               >
                 <img
                   src={p.images[0]}
                   alt={p.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
+                  style={{
+                    transform: p.images[0].includes('grl-t1') || p.images[0].includes('grl-t2') ? 'scale(0.82)' : 'none'
+                  }}
                 />
               </button>
             ))}
@@ -675,10 +683,10 @@ function ReducedMotionShowcase() {
 
           {/* Name + price */}
           <div className="text-center mt-2">
-            <h3 className="font-cormorant font-bold text-[#1B3C34] uppercase tracking-wide text-lg md:text-2xl leading-none">
+            <h3 className="font-cormorant font-bold text-[#1B3C34] uppercase tracking-wide text-base md:text-xl leading-none">
               {SHOWCASE_PRODUCTS[activeIndex].name}
             </h3>
-            <p className="font-cormorant font-bold text-[#1B3C34]/70 tracking-wide text-xl md:text-2xl mt-2">
+            <p className="font-cormorant font-bold text-[#1B3C34]/70 tracking-wide text-lg md:text-xl mt-2">
               {SHOWCASE_PRODUCTS[activeIndex].price}
             </p>
           </div>
