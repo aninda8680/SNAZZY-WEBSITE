@@ -149,7 +149,7 @@ const PRODUCT_SCALE: Record<number, { thumb: number; hero: number }> = {
   1:  { thumb: 1.00, hero: 1.20 }, // T1
   2:  { thumb: 1.00, hero: 1.20 }, // T2
   3:  { thumb: 0.80, hero: 0.75 }, // T3 — crops large
-  4:  { thumb: 1.00, hero: 0.78 }, // T4 — too big in center
+  4:  { thumb: 0.80, hero: 0.78 }, // T4 — too big in ring & center
   5:  { thumb: 1.00, hero: 1.00 }, // T5
   6:  { thumb: 0.82, hero: 0.75 }, // G1 — women's crop, too big in center
   7:  { thumb: 0.82, hero: 0.75 }, // G2 — women's crop, too big in center
