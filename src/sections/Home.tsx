@@ -45,6 +45,7 @@ export default function Home() {
       ref={containerRef}
       id="home"
       className="relative min-h-[100svh] w-full flex items-center justify-center overflow-hidden"
+      style={{ touchAction: 'pan-y' }}
     >
 
       {/* ── MOBILE HERO ── */}

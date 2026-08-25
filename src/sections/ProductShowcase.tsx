@@ -143,6 +143,20 @@ const SHOWCASE_PRODUCTS: ProductDetailData[] = [
   },
 ]
 
+// Per-product scale overrides (thumbScale = ring thumbnails, heroScale = center hero)
+// Adjust these to balance different image crops/aspect ratios
+const PRODUCT_SCALE: Record<number, { thumb: number; hero: number }> = {
+  1:  { thumb: 1.00, hero: 1.20 }, // T1
+  2:  { thumb: 1.00, hero: 1.20 }, // T2
+  3:  { thumb: 0.80, hero: 0.75 }, // T3 — crops large
+  4:  { thumb: 1.00, hero: 0.78 }, // T4 — too big in center
+  5:  { thumb: 1.00, hero: 1.00 }, // T5
+  6:  { thumb: 0.82, hero: 0.75 }, // G1 — women's crop, too big in center
+  7:  { thumb: 0.82, hero: 0.75 }, // G2 — women's crop, too big in center
+  8:  { thumb: 1.00, hero: 1.20 }, // Hoodie
+  9:  { thumb: 1.00, hero: 1.20 }, // Sweatshirt
+}
+
 const N = SHOWCASE_PRODUCTS.length
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -322,44 +336,79 @@ function AnimatedShowcase() {
     <>
       <section
         id="showcase"
-        className="relative bg-[#FAF5E8] overflow-hidden flex flex-col lg:flex-row items-center justify-center"
+        className="relative bg-[#FAF5E8] overflow-hidden"
         style={{
-          paddingTop:    isMobile ? '80px'  : '100px',
-          paddingBottom: isMobile ? '100px' : '140px',
+          paddingTop:    isMobile ? '48px'  : '100px',
+          paddingBottom: isMobile ? '48px'  : '140px',
         }}
       >
-        {/* ── Left content (Desktop absolute left, Mobile stacked top) ── */}
-        <div className="lg:absolute lg:left-12 xl:left-24 lg:top-1/2 lg:-translate-y-1/2 z-20 flex flex-col items-center lg:items-start mb-6 lg:mb-0">
-          <div className="flex justify-center lg:justify-start mb-4 pointer-events-none">
-            <p className="font-inter font-semibold text-[13px] tracking-[0.4em] uppercase text-[#1B3C34]/80">
-              The Collection
-            </p>
-          </div>
-          <div className="flex justify-center lg:justify-start">
-            <CounterStrip
-              active={activeIndex}
-              total={N}
-              onPrev={stepPrev}
-              onNext={stepNext}
+        {/* ── Mobile layout: flex-col stack ── */}
+        {isMobile ? (
+          <div className="flex flex-col items-center gap-0">
+            {/* Top: The Collection + counter */}
+            <div className="flex flex-col items-center gap-3 mb-4">
+              <p className="font-inter font-semibold text-[13px] tracking-[0.4em] uppercase text-[#1B3C34]/80">
+                The Collection
+              </p>
+              <CounterStrip
+                active={activeIndex}
+                total={N}
+                onPrev={stepPrev}
+                onNext={stepNext}
+              />
+            </div>
+
+            {/* Middle: Ring */}
+            <Stage
+              rotDeg={rotDeg}
+              activeIndex={activeIndex}
+              ringR={RING_R}
+              thumbSize={THUMB_SIZE}
+              isMobile={isMobile}
+              onThumbClick={jumpToIndex}
+              onWheel={handleWheel}
             />
+
+            {/* Bottom: Name + price */}
+            <div className="mt-6 z-20">
+              <ProductLabel activeIndex={activeIndex} isMobile={isMobile} />
+            </div>
           </div>
-        </div>
+        ) : (
+          /* ── Desktop layout: circle center, left/right absolute panels ── */
+          <div className="flex items-center justify-center">
+            {/* Left */}
+            <div className="absolute left-12 xl:left-24 top-1/2 -translate-y-1/2 z-20 flex flex-col items-start">
+              <div className="flex justify-start mb-4 pointer-events-none">
+                <p className="font-inter font-semibold text-[13px] tracking-[0.4em] uppercase text-[#1B3C34]/80">
+                  The Collection
+                </p>
+              </div>
+              <CounterStrip
+                active={activeIndex}
+                total={N}
+                onPrev={stepPrev}
+                onNext={stepNext}
+              />
+            </div>
 
-        {/* ── Stage: ring + center hero ── */}
-        <Stage
-          rotDeg={rotDeg}
-          activeIndex={activeIndex}
-          ringR={RING_R}
-          thumbSize={THUMB_SIZE}
-          isMobile={isMobile}
-          onThumbClick={jumpToIndex}
-          onWheel={handleWheel}
-        />
+            {/* Stage */}
+            <Stage
+              rotDeg={rotDeg}
+              activeIndex={activeIndex}
+              ringR={RING_R}
+              thumbSize={THUMB_SIZE}
+              isMobile={isMobile}
+              onThumbClick={jumpToIndex}
+              onWheel={handleWheel}
+            />
 
-        {/* ── Right content (Desktop absolute right, Mobile stacked bottom) ── */}
-        <div className="lg:absolute lg:right-12 xl:right-24 lg:top-1/2 lg:-translate-y-1/2 z-20 mt-6 lg:mt-0">
-          <ProductLabel activeIndex={activeIndex} isMobile={isMobile} />
-        </div>
+            {/* Right */}
+            <div className="absolute right-12 xl:right-24 top-1/2 -translate-y-1/2 z-20">
+              <ProductLabel activeIndex={activeIndex} isMobile={isMobile} />
+            </div>
+          </div>
+        )}
       </section>
     </>
   )
@@ -444,13 +493,13 @@ function Stage({
     <div
       ref={stageRef}
       className="relative w-full flex items-center justify-center mt-12 lg:mt-20"
-      style={{ height: stageH }}
+      style={{ height: stageH, touchAction: 'pan-y' }}
       onMouseEnter={() => { isHovering.current = true }}
       onMouseLeave={() => { isHovering.current = false }}
     >
       {/* Ring container — rotates */}
       <div
-        className="absolute"
+        className="absolute z-20"
         style={{
           width: ringR * 2 + thumbSize,
           height: ringR * 2 + thumbSize,
@@ -479,10 +528,7 @@ function Stage({
           )
           const proximity = 1 - dist / (N / 2) // 1 = top, 0 = bottom
 
-          let scale = 1.0
-          if (product.images[0].includes('grl-t1') || product.images[0].includes('grl-t2')) {
-            scale = 0.82
-          }
+          const thumbScale = (PRODUCT_SCALE[product.id] ?? { thumb: 1 }).thumb
           const opacity = 0.8 + proximity * 0.2
 
           return (
@@ -497,7 +543,7 @@ function Stage({
                 width: thumbSize,
                 height: thumbSize,
                 // Counter-rotate so image stays upright
-                transform: `rotate(${-rotDeg}deg) scale(${scale.toFixed(3)})`,
+                transform: `rotate(${-rotDeg}deg) scale(${thumbScale.toFixed(3)})`,
                 transformOrigin: 'center center',
                 opacity,
                 willChange: 'transform, opacity',
@@ -516,7 +562,7 @@ function Stage({
 
       {/* Center hero image — sits above ring, not rotating */}
       <div
-        className="relative z-10 flex-shrink-0"
+        className="relative z-10 flex-shrink-0 pointer-events-none"
         style={{ width: HERO_SIZE, height: HERO_SIZE * 1.2 }}
       >
         <AnimatePresence mode="wait">
@@ -525,7 +571,7 @@ function Stage({
             src={SHOWCASE_PRODUCTS[activeIndex].images[0]}
             alt={SHOWCASE_PRODUCTS[activeIndex].name}
             initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: SHOWCASE_PRODUCTS[activeIndex].name.includes('T3') ? 0.7 : 1 }}
+            animate={{ opacity: 1, scale: (PRODUCT_SCALE[SHOWCASE_PRODUCTS[activeIndex].id] ?? { hero: 1 }).hero }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.45, ease: [0.25, 0.1, 0.25, 1] }}
             className="w-full h-full object-contain object-center select-none"
@@ -634,7 +680,7 @@ function ReducedMotionShowcase() {
               alt={SHOWCASE_PRODUCTS[activeIndex].name}
               className="w-full h-full object-contain"
               style={{
-                transform: SHOWCASE_PRODUCTS[activeIndex].name.includes('T3') ? 'scale(0.75)' : 'none'
+                transform: `scale(${(PRODUCT_SCALE[SHOWCASE_PRODUCTS[activeIndex].id] ?? { hero: 1 }).hero})`
               }}
             />
           </div>
