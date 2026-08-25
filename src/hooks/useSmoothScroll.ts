@@ -6,6 +6,10 @@ import { ANIMATION_CONFIG } from '../constants'
 
 export const useSmoothScroll = () => {
   useEffect(() => {
+    // Skip Lenis on touch devices — native scroll works better on mobile
+    const isTouchDevice = window.matchMedia('(hover: none) and (pointer: coarse)').matches
+    if (isTouchDevice) return
+
     const lenis = new Lenis({
       duration: ANIMATION_CONFIG.DURATION,
       easing: ANIMATION_CONFIG.EASING,
