@@ -495,7 +495,7 @@ function Stage({
   return (
     <div
       ref={stageRef}
-      className="relative w-full flex items-center justify-center mt-12 lg:mt-20"
+      className="relative w-full flex items-center justify-center -mt-6 lg:mt-20"
       style={{ height: stageH, touchAction: 'pan-y' }}
       onMouseEnter={() => { isHovering.current = true }}
       onMouseLeave={() => { isHovering.current = false }}
