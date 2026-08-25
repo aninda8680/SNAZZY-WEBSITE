@@ -397,10 +397,10 @@ export default function Shop() {
         </div>
       </section>
 
-      {/* Product Modal replaced by ProductDetail Component */}
-      <ProductDetailComponent
-        product={
-          modalProduct ? {
+      {/* Product Detail — only mount when a product is selected so body scroll is not locked on load */}
+      {modalProduct && (
+        <ProductDetailComponent
+          product={{
             id: modalProduct.id,
             name: modalProduct.name,
             category: modalProduct.category,
@@ -413,19 +413,19 @@ export default function Shop() {
             price: modalProduct.price,
             sizes: modalProduct.sizes,
             badge: modalProduct.badge,
-          } : null
-        }
-        theme={{
-          bg: '#FAF5E8', // cream background
-          text: '#1B3C34', // emerald text
-          accent: '#1B3C34',
-          border: 'rgba(27,60,52,0.1)',
-          subtleText: 'rgba(27,60,52,0.6)',
-          font: 'light',
-          hideShadow: true,
-        }}
-        onClose={() => setModal(null)}
-      />
+          }}
+          theme={{
+            bg: '#FAF5E8',
+            text: '#1B3C34',
+            accent: '#1B3C34',
+            border: 'rgba(27,60,52,0.1)',
+            subtleText: 'rgba(27,60,52,0.6)',
+            font: 'light',
+            hideShadow: true,
+          }}
+          onClose={() => setModal(null)}
+        />
+      )}
     </>
   )
 }
