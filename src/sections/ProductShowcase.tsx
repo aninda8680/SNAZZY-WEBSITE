@@ -477,16 +477,19 @@ function Stage({
   const stageRef = useRef<HTMLDivElement>(null)
   const isHovering = useRef(false)
 
-  // Attach a document-level non-passive wheel listener.
-  // Only intercept when mouse is inside the stage.
+  // Attach wheel listener directly to the stage element (non-passive) — desktop only.
+  // Attaching to document non-passively can block mobile scroll on some browsers.
   useEffect(() => {
-    const docWheel = (e: WheelEvent) => {
-      if (!isHovering.current) return
+    const el = stageRef.current
+    if (!el) return
+    // Skip on touch devices — no mouse wheel there
+    if (navigator.maxTouchPoints > 0 || 'ontouchstart' in window) return
+    const handler = (e: WheelEvent) => {
       e.preventDefault()
       onWheel(e)
     }
-    document.addEventListener('wheel', docWheel, { passive: false })
-    return () => document.removeEventListener('wheel', docWheel)
+    el.addEventListener('wheel', handler, { passive: false })
+    return () => el.removeEventListener('wheel', handler)
   }, [onWheel])
 
   return (
