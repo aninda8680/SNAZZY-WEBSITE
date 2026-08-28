@@ -84,7 +84,7 @@ export default function Navbar() {
           <img
             src={logo}
             alt="SNAZZY"
-            className="h-10 sm:h-12 md:h-16 w-auto object-contain scale-110 origin-left translate-y-1"
+            className="h-16 sm:h-20 md:h-24 w-auto object-contain scale-125 origin-left translate-y-1"
           />
         </a>
 
