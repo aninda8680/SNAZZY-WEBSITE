@@ -42,37 +42,19 @@ function WordReveal({ text, delay = 0 }: { text: string; delay?: number }) {
   )
 }
 
-// SVG claw-mark scratch reveal
-function ClawMark() {
+// Image claw-mark reveal
+function ClawMark({ className, opacityTarget = 0.06 }: { className?: string, opacityTarget?: number }) {
   const prefersReducedMotion = useReducedMotion()
   return (
-    <motion.svg
-      viewBox="0 0 120 200"
-      className="absolute top-8 left-6 w-24 md:w-32 opacity-20 pointer-events-none"
-      fill="none"
-    >
-      {[
-        'M 20 10 Q 35 80 15 190',
-        'M 45 5 Q 55 85 38 195',
-        'M 70 8 Q 75 90 62 200',
-        'M 95 12 Q 95 88 85 198',
-      ].map((d, i) => (
-        <motion.path
-          key={i}
-          d={d}
-          stroke="#E8DDCA"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={
-            prefersReducedMotion
-              ? { duration: 0.3, delay: i * 0.05 }
-              : { duration: 0.9, delay: 1.2 + i * 0.15, ease: [0.25, 0.1, 0.25, 1] }
-          }
-        />
-      ))}
-    </motion.svg>
+    <motion.img
+      src="/images/claw-mark.jpg"
+      alt="Claw mark"
+      className={`pointer-events-none mix-blend-screen ${className || ''}`}
+      style={{ filter: 'invert(1) contrast(1.5)' }}
+      initial={{ scale: prefersReducedMotion ? 1 : 1.1, opacity: 0 }}
+      animate={{ scale: 1, opacity: opacityTarget }}
+      transition={{ duration: 1.5, delay: 1.2, ease: 'easeOut' }}
+    />
   )
 }
 
@@ -112,6 +94,12 @@ export default function Drop1Hero({ drop, sectionRef }: Drop1HeroProps) {
           style={{ opacity: contentOpacity }}
           className="relative z-10 flex flex-col justify-center px-8 md:px-14 lg:px-20 pt-28 pb-16 md:pb-0 w-full md:w-[48%] flex-shrink-0"
         >
+          {/* Claw-mark as a large watermark behind text */}
+          <ClawMark 
+            className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[15%] w-[150%] max-w-[800px] -rotate-12"
+            opacityTarget={0.06}
+          />
+
           {/* Sub-label */}
           <motion.span
             {...fadeUp(0.1)}
@@ -120,21 +108,27 @@ export default function Drop1Hero({ drop, sectionRef }: Drop1HeroProps) {
             {drop.subLabel}
           </motion.span>
 
-          {/* Headline */}
-          <h1 className="font-bodoni font-bold text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] text-[#E8DDCA] leading-[0.92] uppercase mb-8">
-            <WordReveal text={drop.headline || drop.name} delay={0.25} />
-          </h1>
+          {/* Headline container with its own claw mark */}
+          <div className="relative mb-8 mt-12 md:mt-20">
+            <ClawMark 
+              className="absolute -top-[270px] md:-top-[460px] left-0 md:left-20 w-48 md:w-80 lg:w-[450px] opacity-[0.06] rotate-12 z-0"
+              opacityTarget={0.06}
+            />
+            <h1 className="relative z-10 font-bodoni font-bold text-[3.5rem] md:text-[4.5rem] lg:text-[5.5rem] xl:text-[6.5rem] text-[#E8DDCA] leading-[0.92] uppercase">
+              <WordReveal text={drop.headline || drop.name} delay={0.25} />
+            </h1>
+          </div>
 
           {/* Descriptor */}
           <motion.p
             {...fadeUp(0.85)}
-            className="font-inter font-light text-sm md:text-[15px] text-white/50 leading-relaxed max-w-sm mb-10"
+            className="relative font-inter font-light text-sm md:text-[15px] text-white/50 leading-relaxed max-w-sm mb-10"
           >
             {drop.descriptorCopy}
           </motion.p>
 
           {/* CTA Button */}
-          <motion.div {...fadeUp(1.0)}>
+          <motion.div {...fadeUp(1.0)} className="relative">
             <button className="group relative inline-flex items-center gap-3 border border-[#E8DDCA]/40 text-[#E8DDCA] px-7 py-3.5 text-[10px] tracking-[0.3em] uppercase font-inter overflow-hidden hover:border-[#E8DDCA]/80 transition-colors duration-300 cursor-pointer">
               <span className="absolute inset-0 bg-[#E8DDCA]/5 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
               <span className="relative">Explore Drop 1</span>
@@ -164,9 +158,6 @@ export default function Drop1Hero({ drop, sectionRef }: Drop1HeroProps) {
             {/* dark gradient overlay on left edge to blend into content */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/30 to-transparent md:via-transparent" />
           </motion.div>
-
-          {/* Claw-mark SVG overlay */}
-          <ClawMark />
 
           {/* Sub-collection labels — bottom right */}
           <motion.div

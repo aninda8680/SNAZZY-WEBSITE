@@ -304,14 +304,18 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
       >
         {/* ── Inner panel — stops click propagation ── */}
         <div
-          className="relative flex w-full h-full"
+          className="relative flex flex-col md:flex-row w-full h-full overflow-y-auto md:overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-8 z-20 cursor-pointer transition-opacity duration-200"
-            style={{ color: `${theme.text}60` }}
+            className="fixed md:absolute top-4 right-4 md:top-6 md:right-8 z-50 cursor-pointer transition-opacity duration-200 p-2 md:p-0 rounded-full"
+            style={{ 
+              color: `${theme.text}60`,
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(8px)',
+            }}
             onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = theme.text)}
             onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = `${theme.text}60`)}
           >
@@ -324,11 +328,11 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="hidden md:flex flex-col justify-center w-[28%] max-w-sm px-10 lg:px-14 py-16 flex-shrink-0 overflow-y-auto"
+            className="flex flex-col justify-center w-full md:w-[28%] md:max-w-sm px-6 pt-8 pb-4 md:px-10 lg:px-14 md:py-16 flex-shrink-0 md:overflow-y-auto order-2 md:order-1"
           >
             {/* Category */}
             <span
-              className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-6"
+              className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-3 md:mb-6"
               style={{ color: theme.subtleText }}
             >
               {product.category}
@@ -336,7 +340,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Name */}
             <h2
-              className="font-cormorant font-semibold text-4xl lg:text-5xl uppercase leading-tight tracking-wide mb-6"
+              className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl uppercase leading-tight tracking-wide mb-4 md:mb-6"
               style={{ color: theme.text }}
             >
               {product.name}
@@ -344,7 +348,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Description */}
             <p
-              className="font-inter font-medium text-sm leading-relaxed mb-8"
+              className="font-inter font-medium text-[13px] md:text-sm leading-relaxed mb-6 md:mb-8"
               style={{ color: theme.subtleText }}
             >
               {product.description}
@@ -355,7 +359,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
               {product.bullets.map((bullet, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-3 font-inter font-medium text-[12px] leading-relaxed"
+                  className="flex items-start gap-3 font-inter font-medium text-[11px] md:text-[12px] leading-relaxed"
                   style={{ color: `${theme.subtleText}` }}
                 >
                   <span
@@ -370,7 +374,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             {/* Badge if any */}
             {product.badge && (
               <span
-                className="mt-10 self-start font-inter text-[8px] tracking-[0.35em] uppercase px-3 py-1.5 border"
+                className="mt-8 md:mt-10 self-start font-inter text-[8px] tracking-[0.35em] uppercase px-3 py-1.5 border"
                 style={{ color: theme.accent, borderColor: `${theme.accent}30` }}
               >
                 {product.badge}
@@ -384,7 +388,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="flex-1 relative overflow-hidden pt-12 px-8 lg:pt-20 lg:px-20 pb-0"
+            className="w-full h-[65vh] md:h-auto min-h-[400px] md:min-h-0 md:flex-1 relative overflow-hidden pt-12 px-0 md:px-8 lg:pt-20 lg:px-20 pb-0 flex-shrink-0 order-1 md:order-2"
           >
             <ImageGallery
               images={product.images}
@@ -400,11 +404,11 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="hidden md:flex flex-col justify-center w-[28%] max-w-sm px-10 lg:px-14 py-16 flex-shrink-0"
+            className="flex flex-col justify-start md:justify-center w-full md:w-[28%] md:max-w-sm px-6 pt-4 pb-16 md:px-10 lg:px-14 md:py-16 flex-shrink-0 order-3"
           >
             {/* Drop context */}
             <span
-              className="font-inter text-[9px] tracking-[0.4em] uppercase block mb-4"
+              className="font-inter text-[9px] tracking-[0.4em] uppercase block mb-3 md:mb-4"
               style={{ color: theme.subtleText }}
             >
               Drop 1 — Wild Instincts
@@ -412,14 +416,14 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Price */}
             <p
-              className="font-cormorant font-semibold text-4xl lg:text-5xl tracking-wide mb-10"
+              className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl tracking-wide mb-8 md:mb-10"
               style={{ color: theme.text }}
             >
               {product.price}
             </p>
 
             {/* Size */}
-            <div className="mb-10">
+            <div className="mb-8 md:mb-10">
               <span
                 className="font-inter font-semibold text-[9px] tracking-[0.35em] uppercase block mb-4"
                 style={{ color: theme.subtleText }}
@@ -430,7 +434,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             </div>
 
             {/* Divider */}
-            <div className="w-full mb-10" style={{ height: '1px', backgroundColor: theme.border }} />
+            <div className="w-full mb-8 md:mb-10" style={{ height: '1px', backgroundColor: theme.border }} />
 
             {/* Add to Bag */}
             <button
@@ -483,30 +487,34 @@ function StaticLayout({
   onClose: () => void
 }) {
   return (
-    <div className="relative flex w-full h-full">
+    <div className="relative flex flex-col md:flex-row w-full h-full overflow-y-auto md:overflow-hidden">
       <button
         onClick={onClose}
-        className="absolute top-6 right-8 z-20 cursor-pointer"
-        style={{ color: `${theme.text}60` }}
+        className="fixed md:absolute top-4 right-4 md:top-6 md:right-8 z-50 cursor-pointer p-2 md:p-0 rounded-full"
+        style={{ 
+          color: `${theme.text}60`,
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          backdropFilter: 'blur(8px)',
+        }}
       >
         <X className="w-5 h-5" strokeWidth={1.5} />
       </button>
 
       <div
-        className="hidden md:flex flex-col justify-center w-[28%] px-10 py-16 overflow-y-auto"
+        className="flex flex-col justify-center w-full md:w-[28%] px-6 pt-8 pb-4 md:px-10 lg:px-14 md:py-16 flex-shrink-0 md:overflow-y-auto order-2 md:order-1"
       >
-        <span className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-6" style={{ color: theme.subtleText }}>
+        <span className="font-inter text-[9px] tracking-[0.45em] uppercase block mb-3 md:mb-6" style={{ color: theme.subtleText }}>
           {product.category}
         </span>
-        <h2 className="font-cormorant font-semibold text-4xl uppercase leading-tight tracking-wide mb-6" style={{ color: theme.text }}>
+        <h2 className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl uppercase leading-tight tracking-wide mb-4 md:mb-6" style={{ color: theme.text }}>
           {product.name}
         </h2>
-        <p className="font-inter font-medium text-sm leading-relaxed mb-8" style={{ color: theme.subtleText }}>
+        <p className="font-inter font-medium text-[13px] md:text-sm leading-relaxed mb-6 md:mb-8" style={{ color: theme.subtleText }}>
           {product.description}
         </p>
         <ul className="flex flex-col gap-3">
           {product.bullets.map((b, i) => (
-            <li key={i} className="flex items-start gap-3 font-inter text-[12px]" style={{ color: theme.subtleText }}>
+            <li key={i} className="flex items-start gap-3 font-inter font-medium text-[11px] md:text-[12px] leading-relaxed" style={{ color: theme.subtleText }}>
               <span className="mt-[5px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: theme.accent, opacity: 0.5 }} />
               {b}
             </li>
@@ -514,7 +522,7 @@ function StaticLayout({
         </ul>
       </div>
 
-      <div className="flex-1 relative overflow-hidden">
+      <div className="w-full h-[65vh] md:h-auto min-h-[400px] md:min-h-0 md:flex-1 relative overflow-hidden flex-shrink-0 order-1 md:order-2">
         <img
           src={product.images[0]}
           alt={product.name}
@@ -524,11 +532,11 @@ function StaticLayout({
       </div>
 
       <div
-        className="hidden md:flex flex-col justify-center w-[28%] px-10 py-16"
+        className="flex flex-col justify-start md:justify-center w-full md:w-[28%] px-6 pt-4 pb-16 md:px-10 lg:px-14 md:py-16 flex-shrink-0 order-3"
       >
-        <p className="font-cormorant font-semibold text-4xl mb-10" style={{ color: theme.text }}>{product.price}</p>
+        <p className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl tracking-wide mb-8 md:mb-10" style={{ color: theme.text }}>{product.price}</p>
         <SizeSelector sizes={product.sizes} theme={theme} />
-        <button className="mt-10 w-full py-4 font-inter text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer" style={{ border: `1px solid ${theme.accent}50`, color: theme.text }}>
+        <button className="mt-10 w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer" style={{ border: `1px solid ${theme.accent}50`, color: theme.text }}>
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
           Add to Bag
         </button>

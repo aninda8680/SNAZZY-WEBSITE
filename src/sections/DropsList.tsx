@@ -51,6 +51,48 @@ function DropCard({ drop, index }: { drop: DropConfig; index: number }) {
         />
         {/* Subtle radial highlight */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_40%,rgba(255,255,255,0.04)_0%,transparent_70%)]" />
+
+        {/* Custom imagery for Drop 1 */}
+        {drop.id === 'drop-1' && (
+          <div className="absolute inset-0 z-0 pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity duration-700">
+            {/* Story image (Panther profile/detail) - Left side */}
+            <motion.img
+              src="/images/drop1-story.png"
+              alt=""
+              className="absolute -left-[10%] md:-left-[5%] bottom-0 h-[80%] md:h-[100%] object-contain opacity-40 mix-blend-screen"
+              style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 25%)' }}
+              initial={{ x: -20, opacity: 0, scaleX: -1 }}
+              whileInView={{ x: 0, opacity: 0.4, scaleX: -1 }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+            />
+            
+            {/* Hero image (Panther full/aggressive) - Right side */}
+            <motion.img
+              src="/images/drop1-hero.png"
+              alt=""
+              className="absolute -right-[10%] md:right-0 bottom-0 h-[85%] md:h-[110%] object-contain opacity-50 mix-blend-screen"
+              style={{ WebkitMaskImage: 'linear-gradient(to right, transparent, black 25%)' }}
+              initial={{ x: 20, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 0.5 }}
+              transition={{ duration: 1, delay: 0.2, ease: 'easeOut' }}
+            />
+
+            {/* Generated Claw Mark - Center/Right behind text */}
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center opacity-15 mix-blend-screen pointer-events-none"
+              style={{ filter: 'invert(1) contrast(1.5)' }}
+              initial={{ scale: 1.1, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 0.15 }}
+              transition={{ duration: 1.5, delay: 0.4, ease: 'easeOut' }}
+            >
+              <img
+                src="/images/claw-mark.jpg"
+                alt=""
+                className="w-full h-full max-w-[800px] object-cover md:object-contain"
+              />
+            </motion.div>
+          </div>
+        )}
       </motion.div>
 
       {/* Content */}
