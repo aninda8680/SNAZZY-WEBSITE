@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, useReducedMotion, useMotionValue, animate } from 'framer-motion'
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion, useMotionValue, animate, useTransform, MotionValue } from 'framer-motion'
+import { ChevronLeft, ChevronRight, ArrowRight, Eye } from 'lucide-react'
 import ProductDetail, { type ProductDetailData } from '../components/ProductDetail'
 
 // --- Types & Defaults ---------------------------------------------------------
@@ -19,67 +19,67 @@ export interface ShowcaseProduct extends Omit<Partial<ProductDetailData>, 'id'> 
 
 export const DEFAULT_SHOWCASE_PRODUCTS: ShowcaseProduct[] = [
   {
-    id: 1, name: 'Snazzy Tee — T1', category: "Men's T-Shirts",
-    description: 'Our signature piece — a 220gsm heavyweight cotton tee with precision embroidery across the chest.',
-    bullets: ['Material: 100% combed ring-spun cotton, 220gsm', 'Care: Machine wash cold (30°C), inside out.'],
+    id: 1, name: 'Snazzy Tee â€” T1', category: "Men's T-Shirts",
+    description: 'Our signature piece â€” a 220gsm heavyweight cotton tee with precision embroidery across the chest.',
+    bullets: ['Material: 100% combed ring-spun cotton, 220gsm', 'Care: Machine wash cold (30Â°C), inside out.'],
     images: ['/images/nobg/t1-front-nobg.png', '/images/nobg/t1-back-nobg.png'],
-    price: '?1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bestseller',
+    price: 'â‚¹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bestseller',
   },
   {
-    id: 2, name: 'Snazzy Tee — T2', category: "Men's T-Shirts",
-    description: 'From the latest streetwear drop — bold embroidered branding on a relaxed-fit silhouette.',
+    id: 2, name: 'Snazzy Tee â€” T2', category: "Men's T-Shirts",
+    description: 'From the latest streetwear drop â€” bold embroidered branding on a relaxed-fit silhouette.',
     bullets: ['Material: 100% combed cotton, 220gsm. Boxy oversized fit.'],
     images: ['/images/nobg/t2-front-nobg.png', '/images/nobg/t2-back-nobg.png'],
-    price: '?1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
+    price: 'â‚¹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
   },
   {
-    id: 3, name: 'Snazzy Tee — T3', category: "Men's T-Shirts",
+    id: 3, name: 'Snazzy Tee â€” T3', category: "Men's T-Shirts",
     description: 'Statement embroidery meets everyday comfort.',
     bullets: ['Material: 100% combed cotton, 220gsm. Regular fit.'],
     images: ['/images/nobg/t3-front-nobg.png', '/images/nobg/t3-back-nobg.png'],
-    price: '?1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
+    price: 'â‚¹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
   },
   {
-    id: 4, name: 'Snazzy Tee — T4', category: "Men's T-Shirts",
-    description: "Part of our limited seasonal run — once it's gone, it's gone.",
+    id: 4, name: 'Snazzy Tee â€” T4', category: "Men's T-Shirts",
+    description: "Part of our limited seasonal run â€” once it's gone, it's gone.",
     bullets: ['Material: 100% combed cotton, 220gsm. Slim regular fit.'],
     images: ['/images/nobg/t4-front-nobg.png', '/images/nobg/t4-back-nobg.png'],
-    price: '?1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Limited',
+    price: 'â‚¹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Limited',
   },
   {
-    id: 5, name: 'Snazzy Tee — T5', category: "Men's T-Shirts",
-    description: 'Our heaviest tee — 260gsm fabric with a structured boxy silhouette.',
+    id: 5, name: 'Snazzy Tee â€” T5', category: "Men's T-Shirts",
+    description: 'Our heaviest tee â€” 260gsm fabric with a structured boxy silhouette.',
     bullets: ['Material: 100% combed cotton, 260gsm. Oversized boxy fit.'],
     images: ['/images/nobg/t5-front-nobg.png', '/images/nobg/t5-back-nobg.png'],
-    price: '?1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bold',
+    price: 'â‚¹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bold',
   },
   {
-    id: 6, name: "Women's Tee — G1", category: "Women's T-Shirts",
+    id: 6, name: "Women's Tee â€” G1", category: "Women's T-Shirts",
     description: 'A relaxed-fit tee in our softest cotton fabric, with delicate embroidery that elevates without overpowering.',
     bullets: ['Material: 100% combed cotton, 180gsm. Relaxed cropped fit.'],
     images: ['/images/nobg/grl-t1-front-nobg.png', '/images/nobg/grl-t1-back-nobg.png'],
-    price: '?1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
+    price: 'â‚¹1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
   },
   {
-    id: 7, name: "Women's Tee — G2", category: "Women's T-Shirts",
+    id: 7, name: "Women's Tee â€” G2", category: "Women's T-Shirts",
     description: 'The dropped shoulder gives an effortless off-duty feel while the embroidered detail keeps it distinctly Snazzy.',
     bullets: ['Material: 100% combed cotton, 180gsm. Drop-shoulder construction.'],
     images: ['/images/nobg/grl-t2-front-nobg.png', '/images/nobg/grl-t2-back-nobg.png'],
-    price: '?1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
+    price: 'â‚¹1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
   },
   {
     id: 8, name: 'Snazzy Hoodie', category: 'Hoodies',
     description: 'A heavyweight French terry hoodie built for year-round comfort with a clean, minimal Snazzy aesthetic.',
     bullets: ['Material: 100% combed cotton, 320gsm French terry. Relaxed fit.'],
     images: ['/images/nobg/hoodie-front-nobg.png', '/images/nobg/hoodie-back-nobg.png'],
-    price: '?2,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Fan Favourite',
+    price: 'â‚¹2,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Fan Favourite',
   },
   {
-    id: 9, name: 'Snazzy Polo', category: 'Polo Shirts',
-    description: 'Structured pique fabric meets relaxed Snazzy tailoring. A versatile piece that transitions effortlessly.',
-    bullets: ['Material: 100% combed pique cotton, 220gsm. Regular fit.'],
-    images: ['/images/nobg/polo-front-nobg.png', '/images/nobg/polo-back-nobg.png'],
-    price: '?1,799', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Classic',
+    id: 9, name: 'Snazzy Sweatshirt', category: 'Sweatshirts',
+    description: 'Structured premium fabric meets relaxed Snazzy tailoring. A versatile piece that transitions effortlessly.',
+    bullets: ['Material: 100% combed cotton, 300gsm. Regular fit.'],
+    images: ['/images/nobg/sweatshirt-front-nobg.png', '/images/nobg/sweatshirt-back-nobg.png'],
+    price: 'â‚¹1,799', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Classic',
   },
 ]
 
@@ -97,7 +97,104 @@ const BREAKPOINT_CONFIG = {
 const ENTER_EXIT_OVERSHOOT = { mobile: 280, tablet: 460, desktop: 640 }
 
 const EASE = [0.76, 0, 0.24, 1] as const
-const SPRING = { type: 'spring' as const, stiffness: 380, damping: 36, mass: 0.8 }
+
+// --- Continuous Math ---------------------------------------------------------
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+
+const getSlotContinuous = (dist: number, config: any, overshoot: number) => {
+  const abs = Math.abs(dist)
+  if (abs >= 3) return { x: Math.sign(dist) * overshoot, scale: 0.28, opacity: 0, zIndex: 0, brightness: 0.88 }
+  
+  const floor = Math.floor(abs)
+  const ceil = Math.ceil(abs)
+  const frac = abs - floor
+  
+  const getVals = (a: number) => {
+    if (a >= 3) return { xMag: overshoot, scale: 0.28, opacity: 0, zIndex: 0, brightness: 0.88 }
+    const xMag = config.offsets[a] ?? (config.offsets[2] + 100)
+    const scale = config.scales[a] ?? 0.28
+    const opacity = a === 0 ? 1 : a === 1 ? 0.65 : a === 2 ? 0.22 : 0
+    const zIndex = a === 0 ? 30 : a === 1 ? 20 : 10
+    const brightness = a === 0 ? 1 : a === 1 ? 0.94 : 0.88
+    return { xMag, scale, opacity, zIndex, brightness }
+  }
+  
+  const v1 = getVals(floor)
+  const v2 = getVals(ceil)
+  
+  const xMag = lerp(v1.xMag, v2.xMag, frac)
+  const x = dist < 0 ? -xMag : xMag
+  
+  return {
+    x,
+    scale: lerp(v1.scale, v2.scale, frac),
+    opacity: lerp(v1.opacity, v2.opacity, frac),
+    zIndex: frac < 0.5 ? v1.zIndex : v2.zIndex,
+    brightness: lerp(v1.brightness, v2.brightness, frac)
+  }
+}
+
+const ContinuousCard = ({ 
+  product, 
+  index, 
+  progress, 
+  total, 
+  config, 
+  overshoot,
+  isCenterHovered
+}: { 
+  product: ShowcaseProduct, 
+  index: number, 
+  progress: MotionValue<number>, 
+  total: number, 
+  config: any, 
+  overshoot: number,
+  isCenterHovered: boolean
+}) => {
+  const dist = useTransform(progress, (val) => {
+    let d = (index - val) % total
+    d = (d + total) % total
+    if (d > total / 2) d -= total
+    return d
+  })
+
+  const slot = useTransform(dist, (d) => getSlotContinuous(d, config, overshoot))
+  
+  const x = useTransform(slot, (s) => s.x)
+  const scale = useTransform(slot, (s) => s.scale)
+  const opacity = useTransform(slot, (s) => s.opacity)
+  const zIndex = useTransform(slot, (s) => s.zIndex)
+  const filter = useTransform(slot, (s) => `brightness(${s.brightness})`)
+  
+  const quickViewOpacity = useTransform(dist, (d) => Math.abs(d) < 0.2 && isCenterHovered ? 1 : 0)
+  const quickViewY = useTransform(dist, (d) => Math.abs(d) < 0.2 && isCenterHovered ? 0 : 8)
+
+  return (
+    <motion.div
+      style={{ x, scale, opacity, zIndex, width: config.width, height: '100%', position: 'absolute', bottom: 0 }}
+      className="origin-bottom flex flex-col items-center justify-end group pointer-events-none"
+    >
+      <div className="relative w-full h-full flex items-end justify-center pb-2 pointer-events-none">
+        <motion.img
+          src={product.images?.[0] ?? ''}
+          alt={product.name}
+          draggable={false}
+          className="w-full h-full object-contain object-bottom"
+          style={{ filter }}
+        />
+        <motion.div
+          style={{ opacity: quickViewOpacity, y: quickViewY }}
+          transition={{ duration: 0.2 }}
+          className="absolute bottom-6 bg-[#1B3C34] text-[#FAF5E8] px-5 py-2.5 text-[10px] font-inter tracking-[0.3em] uppercase flex items-center gap-2 shadow-lg transition-all duration-300 pointer-events-none"
+        >
+          <Eye className="w-3 h-3" />
+          Quick View
+        </motion.div>
+      </div>
+    </motion.div>
+  )
+}
 
 export interface ProductShowcaseProps {
   products?: ShowcaseProduct[]
@@ -106,7 +203,6 @@ export interface ProductShowcaseProps {
   eyebrow?: string
   initialIndex?: number
   onProductClick?: (product: ShowcaseProduct) => void
-  showFooter?: boolean
 }
 
 export default function ProductShowcase({
@@ -118,17 +214,24 @@ export default function ProductShowcase({
   onProductClick,
 }: ProductShowcaseProps) {
   const total = products.length
+  
+  // The absolute track position
+  const progress = useMotionValue(initialIndex)
+  
+  // Derived active state for text and dots
   const [activeIndex, setActiveIndex] = useState(
     total > 0 ? Math.min(Math.max(initialIndex, 0), total - 1) : 0
   )
-  const [direction, setDirection] = useState<1 | -1>(1)
+  
   const [selectedProduct, setSelectedProduct] = useState<ShowcaseProduct | null>(null)
 
   const isDraggingRef = useRef(false)
   const pointerStartX = useRef(0)
   const pointerStartY = useRef(0)
+  const progressOnDragStart = useRef(initialIndex)
   const dragAxis = useRef<'h' | 'v' | null>(null)
-  const dragX = useMotionValue(0)
+
+  const [isCenterHovered, setIsCenterHovered] = useState(false)
 
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== 'undefined' ? window.innerWidth : 1200
@@ -145,22 +248,35 @@ export default function ProductShowcase({
   const isMobile = bp === 'mobile'
 
   const prefersReducedMotion = useReducedMotion()
-  const transDuration = prefersReducedMotion ? 0 : 0.52
-  const cardTransition = { duration: transDuration, ease: EASE }
+  const ANIM_DURATION = prefersReducedMotion ? 0 : 0.5
+  const transition = { duration: ANIM_DURATION, ease: EASE }
 
-  const goToIndex = useCallback((newIdx: number, dir: 1 | -1) => {
+  const next = useCallback(() => {
     if (total <= 1) return
-    const wrapped = ((newIdx % total) + total) % total
-    setDirection(dir)
-    setActiveIndex(wrapped)
-  }, [total])
+    const nextTarget = Math.round(progress.get()) + 1
+    animate(progress, nextTarget, transition)
+    setActiveIndex(((nextTarget % total) + total) % total)
+  }, [progress, total, transition])
 
-  const next = useCallback(() => goToIndex(activeIndex + 1,  1), [goToIndex, activeIndex])
-  const prev = useCallback(() => goToIndex(activeIndex - 1, -1), [goToIndex, activeIndex])
+  const prev = useCallback(() => {
+    if (total <= 1) return
+    const prevTarget = Math.round(progress.get()) - 1
+    animate(progress, prevTarget, transition)
+    setActiveIndex(((prevTarget % total) + total) % total)
+  }, [progress, total, transition])
+
   const jump = useCallback((idx: number) => {
     if (idx === activeIndex) return
-    goToIndex(idx, idx > activeIndex ? 1 : -1)
-  }, [goToIndex, activeIndex])
+    const current = progress.get()
+    const currentMod = ((Math.round(current) % total) + total) % total
+    let diff = (idx - currentMod) % total
+    diff = (diff + total) % total
+    if (diff > total / 2) diff -= total
+    const target = Math.round(current) + diff
+    
+    animate(progress, target, transition)
+    setActiveIndex(((target % total) + total) % total)
+  }, [progress, total, transition, activeIndex])
 
   const nextRef = useRef(next)
   useEffect(() => { nextRef.current = next }, [next])
@@ -185,10 +301,10 @@ export default function ProductShowcase({
     isDraggingRef.current = false
     pointerStartX.current = e.clientX
     pointerStartY.current = e.clientY
+    progressOnDragStart.current = progress.get()
     dragAxis.current = null
-    dragX.set(0)
     ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-  }, [dragX])
+  }, [progress])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     if (!(e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) return
@@ -201,51 +317,46 @@ export default function ProductShowcase({
     }
     if (dragAxis.current === 'v') return
     e.preventDefault()
-    dragX.set(dx)
+    
+    // Scale drag distance: dragging 1 item width = 1 progress unit
+    const dragScale = dx / (config.width * 0.8)
+    progress.set(progressOnDragStart.current - dragScale)
+    
     if (Math.abs(dx) > 5) isDraggingRef.current = true
-  }, [dragX])
+  }, [progress, config.width])
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
-    const delta = e.clientX - pointerStartX.current
-    animate(dragX, 0, { type: 'spring', stiffness: 700, damping: 45, mass: 0.5 })
+    const dx = e.clientX - pointerStartX.current
     dragAxis.current = null
     setTimeout(() => { isDraggingRef.current = false }, 50)
-    if (Math.abs(delta) < 8) return
-    if (delta < -40) next()
-    else if (delta > 40) prev()
-  }, [dragX, next, prev])
+    
+    if (Math.abs(dx) < 8) {
+      // It was a tap, snap back to nearest
+      const target = Math.round(progress.get())
+      animate(progress, target, transition)
+      setActiveIndex(((target % total) + total) % total)
+      return
+    }
+    
+    // It was a drag, use swipe thresholds
+    let target = Math.round(progress.get())
+    if (dx < -40) target = Math.round(progressOnDragStart.current) + 1
+    else if (dx > 40) target = Math.round(progressOnDragStart.current) - 1
+    
+    animate(progress, target, transition)
+    setActiveIndex(((target % total) + total) % total)
+  }, [progress, transition, total])
 
   useEffect(() => {
     if (total === 0) return
-    for (const off of [-2, -1, 1, 2]) {
-      const idx = (activeIndex + off + total) % total
-      const url = products[idx]?.images?.[0]
+    products.forEach(p => {
+      const url = p.images?.[0]
       if (url) { const img = new Image(); img.src = url }
-    }
-  }, [activeIndex, products, total])
-
-  const getSlot = useCallback((dist: number) => {
-    const abs = Math.abs(dist)
-    if (abs > 2) return { x: Math.sign(dist) * overshoot, scale: 0.28, opacity: 0, zIndex: 0 }
-    const scale   = config.scales[abs] ?? 0.28
-    const xMag    = config.offsets[abs] ?? 0
-    const x       = dist < 0 ? -xMag : xMag
-    const opacity = abs === 0 ? 1 : abs === 1 ? 0.65 : 0.22
-    const zIndex  = abs === 0 ? 30 : abs === 1 ? 20 : 10
-    return { x, scale, opacity, zIndex }
-  }, [config, overshoot])
-
-  const getEnter = useCallback((dist: number) => ({
-    x: Math.sign(dist) * overshoot, scale: 0.28, opacity: 0, zIndex: 0,
-  }), [overshoot])
+    })
+  }, [products, total])
 
   if (total === 0) return null
   const activeProduct = products[activeIndex]
-  const visibleOffsets = total > 1 ? [-3, -2, -1, 0, 1, 2, 3] : [0]
-  const visibleProducts = visibleOffsets.map(off => ({
-    product: products[((activeIndex + off) % total + total) % total],
-    dist: off,
-  }))
 
   const handleDragLayerClick = (e: React.MouseEvent) => {
     if (isDraggingRef.current) return
@@ -267,46 +378,28 @@ export default function ProductShowcase({
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onClick={handleDragLayerClick}
+      onMouseEnter={() => setIsCenterHovered(true)}
+      onMouseLeave={() => setIsCenterHovered(false)}
       className="absolute inset-0 z-50 cursor-grab active:cursor-grabbing"
       style={{ touchAction: 'none' }}
     />
   )
 
   const Cards = (
-    <AnimatePresence initial={false}>
-      {visibleProducts.map(({ product, dist }) => {
-        const slot     = getSlot(dist)
-        const enter    = getEnter(dist)
-        const abs      = Math.abs(dist)
-        const isCenter = dist === 0
-        return (
-          <motion.div
-            key={product.id}
-            initial={enter}
-            animate={{ x: slot.x, scale: slot.scale, opacity: slot.opacity, zIndex: slot.zIndex }}
-            style={{ x: dragX, width: config.width, height: '100%', position: 'absolute', bottom: 0 } as React.CSSProperties}
-            exit={{
-              x: Math.sign(dist || direction) * overshoot * direction,
-              scale: 0.28, opacity: 0, zIndex: 0,
-              transition: cardTransition,
-            }}
-            transition={isCenter ? SPRING : cardTransition}
-            className="origin-bottom"
-          >
-            <img
-              src={product.images?.[0] ?? ''}
-              alt={product.name}
-              draggable={false}
-              className="w-full h-full object-contain object-bottom pointer-events-none"
-              style={{
-                filter: isCenter ? 'none' : `brightness(${abs === 1 ? 0.94 : 0.88})`,
-                transition: 'filter 0.45s ease',
-              }}
-            />
-          </motion.div>
-        )
-      })}
-    </AnimatePresence>
+    <div className="absolute inset-0 flex justify-center pointer-events-none">
+      {products.map((product, idx) => (
+        <ContinuousCard
+          key={product.id}
+          product={product}
+          index={idx}
+          progress={progress}
+          total={total}
+          config={config}
+          overshoot={overshoot}
+          isCenterHovered={isCenterHovered}
+        />
+      ))}
+    </div>
   )
 
   return (
