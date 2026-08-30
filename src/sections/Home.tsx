@@ -79,7 +79,7 @@ export default function Home() {
           Embroidered in India — Worn by the World
         </p>
 
-        <h1 className="font-bodoni font-black leading-[0.92] mb-2 pb-4 overflow-hidden">
+        <h1 className="font-cormorant font-black leading-[0.92] mb-2 pb-4 overflow-hidden">
           <span ref={line1Ref} className="block text-[3.8rem] sm:text-7xl md:text-8xl lg:text-9xl text-white">
             Wear
           </span>

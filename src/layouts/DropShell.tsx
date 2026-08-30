@@ -28,8 +28,8 @@ export default function DropShell() {
   // ── All other drops use the generic placeholder shell ──
   return (
     <div
-      className="min-h-screen text-white selection:bg-white/20 selection:text-white font-inter overflow-x-hidden"
-      style={{ backgroundColor: drop.themeColor }}
+      className="min-h-screen text-white selection:bg-white/20 selection:text-white font-inter overflow-x-clip"
+      style={{ backgroundColor: drop.themeColor || '#050505' }}
     >
       {/* Persistent Back Control */}
       <motion.button

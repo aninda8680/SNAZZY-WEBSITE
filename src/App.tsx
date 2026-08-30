@@ -20,6 +20,7 @@ import Checkout from './pages/Checkout'
 import OrderSuccess from './pages/OrderSuccess'
 import Orders from './pages/Orders'
 import About from './pages/About'
+import Collections from './pages/Collections'
 import Account from './pages/Account'
 
 // Admin pages
@@ -44,8 +45,9 @@ export default function App() {
               {/* Drop Experience */}
               <Route path="/drop/:id" element={<DropShell />} />
 
-              {/* About */}
+              {/* About and Collections */}
               <Route path="/about" element={<About />} />
+              <Route path="/collections" element={<Collections />} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />

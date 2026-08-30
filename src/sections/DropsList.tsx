@@ -107,8 +107,7 @@ function DropCard({ drop, index }: { drop: DropConfig; index: number }) {
           </span>
         </div>
 
-        {/* Drop Name */}
-        <h2 className="font-bodoni font-bold text-6xl md:text-8xl lg:text-9xl text-white tracking-[0.12em] uppercase leading-none transform scale-100 group-hover:scale-[1.025] transition-transform duration-700 ease-out">
+        <h2 className="font-cormorant font-bold text-6xl md:text-8xl lg:text-9xl text-white tracking-[0.12em] uppercase leading-none transform scale-100 group-hover:scale-[1.025] transition-transform duration-700 ease-out">
           {drop.name}
         </h2>
 

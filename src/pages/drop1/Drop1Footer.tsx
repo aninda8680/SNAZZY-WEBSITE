@@ -46,7 +46,7 @@ export default function Drop1Footer({ drop }: Drop1FooterProps) {
         </span>
 
         {/* Tagline */}
-        <span className="font-inter text-[9px] tracking-[0.25em] text-[#E8DDCA]/20 uppercase hidden md:block">
+        <span className="font-cormorant text-sm tracking-[0.15em] text-[#E8DDCA]/40 uppercase hidden md:block">
           Wear Your Story.
         </span>
       </motion.div>

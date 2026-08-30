@@ -215,7 +215,7 @@ export default function Drop1ProductGrid({
               <span className="font-inter text-[9px] tracking-[0.45em] text-[#E8DDCA]/30 uppercase block mb-3">
                 Full Collection
               </span>
-              <h2 className="font-bodoni font-bold text-4xl text-[#E8DDCA] uppercase">
+              <h2 className="font-cormorant font-bold text-4xl text-[#E8DDCA] uppercase">
                 Shop Drop 1
               </h2>
             </div>

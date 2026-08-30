@@ -1,18 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useId } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import ProductModal, { type ProductDetail } from '../components/ProductModal'
 import ProductDetailComponent from '../components/ProductDetail'
+import { useNavbarVisibility } from '../hooks'
 
 gsap.registerPlugin(ScrollTrigger)
 
 type Category = 'All' | "Men's T-Shirts" | "Women's T-Shirts" | 'Hoodies' | 'Sweatshirts'
+type ShopVariant = 'section' | 'page'
 
-const SIZES_TEE     = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-const SIZES_HOODIE  = ['S', 'M', 'L', 'XL', 'XXL']
+const SIZES_TEE    = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+const SIZES_HOODIE = ['S', 'M', 'L', 'XL', 'XXL']
 
 const products: ProductDetail[] = [
   {
@@ -74,7 +76,7 @@ const products: ProductDetail[] = [
     hoverImage: '/images/nobg/t4-back-nobg.png',
     badge: 'Limited',
     description:
-      'Part of our limited seasonal run — once it\'s gone, it\'s gone. The T4 features exclusive embroidery artwork produced in a single run of 100 units. No restocks, no second chances.',
+      "Part of our limited seasonal run — once it's gone, it's gone. The T4 features exclusive embroidery artwork produced in a single run of 100 units. No restocks, no second chances.",
     sizes: SIZES_TEE,
     material: '100% combed cotton, 220gsm. Slim regular fit. Pre-washed for minimal shrinkage.',
     care: 'Hand wash or gentle cycle cold. Lay flat to dry. Do not wring or bleach.',
@@ -163,6 +165,20 @@ const products: ProductDetail[] = [
 
 const categories: Category[] = ['All', "Men's T-Shirts", "Women's T-Shirts", 'Hoodies', 'Sweatshirts']
 
+// ── Skeleton card shimmer ────────────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="flex flex-col animate-pulse">
+      <div className="aspect-[3/4] bg-[#1B3C34]/8 rounded-none" />
+      <div className="pt-3 px-0 space-y-2">
+        <div className="h-2.5 bg-[#1B3C34]/10 w-3/4" />
+        <div className="h-3.5 bg-[#1B3C34]/8 w-1/3" />
+      </div>
+    </div>
+  )
+}
+
+// ── Product Card ─────────────────────────────────────────────────────────────
 function ProductCard({
   product,
   index,
@@ -174,7 +190,11 @@ function ProductCard({
 }) {
   const { addItem } = useCart()
   const [picking, setPicking] = useState(false)
-  const [added, setAdded] = useState<string | null>(null)
+  const [added, setAdded]     = useState<string | null>(null)
+  const [imgIndex, setImgIndex] = useState(0)
+  const prefersReducedMotion = useReducedMotion()
+
+  const images = [product.image, ...(product.hoverImage ? [product.hoverImage] : [])]
 
   function handleQuickAdd(e: React.MouseEvent) {
     e.stopPropagation()
@@ -201,73 +221,108 @@ function ProductCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 30 }}
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative flex flex-col cursor-pointer bg-[#FAF5E8] md:bg-transparent"
+      className="group relative flex flex-col cursor-pointer"
       onClick={() => !picking && onOpen(product)}
     >
-      {/* Image area — full-bleed, no side gaps */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF5E8]">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
-          onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
-        />
-        {product.hoverImage && (
-          <img
-            src={product.hoverImage}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-            onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
-          />
+      {/* Image */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-[#F0EAD9]">
+        <motion.div
+          className="w-full h-full cursor-grab active:cursor-grabbing"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.2}
+          onDragEnd={(_, { offset, velocity }) => {
+            const swipe = Math.abs(offset.x) * velocity.x
+            if (swipe < -100 || offset.x < -40) {
+              if (imgIndex < images.length - 1) setImgIndex(imgIndex + 1)
+            } else if (swipe > 100 || offset.x > 40) {
+              if (imgIndex > 0) setImgIndex(imgIndex - 1)
+            }
+          }}
+        >
+          <motion.div
+            className="flex w-full h-full"
+            animate={{ x: `-${imgIndex * 100}%` }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            {images.map((img, i) => (
+              <motion.img
+                key={i}
+                src={img}
+                alt={`${product.name} — view ${i + 1}`}
+                className="w-full h-full flex-shrink-0 object-cover pointer-events-none"
+                whileHover={prefersReducedMotion ? {} : { scale: 1.04 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
+              />
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Carousel dots */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none">
+            {images.map((_, i) => (
+              <div
+                key={i}
+                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
+                  i === imgIndex ? 'bg-[#1B3C34]' : 'bg-[#1B3C34]/25'
+                }`}
+              />
+            ))}
+          </div>
         )}
 
         {/* Wishlist — desktop only */}
         <button
-          className="hidden md:flex absolute top-3 right-3 p-1.5 text-[#1B3C34]/40 hover:text-[#1B3C34] transition-colors z-10"
+          className="hidden md:flex absolute top-3 right-3 p-1.5 text-[#1B3C34]/30 hover:text-[#1B3C34] transition-colors z-10"
           onClick={(e) => e.stopPropagation()}
+          aria-label={`Wishlist ${product.name}`}
         >
           <Heart className="w-4 h-4" />
         </button>
 
-        {/* Badge — desktop only (no clutter on mobile) */}
+        {/* Badge */}
         {product.badge && (
-          <span className="hidden md:block absolute top-3 left-3 font-inter text-[9px] tracking-[0.25em] uppercase text-[#1B3C34]/60">
+          <span className="hidden md:block absolute top-3 left-3 font-inter text-[9px] tracking-[0.3em] uppercase text-[#1B3C34]/55 bg-[#FAF5E8]/80 backdrop-blur-sm px-2 py-1">
             {product.badge}
           </span>
         )}
 
-        {/* Quick Add / Size picker — desktop hover only */}
-        <div className={`hidden md:block absolute inset-x-0 bottom-0 transition-transform duration-300 ease-out ${
-          picking || false ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'
-        }`}>
+        {/* Quick Add overlay — desktop hover, separated from swipe area */}
+        <div
+          className={`hidden md:block absolute inset-x-0 bottom-0 transition-transform duration-400 ease-out ${
+            picking ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'
+          }`}
+        >
           {!picking ? (
             <button
               onClick={handleQuickAdd}
-              className="w-full py-3.5 bg-white/95 backdrop-blur-sm font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] font-medium hover:bg-[#1B3C34] hover:text-white transition-colors duration-200 flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-[#FAF5E8]/96 backdrop-blur-sm font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34] hover:bg-[#1B3C34] hover:text-[#FAF5E8] transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
               Quick Add
             </button>
           ) : (
-            <div className="bg-white/97 backdrop-blur-sm px-3 pt-2.5 pb-3" onClick={e => e.stopPropagation()}>
+            <div className="bg-[#FAF5E8]/97 backdrop-blur-sm px-3 pt-2.5 pb-3" onClick={(e) => e.stopPropagation()}>
               {added ? (
-                <p className="text-center font-inter text-[11px] tracking-[0.3em] uppercase text-[#1B3C34] py-2">
+                <p className="text-center font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34] py-2">
                   Size {added} added ✓
                 </p>
               ) : (
                 <>
-                  <p className="font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/40 text-center mb-2">
+                  <p className="font-inter text-[9px] tracking-[0.4em] uppercase text-[#1B3C34]/40 text-center mb-2">
                     Select Size
                   </p>
                   <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                    {product.sizes.map(size => (
+                    {product.sizes.map((size) => (
                       <button
                         key={size}
                         onClick={(e) => handlePickSize(e, size)}
-                        className="w-9 h-9 border border-[#1B3C34]/20 font-inter text-[11px] text-[#1B3C34] hover:bg-[#1B3C34] hover:text-white hover:border-[#1B3C34] transition-colors duration-150"
+                        className="w-9 h-9 border border-[#1B3C34]/20 font-inter text-[11px] text-[#1B3C34] hover:bg-[#1B3C34] hover:text-[#FAF5E8] hover:border-[#1B3C34] transition-colors duration-150"
                       >
                         {size}
                       </button>
@@ -287,117 +342,195 @@ function ProductCard({
       </div>
 
       {/* Info */}
-      <div className="pt-3 pb-4 px-3 md:px-0">
-        <h3 className="font-bodoni md:font-inter text-[13px] font-normal text-[#1B3C34] leading-snug tracking-[0.04em] uppercase mb-1">
+      <div className="pt-3 pb-4 px-0">
+        <h3 className="font-inter text-[11px] md:text-[12px] tracking-[0.08em] uppercase text-[#1B3C34] leading-snug mb-0.5">
           {product.name}
         </h3>
-        <div className="flex items-center justify-between gap-2">
-          <p className="font-inter text-[11px] text-[#1B3C34]/50 tracking-wide">
-            {product.category}
-          </p>
-          <p className="font-inter text-[12px] md:text-[13px] text-[#1B3C34] flex-shrink-0 font-medium">
-            {product.price}
-          </p>
-        </div>
-        <p className="font-inter text-[10px] text-[#1B3C34]/40 mt-1 tracking-wide hidden md:block">
+        <p className="font-cormorant text-[16px] md:text-[18px] text-[#1B3C34] leading-none">
+          {product.price}
+        </p>
+        <p className="font-inter text-[9px] text-[#1B3C34]/35 mt-1 tracking-wide hidden md:block">
           View details →
         </p>
       </div>
-
     </motion.article>
   )
 }
 
-export default function Shop() {
-  const sectionRef  = useRef<HTMLDivElement>(null)
-  const headingRef  = useRef<HTMLDivElement>(null)
-  const [active, setActive]       = useState<Category>('All')
-  const [modalProduct, setModal]  = useState<ProductDetail | null>(null)
+// ── Sticky Filter Bar ────────────────────────────────────────────────────────
+function FilterBar({
+  active,
+  onChange,
+  variant,
+  layoutId,
+}: {
+  active: Category
+  onChange: (c: Category) => void
+  variant: ShopVariant
+  layoutId: string
+}) {
+  const showNavbar = useNavbarVisibility()
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: headingRef.current, start: 'top 78%' },
-        }
-      )
-    }, sectionRef)
-    return () => ctx.revert()
-  }, [])
-
-  const filtered = active === 'All' ? products : products.filter((p) => p.category === active)
+  const stickyClass =
+    variant === 'page'
+      ? `sticky z-30 bg-[#0A1C17]/95 backdrop-blur-md border-b border-white/10 transition-all duration-300 ${showNavbar ? 'top-14 md:top-16' : 'top-0'}`
+      : ''
 
   return (
-    <>
-      <section ref={sectionRef} id="shop" className="relative bg-[#FAF5E8] py-12 md:py-24">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-
-          {/* Heading */}
-          <div ref={headingRef} className="mb-6 md:mb-10">
-            <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#1B3C34]/50 mb-3">
-              Shop The Collection
-            </p>
-            <div className="flex items-end justify-between gap-4 border-b border-[#1B3C34]/10 pb-5">
-              <h2 className="font-bodoni md:font-inter font-light text-[1.8rem] md:text-4xl tracking-tight text-[#1B3C34] uppercase">
-                New Season
-              </h2>
-              <p className="font-inter text-[10px] text-[#1B3C34]/40 tracking-wide pb-1 hidden sm:block">
-                {products.length} pieces
-              </p>
-            </div>
-          </div>
-
-          {/* Filter tabs */}
-          <div className="flex flex-wrap gap-x-5 gap-y-2 md:gap-6 mb-8 md:mb-10 border-b border-[#1B3C34]/10 pb-4">
+    <div className={`${stickyClass}`}>
+      <div
+        className={`max-w-[1400px] mx-auto ${variant === 'page' ? 'px-4 md:px-8' : 'px-4 md:px-8'}`}
+      >
+        {/* Scrollable wrapper with right-edge fade */}
+        <div className="relative">
+          <div className="flex gap-x-6 md:gap-x-8 py-3.5 overflow-x-auto scrollbar-hide"
+            style={{ WebkitOverflowScrolling: 'touch' }}>
             {categories.map((cat) => {
               const isActive = active === cat
               return (
                 <button
                   key={cat}
-                  onClick={() => setActive(cat)}
-                  className={`font-inter text-[11px] tracking-[0.2em] md:tracking-[0.25em] uppercase py-2 md:py-0 md:pb-1 transition-all duration-200 ${
-                    isActive
-                      ? 'text-[#1B3C34] border-b-2 border-[#1B3C34]'
-                      : 'text-[#1B3C34]/40 hover:text-[#1B3C34]/70'
+                  onClick={() => onChange(cat)}
+                  className={`relative flex-shrink-0 font-inter text-[10px] md:text-[10.5px] tracking-[0.28em] uppercase pb-2 transition-colors duration-200 ${
+                    variant === 'page'
+                      ? (isActive ? 'text-white' : 'text-white/50 hover:text-white/80')
+                      : (isActive ? 'text-[#1B3C34]' : 'text-[#1B3C34]/40 hover:text-[#1B3C34]/70')
                   }`}
                 >
                   {cat}
+                  {isActive && (
+                    <motion.div
+                      layoutId={layoutId}
+                      className={`absolute bottom-0 left-0 right-0 h-[1.5px] ${variant === 'page' ? 'bg-white' : 'bg-[#1B3C34]'}`}
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
+                  )}
                 </button>
               )
             })}
           </div>
+          {/* Right fade mask */}
+          <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-10 ${
+            variant === 'page' ? 'bg-gradient-to-l from-[#0A1C17] to-transparent' : 'bg-gradient-to-l from-[#FAF5E8] to-transparent'
+          } md:hidden`} />
+        </div>
+      </div>
+    </div>
+  )
+}
 
-          {/* Product grid */}
+// ── Main Export ──────────────────────────────────────────────────────────────
+export default function Shop({ variant = 'section' }: { variant?: ShopVariant }) {
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const headingRef = useRef<HTMLDivElement>(null)
+  const [active, setActive]      = useState<Category>('All')
+  const [modalProduct, setModal] = useState<ProductDetail | null>(null)
+  const filterLayoutId = useId()
+  const prefersReducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (variant === 'page') return // header lives outside this component
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        headingRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+          scrollTrigger: { trigger: headingRef.current, start: 'top 78%' },
+        }
+      )
+    }, sectionRef)
+    return () => ctx.revert()
+  }, [variant])
+
+  const filtered = active === 'All' ? products : products.filter((p) => p.category === active)
+
+  const DETAIL_THEME = {
+    bg: '#FAF5E8',
+    text: '#1B3C34',
+    accent: '#1B3C34',
+    border: 'rgba(27,60,52,0.1)',
+    subtleText: 'rgba(27,60,52,0.6)',
+    font: 'light' as const,
+    hideShadow: true,
+  }
+
+  return (
+    <>
+      <section
+        ref={sectionRef}
+        id="shop"
+        className={`relative ${variant === 'section' ? 'bg-[#FAF5E8] py-12 md:py-24' : 'pb-16 md:pb-24'}`}
+      >
+        {/* Section heading — only shown when used as a landing-page section */}
+        {variant === 'section' && (
+          <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+            <div ref={headingRef} className="mb-6 md:mb-10">
+              <p className="font-inter text-[10px] tracking-[0.4em] md:tracking-[0.5em] uppercase text-[#1B3C34]/50 mb-3">
+                Shop The Collection
+              </p>
+              <div className="flex items-end justify-between gap-4 border-b border-[#1B3C34]/10 pb-5">
+                <h2 className="font-cormorant font-light text-[2.2rem] md:text-5xl tracking-tight text-[#1B3C34] uppercase">
+                  New Season
+                </h2>
+                <p className="font-inter text-[10px] text-[#1B3C34]/40 tracking-wide pb-1 hidden sm:block">
+                  {products.length} pieces
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter bar */}
+        <FilterBar
+          active={active}
+          onChange={setActive}
+          variant={variant}
+          layoutId={filterLayoutId}
+        />
+
+        {/* Product grid */}
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 pt-8 md:pt-10">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-px bg-[#1B3C34]/10 -mx-4 md:mx-0 md:bg-transparent md:gap-x-4 md:gap-y-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-            >
-              {filtered.map((product, i) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  index={i}
-                  onOpen={setModal}
-                />
-              ))}
-            </motion.div>
+            {filtered.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="py-24 text-center"
+              >
+                <p className="font-cormorant text-2xl text-[#1B3C34]/40 italic mb-2">
+                  No pieces found in this category yet.
+                </p>
+                <p className="font-inter text-[10px] tracking-[0.3em] uppercase text-[#1B3C34]/25">
+                  Check back soon
+                </p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={active}
+                className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-16"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22 }}
+              >
+                {filtered.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={i}
+                    onOpen={setModal}
+                  />
+                ))}
+              </motion.div>
+            )}
           </AnimatePresence>
-
         </div>
       </section>
 
-      {/* Product Detail — only mount when a product is selected so body scroll is not locked on load */}
+      {/* Product Detail Modal */}
       {modalProduct && (
         <ProductDetailComponent
           product={{
@@ -414,15 +547,7 @@ export default function Shop() {
             sizes: modalProduct.sizes,
             badge: modalProduct.badge,
           }}
-          theme={{
-            bg: '#FAF5E8',
-            text: '#1B3C34',
-            accent: '#1B3C34',
-            border: 'rgba(27,60,52,0.1)',
-            subtleText: 'rgba(27,60,52,0.6)',
-            font: 'light',
-            hideShadow: true,
-          }}
+          theme={DETAIL_THEME}
           onClose={() => setModal(null)}
         />
       )}

@@ -230,6 +230,9 @@ export default function ProductShowcase({
   const pointerStartY = useRef(0)
   const progressOnDragStart = useRef(initialIndex)
   const dragAxis = useRef<'h' | 'v' | null>(null)
+  // Touch handlers for mobile (no overlay div — keeps native scroll intact)
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
 
   const [isCenterHovered, setIsCenterHovered] = useState(false)
 
@@ -303,26 +306,38 @@ export default function ProductShowcase({
     pointerStartY.current = e.clientY
     progressOnDragStart.current = progress.get()
     dragAxis.current = null
-    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    // NOTE: Do NOT setPointerCapture here — doing so immediately blocks native
+    // vertical scroll. We capture only once we confirm a horizontal drag below.
   }, [progress])
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
-    if (!(e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) return
     const dx = e.clientX - pointerStartX.current
     const dy = e.clientY - pointerStartY.current
+    const el = e.currentTarget as HTMLElement
+
+    // Axis not yet determined — wait until movement is clear enough
     if (!dragAxis.current) {
-      if (Math.abs(dx) > Math.abs(dy) + 4) dragAxis.current = 'h'
-      else if (Math.abs(dy) > Math.abs(dx) + 4) dragAxis.current = 'v'
+      if (Math.abs(dx) > Math.abs(dy) + 4) {
+        dragAxis.current = 'h'
+        // Only capture pointer once we're sure it's a horizontal swipe
+        el.setPointerCapture(e.pointerId)
+      } else if (Math.abs(dy) > Math.abs(dx) + 4) {
+        dragAxis.current = 'v'
+        // Vertical — release capture so the browser can scroll natively
+        if (el.hasPointerCapture(e.pointerId)) el.releasePointerCapture(e.pointerId)
+      }
       return
     }
+
     if (dragAxis.current === 'v') return
+    if (!el.hasPointerCapture(e.pointerId)) return
+
+    if (Math.abs(dx) > 5) isDraggingRef.current = true
     e.preventDefault()
-    
+
     // Scale drag distance: dragging 1 item width = 1 progress unit
     const dragScale = dx / (config.width * 0.8)
     progress.set(progressOnDragStart.current - dragScale)
-    
-    if (Math.abs(dx) > 5) isDraggingRef.current = true
   }, [progress, config.width])
 
   const handlePointerUp = useCallback((e: React.PointerEvent) => {
@@ -381,7 +396,7 @@ export default function ProductShowcase({
       onMouseEnter={() => setIsCenterHovered(true)}
       onMouseLeave={() => setIsCenterHovered(false)}
       className="absolute inset-0 z-50 cursor-grab active:cursor-grabbing"
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'pan-y' }}
     />
   )
 
@@ -415,8 +430,8 @@ export default function ProductShowcase({
         role="region"
         aria-roledescription="carousel"
         aria-label="Product Showcase"
-        className="relative bg-[#FAF5E8] overflow-hidden select-none"
-        style={{ paddingTop: isMobile ? '3.5rem' : '5rem' }}
+        className="relative bg-[#FAF5E8] select-none"
+        style={{ paddingTop: isMobile ? '3.5rem' : '5rem', overflowX: 'clip' }}
       >
 
         {/* Ambient orb */}
@@ -585,9 +600,35 @@ export default function ProductShowcase({
               </div>
             </div>
 
-            {/* Fan Stage */}
-            <div className="relative w-full flex items-end justify-center" style={{ height: config.height }}>
-              {DragLayer}
+            {/* Fan Stage — touch handled directly on container, no overlay */}
+            <div
+              className="relative w-full flex items-end justify-center"
+              style={{ height: config.height, touchAction: 'pan-y' }}
+              onTouchStart={(e) => {
+                touchStartX.current = e.touches[0].clientX
+                touchStartY.current = e.touches[0].clientY
+                progressOnDragStart.current = progress.get()
+                isDraggingRef.current = false
+              }}
+              onTouchEnd={(e) => {
+                const dx = e.changedTouches[0].clientX - touchStartX.current
+                const dy = e.changedTouches[0].clientY - touchStartY.current
+                // Only treat as horizontal swipe if clearly more horizontal than vertical
+                if (Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 30) {
+                  isDraggingRef.current = true
+                  let target = Math.round(progressOnDragStart.current)
+                  if (dx < 0) target = Math.round(progressOnDragStart.current) + 1
+                  else target = Math.round(progressOnDragStart.current) - 1
+                  animate(progress, target, transition)
+                  setActiveIndex(((target % total) + total) % total)
+                  setTimeout(() => { isDraggingRef.current = false }, 300)
+                }
+              }}
+              onClick={(e) => {
+                if (isDraggingRef.current) return
+                onProductClick ? onProductClick(activeProduct) : setSelectedProduct(activeProduct)
+              }}
+            >
               {Cards}
             </div>
 
