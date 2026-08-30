@@ -230,9 +230,11 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
   // Lock body scroll while open
   useEffect(() => {
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
-  }, [])
+    if (product) {
+      document.body.style.overflow = 'hidden'
+      return () => { document.body.style.overflow = '' }
+    }
+  }, [product])
 
   if (prefersReducedMotion) {
     if (!product) return null

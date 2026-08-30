@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSmoothScroll } from '../hooks'
+// import { useSmoothScroll } from '../hooks'
 import { Navbar, Cart, ViewToggle } from '../components'
 import {
   Home,
@@ -11,7 +11,7 @@ import {
 } from '../sections'
 
 export default function MainLayout() {
-  useSmoothScroll()
+  // useSmoothScroll()
   const [mobilePreview, setMobilePreview] = useState(false)
 
   useEffect(() => {
@@ -22,7 +22,7 @@ export default function MainLayout() {
   return (
     <>
       <div
-        className={`bg-[#FAF5E8] text-[#1B3C34] overflow-x-clip transition-all duration-300 ${
+        className={`bg-[#FAF5E8] text-[#1B3C34] transition-all duration-300 ${
           mobilePreview
             ? 'max-w-[390px] mx-auto shadow-[0_0_0_1px_rgba(0,0,0,0.15),0_20px_60px_rgba(0,0,0,0.35)]'
             : ''
