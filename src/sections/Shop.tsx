@@ -264,7 +264,7 @@ function ProductCard({
 
         {/* Carousel dots */}
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none">
+          <div className={`absolute bottom-5 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none transition-all duration-400 ease-out ${picking ? 'opacity-0' : 'md:group-hover:-translate-y-14'}`}>
             {images.map((_, i) => (
               <div
                 key={i}
