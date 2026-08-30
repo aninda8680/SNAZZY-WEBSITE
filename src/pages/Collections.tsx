@@ -43,7 +43,7 @@ function CollectionsHeader() {
           animate={animate}
           transition={{ duration: 0.55, ease, delay: prefersReducedMotion ? 0 : 0.1 }}
         >
-          Full&nbsp;
+          Full{' '}
           <em className="not-italic" style={{ fontStyle: 'italic' }}>Collection</em>
         </motion.h1>
 

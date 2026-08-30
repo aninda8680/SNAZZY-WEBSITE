@@ -115,6 +115,7 @@ export default function ProductModal({ product, onClose }: Props) {
       document.body.style.position = ''
       document.body.style.top      = ''
       document.body.style.width    = ''
+      window.scrollTo(0, scrollYRef.current)
       window.dispatchEvent(new Event('lenis-resume'))
     }
   }, [product])

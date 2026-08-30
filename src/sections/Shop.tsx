@@ -383,7 +383,7 @@ function FilterBar({
       >
         {/* Scrollable wrapper with right-edge fade */}
         <div className="relative">
-          <div className="flex gap-x-6 md:gap-x-8 py-3.5 overflow-x-auto scrollbar-hide"
+          <div className="flex w-max max-w-full mx-auto gap-x-6 md:gap-x-8 py-3.5 overflow-x-auto scrollbar-hide"
             style={{ WebkitOverflowScrolling: 'touch' }}>
             {categories.map((cat) => {
               const isActive = active === cat
