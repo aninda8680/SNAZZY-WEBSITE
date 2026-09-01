@@ -119,6 +119,28 @@ function ImageGallery({
     }
   }
 
+  const touchStartX = useRef<number | null>(null)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || isAnimating.current) return
+    const touchEndX = e.changedTouches[0].clientX
+    const deltaX = touchStartX.current - touchEndX
+
+    // Require a minimum swipe distance of 50px
+    if (Math.abs(deltaX) > 50) {
+      if (deltaX > 0 && activeIndex < images.length - 1) {
+        changeImage(activeIndex + 1) // swipe left -> next image
+      } else if (deltaX < 0 && activeIndex > 0) {
+        changeImage(activeIndex - 1) // swipe right -> prev image
+      }
+    }
+    touchStartX.current = null
+  }
+
   const imageSlideVariants = {
     initial: (dir: number) => ({
       opacity: 0,
@@ -138,6 +160,8 @@ function ImageGallery({
     <div 
       className="relative w-full h-full overflow-hidden flex"
       onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Dot indicator */}
       {images.length > 1 && (
