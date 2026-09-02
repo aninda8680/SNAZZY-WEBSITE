@@ -1,87 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useMotionValue, animate, useTransform, MotionValue } from 'framer-motion'
 import { ChevronLeft, ChevronRight, ArrowRight, Eye } from 'lucide-react'
-import ProductDetail, { type ProductDetailData } from '../components/ProductDetail'
-
-// --- Types & Defaults ---------------------------------------------------------
-
-export interface ShowcaseProduct extends Omit<Partial<ProductDetailData>, 'id'> {
-  id: number | string
-  name: string
-  price: string
-  images: string[]
-  category?: string
-  description?: string
-  bullets?: string[]
-  sizes?: string[]
-  badge?: string
-}
-
-export const DEFAULT_SHOWCASE_PRODUCTS: ShowcaseProduct[] = [
-  {
-    id: 1, name: 'Snazzy Tee — T1', category: "Men's T-Shirts",
-    description: 'Our signature piece — a 220gsm heavyweight cotton tee with precision embroidery across the chest.',
-    bullets: ['Material: 100% combed ring-spun cotton, 220gsm', 'Care: Machine wash cold (30°C), inside out.'],
-    images: ['/images/nobg/t1-front-nobg.png', '/images/nobg/t1-back-nobg.png'],
-    price: '₹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bestseller',
-  },
-  {
-    id: 2, name: 'Snazzy Tee — T2', category: "Men's T-Shirts",
-    description: 'From the latest streetwear drop — bold embroidered branding on a relaxed-fit silhouette.',
-    bullets: ['Material: 100% combed cotton, 220gsm. Boxy oversized fit.'],
-    images: ['/images/nobg/t2-front-nobg.png', '/images/nobg/t2-back-nobg.png'],
-    price: '₹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
-  },
-  {
-    id: 3, name: 'Snazzy Tee — T3', category: "Men's T-Shirts",
-    description: 'Statement embroidery meets everyday comfort.',
-    bullets: ['Material: 100% combed cotton, 220gsm. Regular fit.'],
-    images: ['/images/nobg/t3-front-nobg.png', '/images/nobg/t3-back-nobg.png'],
-    price: '₹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
-  },
-  {
-    id: 4, name: 'Snazzy Tee — T4', category: "Men's T-Shirts",
-    description: "Part of our limited seasonal run — once it's gone, it's gone.",
-    bullets: ['Material: 100% combed cotton, 220gsm. Slim regular fit.'],
-    images: ['/images/nobg/t4-front-nobg.png', '/images/nobg/t4-back-nobg.png'],
-    price: '₹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Limited',
-  },
-  {
-    id: 5, name: 'Snazzy Tee — T5', category: "Men's T-Shirts",
-    description: 'Our heaviest tee — 260gsm fabric with a structured boxy silhouette.',
-    bullets: ['Material: 100% combed cotton, 260gsm. Oversized boxy fit.'],
-    images: ['/images/nobg/t5-front-nobg.png', '/images/nobg/t5-back-nobg.png'],
-    price: '₹1,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Bold',
-  },
-  {
-    id: 6, name: "Women's Tee — G1", category: "Women's T-Shirts",
-    description: 'A relaxed-fit tee in our softest cotton fabric, with delicate embroidery that elevates without overpowering.',
-    bullets: ['Material: 100% combed cotton, 180gsm. Relaxed cropped fit.'],
-    images: ['/images/nobg/grl-t1-front-nobg.png', '/images/nobg/grl-t1-back-nobg.png'],
-    price: '₹1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'New',
-  },
-  {
-    id: 7, name: "Women's Tee — G2", category: "Women's T-Shirts",
-    description: 'The dropped shoulder gives an effortless off-duty feel while the embroidered detail keeps it distinctly Snazzy.',
-    bullets: ['Material: 100% combed cotton, 180gsm. Drop-shoulder construction.'],
-    images: ['/images/nobg/grl-t2-front-nobg.png', '/images/nobg/grl-t2-back-nobg.png'],
-    price: '₹1,399', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Popular',
-  },
-  {
-    id: 8, name: 'Snazzy Hoodie', category: 'Hoodies',
-    description: 'A heavyweight French terry hoodie built for year-round comfort with a clean, minimal Snazzy aesthetic.',
-    bullets: ['Material: 100% combed cotton, 320gsm French terry. Relaxed fit.'],
-    images: ['/images/nobg/hoodie-front-nobg.png', '/images/nobg/hoodie-back-nobg.png'],
-    price: '₹2,499', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Fan Favourite',
-  },
-  {
-    id: 9, name: 'Snazzy Sweatshirt', category: 'Sweatshirts',
-    description: 'Structured premium fabric meets relaxed Snazzy tailoring. A versatile piece that transitions effortlessly.',
-    bullets: ['Material: 100% combed cotton, 300gsm. Regular fit.'],
-    images: ['/images/nobg/sweatshirt-front-nobg.png', '/images/nobg/sweatshirt-back-nobg.png'],
-    price: '₹1,799', sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'], badge: 'Classic',
-  },
-]
+import { useNavigate } from 'react-router-dom'
+import { MAIN_PRODUCTS, type ProductData as ShowcaseProduct } from '../data/products'
 
 const DETAIL_THEME = {
   bg: '#FAF5E8', text: '#1B3C34', accent: '#1B3C34',
@@ -206,7 +127,7 @@ export interface ProductShowcaseProps {
 }
 
 export default function ProductShowcase({
-  products = DEFAULT_SHOWCASE_PRODUCTS,
+  products = MAIN_PRODUCTS,
   autoplay = true,
   autoplayInterval = 3500,
   eyebrow = 'THE COLLECTION',
@@ -223,7 +144,7 @@ export default function ProductShowcase({
     total > 0 ? Math.min(Math.max(initialIndex, 0), total - 1) : 0
   )
   
-  const [selectedProduct, setSelectedProduct] = useState<ShowcaseProduct | null>(null)
+  const navigate = useNavigate()
 
   const isDraggingRef = useRef(false)
   const pointerStartX = useRef(0)
@@ -285,20 +206,20 @@ export default function ProductShowcase({
   useEffect(() => { nextRef.current = next }, [next])
 
   useEffect(() => {
-    if (!autoplay || prefersReducedMotion || total <= 1 || selectedProduct) return
+    if (!autoplay || prefersReducedMotion || total <= 1 ) return
     const t = setInterval(() => nextRef.current(), autoplayInterval)
     return () => clearInterval(t)
-  }, [autoplay, prefersReducedMotion, total, selectedProduct, autoplayInterval])
+  }, [autoplay, prefersReducedMotion, total, autoplayInterval])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (selectedProduct) return
+      
       if (e.key === 'ArrowRight') next()
       if (e.key === 'ArrowLeft') prev()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [next, prev, selectedProduct])
+  }, [next, prev])
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     isDraggingRef.current = false
@@ -380,7 +301,7 @@ export default function ProductShowcase({
     const w = rect.width
     if (x < w / 3) prev()
     else if (x > (w * 2) / 3) next()
-    else onProductClick ? onProductClick(activeProduct) : setSelectedProduct(activeProduct)
+    else onProductClick ? onProductClick(activeProduct) : navigate(`/product/${activeProduct.slug}`)
   }
 
   const idxStr   = String(activeIndex + 1).padStart(2, '0')
@@ -419,12 +340,7 @@ export default function ProductShowcase({
 
   return (
     <>
-      <ProductDetail
-        product={selectedProduct as ProductDetailData | null}
-        onClose={() => setSelectedProduct(null)}
-        theme={DETAIL_THEME}
-      />
-
+      
       <section
         id="collection"
         role="region"
@@ -501,7 +417,7 @@ export default function ProductShowcase({
                     </span>
                   )}
                   <button
-                    onClick={() => onProductClick ? onProductClick(activeProduct) : setSelectedProduct(activeProduct)}
+                    onClick={() => onProductClick ? onProductClick(activeProduct) : navigate(`/product/${activeProduct.slug}`)}
                     className="group flex items-center gap-2.5 font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/45 hover:text-[#1B3C34] transition-colors duration-300 cursor-pointer"
                   >
                     <span>View Details</span>
@@ -626,7 +542,7 @@ export default function ProductShowcase({
               }}
               onClick={(e) => {
                 if (isDraggingRef.current) return
-                onProductClick ? onProductClick(activeProduct) : setSelectedProduct(activeProduct)
+                onProductClick ? onProductClick(activeProduct) : navigate(`/product/${activeProduct.slug}`)
               }}
             >
               {Cards}
@@ -671,7 +587,7 @@ export default function ProductShowcase({
                   {activeProduct.price}
                 </p>
                 <button
-                  onClick={() => onProductClick ? onProductClick(activeProduct) : setSelectedProduct(activeProduct)}
+                  onClick={() => onProductClick ? onProductClick(activeProduct) : navigate(`/product/${activeProduct.slug}`)}
                   className="flex items-center gap-2 font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/45 hover:text-[#1B3C34] transition-colors duration-200 cursor-pointer group"
                 >
                   <span>View Details</span>

@@ -1,20 +1,11 @@
+import { type ProductData } from '../data/products'
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X, ShoppingBag, Plus, Minus } from 'lucide-react'
 
 // ─── Data Contract ────────────────────────────────────────────────────────────
 
-export interface ProductDetailData {
-  id: number
-  name: string
-  category: string
-  description: string
-  bullets: string[]
-  images: string[]
-  price: string
-  sizes: string[]
-  badge?: string
-}
+
 
 export interface ProductDetailTheme {
   bg: string
@@ -27,7 +18,7 @@ export interface ProductDetailTheme {
 }
 
 export interface ProductDetailProps {
-  product: ProductDetailData | null
+  product: ProductData | null
   theme: ProductDetailTheme
   onClose: () => void
 }
@@ -120,18 +111,22 @@ function ImageGallery({
   }
 
   const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
   }
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || isAnimating.current) return
+    if (touchStartX.current === null || touchStartY.current === null || isAnimating.current) return
     const touchEndX = e.changedTouches[0].clientX
+    const touchEndY = e.changedTouches[0].clientY
     const deltaX = touchStartX.current - touchEndX
+    const deltaY = touchStartY.current - touchEndY
 
-    // Require a minimum swipe distance of 50px
-    if (Math.abs(deltaX) > 50) {
+    // Only treat as horizontal swipe if clearly more horizontal than vertical
+    if (Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && Math.abs(deltaX) > 30) {
       if (deltaX > 0 && activeIndex < images.length - 1) {
         changeImage(activeIndex + 1) // swipe left -> next image
       } else if (deltaX < 0 && activeIndex > 0) {
@@ -139,6 +134,7 @@ function ImageGallery({
       }
     }
     touchStartX.current = null
+    touchStartY.current = null
   }
 
   const imageSlideVariants = {
@@ -159,6 +155,7 @@ function ImageGallery({
   return (
     <div 
       className="relative w-full h-full overflow-hidden flex"
+      style={{ touchAction: 'pan-y' }}
       onWheel={handleWheel}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -195,7 +192,7 @@ function ImageGallery({
           onAnimationComplete={() => { isAnimating.current = false }}
           src={images[activeIndex]}
           alt={`${name} — view ${activeIndex + 1}`}
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          className="absolute inset-0 w-full h-full object-contain object-center"
           style={{
             // Creates a sharp white line (1st shadow) and a soft aesthetic glow (2nd shadow) behind the exact shape of the image
             filter: hideShadow ? 'none' : 'drop-shadow(0 0 1px rgba(255, 255, 255, 1)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.25))'
@@ -227,9 +224,9 @@ function SizeSelector({
             onClick={() => setSelected(size)}
             className="font-inter text-[11px] tracking-wider w-14 h-12 border transition-all duration-200 cursor-pointer"
             style={{
-              borderColor: isActive ? theme.accent : theme.border,
-              color: isActive ? theme.text : theme.subtleText,
-              backgroundColor: isActive ? `${theme.accent}10` : 'transparent',
+              borderColor: isActive ? theme.text : theme.border,
+              color: isActive ? theme.bg : theme.text,
+              backgroundColor: isActive ? theme.text : 'transparent',
             }}
           >
             {size}
@@ -252,13 +249,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
     return () => window.removeEventListener('keydown', onKey)
   }, [onClose])
 
-  // Lock body scroll while open
-  useEffect(() => {
-    if (product) {
-      document.body.style.overflow = 'hidden'
-      return () => { document.body.style.overflow = '' }
-    }
-  }, [product])
+
 
   if (prefersReducedMotion) {
     if (!product) return null
@@ -266,7 +257,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
     const isMissingData = !theme || !product.images || product.images.length === 0 || !product.name;
     if (isMissingData) {
       return (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#FAF5E8]" onClick={onClose}>
+        <div className="w-full h-screen flex items-center justify-center overflow-hidden bg-[#FAF5E8]" onClick={onClose}>
           <div className="flex flex-col items-center gap-4">
             <p className="font-inter text-sm tracking-widest uppercase text-[#1B3C34]/60">
               Couldn't load product
@@ -284,7 +275,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
     return (
       <div
-        className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
+        className="w-full h-[100dvh] flex items-stretch overflow-hidden"
         style={{ backgroundColor: theme.bg }}
       >
         <StaticLayout product={product} theme={theme} onClose={onClose} />
@@ -302,7 +293,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[300] flex items-center justify-center overflow-hidden bg-[#FAF5E8]"
+          className="w-full h-[100dvh] flex items-center justify-center overflow-hidden bg-[#FAF5E8]"
           onClick={onClose}
         >
           <div className="flex flex-col items-center gap-4">
@@ -324,7 +315,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="fixed inset-0 z-[300] flex items-stretch overflow-hidden"
+        className="w-full h-[100dvh] flex items-stretch overflow-hidden"
         style={{ backgroundColor: theme.bg }}
         onClick={onClose}
       >
@@ -414,7 +405,7 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="w-full h-[65vh] md:h-auto min-h-[400px] md:min-h-0 md:flex-1 relative overflow-hidden pt-12 px-0 md:px-8 lg:pt-20 lg:px-20 pb-0 flex-shrink-0 order-1 md:order-2"
+            className="w-full h-[65vh] md:h-auto min-h-[400px] md:min-h-0 md:flex-1 relative overflow-hidden pt-12 px-0 md:px-12 md:pt-16 lg:pt-24 lg:px-32 pb-0 md:pb-12 flex-shrink-0 order-1 md:order-2"
           >
             <ImageGallery
               images={product.images}
@@ -464,26 +455,25 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Add to Bag */}
             <button
-              className="group relative w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-all duration-300 flex items-center justify-center gap-3 cursor-pointer"
+              className="group relative w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-colors duration-300 flex items-center justify-center gap-3 cursor-pointer"
               style={{
-                border: `1px solid ${theme.accent}50`,
+                border: `1px solid ${theme.text}`,
                 color: theme.text,
+                backgroundColor: 'transparent',
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLElement
-                el.style.borderColor = theme.accent
+                el.style.backgroundColor = theme.text
+                el.style.color = theme.bg
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget as HTMLElement
-                el.style.borderColor = `${theme.accent}50`
+                el.style.backgroundColor = 'transparent'
+                el.style.color = theme.text
               }}
             >
-              <span
-                className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-500"
-                style={{ backgroundColor: `${theme.accent}08` }}
-              />
-              <ShoppingBag className="relative w-4 h-4" strokeWidth={1.5} />
-              <span className="relative">Add to Bag</span>
+              <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
+              <span>Add to Bag</span>
             </button>
 
             {/* Size guide */}
@@ -508,7 +498,7 @@ function StaticLayout({
   theme,
   onClose,
 }: {
-  product: ProductDetailData
+  product: ProductData
   theme: ProductDetailTheme
   onClose: () => void
 }) {
@@ -562,7 +552,20 @@ function StaticLayout({
       >
         <p className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl tracking-wide mb-8 md:mb-10" style={{ color: theme.text }}>{product.price}</p>
         <SizeSelector sizes={product.sizes} theme={theme} />
-        <button className="mt-10 w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer" style={{ border: `1px solid ${theme.accent}50`, color: theme.text }}>
+        <button 
+          className="mt-10 w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer transition-colors duration-300" 
+          style={{ border: `1px solid ${theme.text}`, color: theme.text, backgroundColor: 'transparent' }}
+          onMouseEnter={(e) => {
+            const el = e.currentTarget as HTMLElement
+            el.style.backgroundColor = theme.text
+            el.style.color = theme.bg
+          }}
+          onMouseLeave={(e) => {
+            const el = e.currentTarget as HTMLElement
+            el.style.backgroundColor = 'transparent'
+            el.style.color = theme.text
+          }}
+        >
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
           Add to Bag
         </button>

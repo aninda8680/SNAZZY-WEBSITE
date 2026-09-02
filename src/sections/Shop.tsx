@@ -4,164 +4,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Heart, ShoppingBag } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import ProductModal, { type ProductDetail } from '../components/ProductModal'
-import ProductDetailComponent from '../components/ProductDetail'
 import { useNavbarVisibility } from '../hooks'
+import { useNavigate } from 'react-router-dom'
+import { MAIN_PRODUCTS, type ProductData } from '../data/products'
 
 gsap.registerPlugin(ScrollTrigger)
 
 type Category = 'All' | "Men's T-Shirts" | "Women's T-Shirts" | 'Hoodies' | 'Sweatshirts'
 type ShopVariant = 'section' | 'page'
-
-const SIZES_TEE    = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
-const SIZES_HOODIE = ['S', 'M', 'L', 'XL', 'XXL']
-
-const products: ProductDetail[] = [
-  {
-    id: 1,
-    name: 'Snazzy Tee — T1',
-    tagline: 'Premium embroidered cotton tee',
-    category: "Men's T-Shirts",
-    price: '₹1,499',
-    priceNum: 1499,
-    image: '/images/nobg/t1-front-nobg.png',
-    hoverImage: '/images/nobg/t1-back-nobg.png',
-    badge: 'Bestseller',
-    description:
-      'Our signature piece — a 220gsm heavyweight cotton tee with precision embroidery across the chest. Designed for those who believe clothing should say something. Structured fit that holds its shape wash after wash.',
-    sizes: SIZES_TEE,
-    material: '100% combed ring-spun cotton, 220gsm. Ribbed crew neck. Pre-shrunk fabric.',
-    care: 'Machine wash cold (30°C), inside out. Do not tumble dry. Iron on reverse. Do not bleach.',
-  },
-  {
-    id: 2,
-    name: 'Snazzy Tee — T2',
-    tagline: 'Signature streetwear drop',
-    category: "Men's T-Shirts",
-    price: '₹1,499',
-    priceNum: 1499,
-    image: '/images/nobg/t2-front-nobg.png',
-    hoverImage: '/images/nobg/t2-back-nobg.png',
-    badge: 'New',
-    description:
-      'From the latest streetwear drop — bold embroidered branding on a relaxed-fit silhouette. The dropped shoulder and boxy cut make this an instant wardrobe anchor for any season.',
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 220gsm. Boxy oversized fit. Reinforced seams.',
-    care: 'Machine wash cold. Turn inside out before washing. Hang to dry. Do not iron directly on embroidery.',
-  },
-  {
-    id: 3,
-    name: 'Snazzy Tee — T3',
-    tagline: 'Bold graphic on 220gsm cotton',
-    category: "Men's T-Shirts",
-    price: '₹1,499',
-    priceNum: 1499,
-    image: '/images/nobg/t3-front-nobg.png',
-    hoverImage: '/images/nobg/t3-back-nobg.png',
-    badge: 'Popular',
-    description:
-      'Statement embroidery meets everyday comfort. The T3 features a bold graphic design rendered in high-density thread on 220gsm cotton. A piece that gets better with every wear.',
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 220gsm. Regular fit. Double-stitched hems for durability.',
-    care: 'Cold machine wash. Turn inside out. Hang dry. Iron on low heat avoiding embroidered areas.',
-  },
-  {
-    id: 4,
-    name: 'Snazzy Tee — T4',
-    tagline: 'Limited season drop',
-    category: "Men's T-Shirts",
-    price: '₹1,499',
-    priceNum: 1499,
-    image: '/images/nobg/t4-front-nobg.png',
-    hoverImage: '/images/nobg/t4-back-nobg.png',
-    badge: 'Limited',
-    description:
-      "Part of our limited seasonal run — once it's gone, it's gone. The T4 features exclusive embroidery artwork produced in a single run of 100 units. No restocks, no second chances.",
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 220gsm. Slim regular fit. Pre-washed for minimal shrinkage.',
-    care: 'Hand wash or gentle cycle cold. Lay flat to dry. Do not wring or bleach.',
-  },
-  {
-    id: 5,
-    name: 'Snazzy Tee — T5',
-    tagline: 'Heavyweight oversized fit',
-    category: "Men's T-Shirts",
-    price: '₹1,499',
-    priceNum: 1499,
-    image: '/images/t5-front.png',
-    hoverImage: '/images/t5-back.png',
-    badge: 'Bold',
-    description:
-      'Our heaviest tee — 260gsm fabric with a structured boxy silhouette. The oversized cut is intentional, not accidental. Embroidery on chest and sleeve for full coverage brand expression.',
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 260gsm. Oversized boxy fit. Extended back hem. Thick ribbed collar.',
-    care: 'Machine wash 30°C. Turn inside out. Do not tumble dry. Steam press if needed — avoid embroidery.',
-  },
-  {
-    id: 6,
-    name: "Women's Tee — G1",
-    tagline: 'Relaxed fit, premium cotton',
-    category: "Women's T-Shirts",
-    price: '₹1,399',
-    priceNum: 1399,
-    image: '/images/nobg/grl-t1-front-nobg.png',
-    hoverImage: '/images/nobg/grl-t1-back-nobg.png',
-    badge: 'New',
-    description:
-      'Designed for her. A relaxed-fit tee in our softest cotton fabric, with delicate embroidery that elevates without overpowering. The silhouette is slightly cropped with a curved hem.',
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 180gsm. Relaxed cropped fit. Curved hem. Soft-touch finish.',
-    care: 'Machine wash cold, gentle cycle. Reshape while damp. Do not tumble dry. Cool iron on reverse.',
-  },
-  {
-    id: 7,
-    name: "Women's Tee — G2",
-    tagline: 'Soft drop-shoulder silhouette',
-    category: "Women's T-Shirts",
-    price: '₹1,399',
-    priceNum: 1399,
-    image: '/images/nobg/grl-t2-front-nobg.png',
-    hoverImage: '/images/nobg/grl-t2-back-nobg.png',
-    badge: 'Popular',
-    description:
-      'A wardrobe essential reimagined. The dropped shoulder gives an effortless off-duty feel while the embroidered detail keeps it distinctly Snazzy. Pairs with everything.',
-    sizes: SIZES_TEE,
-    material: '100% combed cotton, 180gsm. Drop-shoulder construction. Slightly oversized.',
-    care: 'Machine wash cold. Hang to dry. Iron on low on the back. Do not bleach.',
-  },
-  {
-    id: 8,
-    name: 'Snazzy Hoodie',
-    tagline: 'Fleece-lined premium embroidered hoodie',
-    category: 'Hoodies',
-    price: '₹2,499',
-    priceNum: 2499,
-    image: '/images/nobg/hoodie-front-nobg.png',
-    hoverImage: '/images/nobg/hoodie-back-nobg.png',
-    badge: 'Bestseller',
-    description:
-      'The hoodie that redefines casual. 380gsm fleece-lined fabric with precision chest embroidery, an adjustable drawstring hood, and a kangaroo pocket finished with a woven brand label inside.',
-    sizes: SIZES_HOODIE,
-    material: '80% cotton, 20% polyester, 380gsm. Fleece-lined interior. Ribbed cuffs and hem. Metal eyelets.',
-    care: 'Machine wash 30°C. Turn inside out. Do not tumble dry on high heat. Steam iron if needed.',
-  },
-  {
-    id: 9,
-    name: 'Snazzy Sweatshirt',
-    tagline: '320gsm French terry, embroidered chest',
-    category: 'Sweatshirts',
-    price: '₹1,999',
-    priceNum: 1999,
-    image: '/images/nobg/sweatshirt-front-nobg.png',
-    hoverImage: '/images/nobg/sweatshirt-back-nobg.png',
-    badge: 'Artisan',
-    description:
-      'French terry construction meets artisan embroidery. The crewneck silhouette is clean and versatile — dress it up or down. The 320gsm weight means it keeps its shape without feeling heavy.',
-    sizes: SIZES_HOODIE,
-    material: '80% cotton, 20% polyester, 320gsm. French terry loopback. Ribbed crew neck, cuffs and waistband.',
-    care: 'Machine wash cold, inside out. Reshape while damp. Do not bleach. Cool tumble dry or hang dry.',
-  },
-]
 
 const categories: Category[] = ['All', "Men's T-Shirts", "Women's T-Shirts", 'Hoodies', 'Sweatshirts']
 
@@ -182,11 +32,11 @@ function SkeletonCard() {
 function ProductCard({
   product,
   index,
-  onOpen,
+  onClick,
 }: {
-  product: ProductDetail
+  product: ProductData
   index: number
-  onOpen: (p: ProductDetail) => void
+  onClick: (p: ProductData) => void
 }) {
   const { addItem } = useCart()
   const [picking, setPicking] = useState(false)
@@ -194,7 +44,7 @@ function ProductCard({
   const [imgIndex, setImgIndex] = useState(0)
   const prefersReducedMotion = useReducedMotion()
 
-  const images = [product.image, ...(product.hoverImage ? [product.hoverImage] : [])]
+  const images = product.images
 
   function handleQuickAdd(e: React.MouseEvent) {
     e.stopPropagation()
@@ -225,7 +75,7 @@ function ProductCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
       className="group relative flex flex-col cursor-pointer"
-      onClick={() => !picking && onOpen(product)}
+      onClick={() => !picking && onClick(product)}
     >
       {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden bg-[#F0EAD9]">
@@ -424,7 +274,7 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
   const sectionRef = useRef<HTMLDivElement>(null)
   const headingRef = useRef<HTMLDivElement>(null)
   const [active, setActive]      = useState<Category>('All')
-  const [modalProduct, setModal] = useState<ProductDetail | null>(null)
+  const navigate = useNavigate()
   const filterLayoutId = useId()
   const prefersReducedMotion = useReducedMotion()
 
@@ -443,9 +293,9 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
     return () => ctx.revert()
   }, [variant])
 
-  const filtered = active === 'All' ? products : products.filter((p) => p.category === active)
+  const filtered = active === 'All' ? MAIN_PRODUCTS : MAIN_PRODUCTS.filter((p) => p.category === active)
 
-  const DETAIL_THEME = {
+  /* const DETAIL_THEME = {
     bg: '#FAF5E8',
     text: '#1B3C34',
     accent: '#1B3C34',
@@ -453,7 +303,7 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
     subtleText: 'rgba(27,60,52,0.6)',
     font: 'light' as const,
     hideShadow: true,
-  }
+  } */
 
   return (
     <>
@@ -474,7 +324,7 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
                   New Season
                 </h2>
                 <p className="font-inter text-[10px] text-[#1B3C34]/40 tracking-wide pb-1 hidden sm:block">
-                  {products.length} pieces
+                  {MAIN_PRODUCTS.length} pieces
                 </p>
               </div>
             </div>
@@ -521,7 +371,7 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
                     key={product.id}
                     product={product}
                     index={i}
-                    onOpen={setModal}
+                    onClick={(p) => navigate(`/product/${p.slug}`)}
                   />
                 ))}
               </motion.div>
@@ -529,28 +379,6 @@ export default function Shop({ variant = 'section' }: { variant?: ShopVariant })
           </AnimatePresence>
         </div>
       </section>
-
-      {/* Product Detail Modal */}
-      {modalProduct && (
-        <ProductDetailComponent
-          product={{
-            id: modalProduct.id,
-            name: modalProduct.name,
-            category: modalProduct.category,
-            description: modalProduct.description,
-            bullets: [
-              `Material: ${modalProduct.material}`,
-              `Care: ${modalProduct.care}`,
-            ],
-            images: [modalProduct.image, ...(modalProduct.hoverImage ? [modalProduct.hoverImage] : [])],
-            price: modalProduct.price,
-            sizes: modalProduct.sizes,
-            badge: modalProduct.badge,
-          }}
-          theme={DETAIL_THEME}
-          onClose={() => setModal(null)}
-        />
-      )}
     </>
   )
 }

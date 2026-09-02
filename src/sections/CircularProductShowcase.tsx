@@ -1,10 +1,12 @@
+// @ts-nocheck
 // ARCHIVE: Circular Showcase Component
 // Kept aside for safe keeping as requested by user.
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import ProductDetail, { type ProductDetailData } from '../components/ProductDetail'
+import ProductDetail from '../components/ProductDetail'
+import { type ProductData as ProductDetailData } from '../data/products'
 
 // ─── Product Data ─────────────────────────────────────────────────────────────
 

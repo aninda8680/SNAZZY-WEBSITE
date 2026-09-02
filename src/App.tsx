@@ -22,6 +22,7 @@ import Orders from './pages/Orders'
 import About from './pages/About'
 import Collections from './pages/Collections'
 import Account from './pages/Account'
+import ProductPage from './pages/ProductPage'
 
 // Admin pages
 import AdminLayout from './pages/admin/AdminLayout'
@@ -48,6 +49,9 @@ export default function App() {
               {/* About and Collections */}
               <Route path="/about" element={<About />} />
               <Route path="/collections" element={<Collections />} />
+              
+              {/* Product Page */}
+              <Route path="/product/:slug" element={<ProductPage />} />
 
             {/* Auth */}
             <Route path="/login" element={<Login />} />

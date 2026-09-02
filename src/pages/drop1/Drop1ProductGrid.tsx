@@ -1,95 +1,10 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ShoppingBag } from 'lucide-react'
-import ProductDetail, {
-  type ProductDetailData,
-  type ProductDetailTheme,
-} from '../../components/ProductDetail'
+import { useNavigate } from 'react-router-dom'
+import { DROP1_PRODUCTS, type ProductData } from '../../data/products'
 
-// ─── Drop 1 Theme ─────────────────────────────────────────────────────────────
 
-const DROP1_THEME: ProductDetailTheme = {
-  bg: '#050505',
-  text: '#E8DDCA',
-  accent: '#E8DDCA',
-  border: 'rgba(232,221,202,0.10)',
-  subtleText: 'rgba(232,221,202,0.45)',
-  font: 'dark',
-}
-
-// ─── Product Data ─────────────────────────────────────────────────────────────
-
-const DROP1_PRODUCTS: ProductDetailData[] = [
-  {
-    id: 1,
-    name: 'Snazzy Tee — T1',
-    price: '₹1,499',
-    category: 'T-Shirts',
-    description:
-      'Cut for those who move with intention. The T1 is the cornerstone of Wild Instincts — minimal on the surface, deliberate in every seam.',
-    bullets: ['100% Organic Pima Cotton', 'Regular fit, slightly dropped shoulder', 'Machine wash cold, tumble dry low', 'Pre-shrunk, stonewash finish'],
-    images: ['/images/nobg/t1-front-nobg.png', '/images/nobg/t1-back-nobg.png'],
-    badge: 'Bestseller',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  },
-  {
-    id: 2,
-    name: 'Snazzy Tee — T2',
-    price: '₹1,499',
-    category: 'T-Shirts',
-    description:
-      'A quiet statement. The T2 carries the same exacting construction as the T1, refined with a slightly longer hem and tighter rib collar.',
-    bullets: ['100% Organic Pima Cotton', 'Slim regular fit, longer hem', 'Ribbed crew collar', 'Garment-dyed in small batches'],
-    images: ['/images/nobg/t2-front-nobg.png', '/images/nobg/t2-back-nobg.png'],
-    badge: 'New',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  },
-  {
-    id: 3,
-    name: 'Snazzy Tee — T3',
-    price: '₹1,499',
-    category: 'T-Shirts',
-    description:
-      'The workhorse. The T3 is built for longevity — a heavier weight mid-gauge cotton that softens with every wash without losing its shape.',
-    bullets: ['220 GSM mid-weight cotton', 'Boxy, relaxed fit', 'Reinforced side seams', 'Faded ink graphic — limited run'],
-    images: ['/images/nobg/t3-front-nobg.png', '/images/nobg/t3-back-nobg.png'],
-    badge: 'Popular',
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  },
-  {
-    id: 4,
-    name: 'Snazzy Hoodie — H1',
-    price: '₹2,799',
-    category: 'Hoodies',
-    description:
-      'The weight of purpose. The H1 hoodie is a study in considered construction — brushed inner fleece, an unlined kangaroo pocket, and a hood that actually fits right.',
-    bullets: ['380 GSM brushed fleece interior', 'Oversized, structured silhouette', 'Ribbed cuffs and hem, non-stretch', 'Garment-washed for immediate softness'],
-    images: ['/images/nobg/hoodie-front-nobg.png', '/images/nobg/hoodie-back-nobg.png'],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-  },
-  {
-    id: 5,
-    name: 'Snazzy Sweatshirt — S1',
-    price: '₹2,299',
-    category: 'Sweatshirts',
-    description:
-      'Between seasons, between moments. The S1 crewneck is the layer that grounds every outfit — an honest sweatshirt with no excess.',
-    bullets: ['320 GSM loop-back cotton', 'Classic crewneck, boxy fit', 'Set-in sleeves, clean finish', 'Cold wash recommended to preserve drape'],
-    images: ['/images/nobg/sweatshirt-front-nobg.png', '/images/nobg/sweatshirt-back-nobg.png'],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-  },
-  {
-    id: 6,
-    name: 'Snazzy Tee — T4',
-    price: '₹1,499',
-    category: 'T-Shirts',
-    description:
-      'The outlier in the T-series. The T4 features an extended back hem and a subtle tonal graphic across the chest — for when understated becomes a language.',
-    bullets: ['180 GSM single jersey cotton', 'Relaxed fit, extended back hem', 'Tonal print — barely-there in daylight', 'Narrow rib collar'],
-    images: ['/images/nobg/t4-front-nobg.png', '/images/nobg/t4-back-nobg.png'],
-    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-  },
-]
 
 const CATEGORIES = ['All', 'T-Shirts', 'Hoodies', 'Sweatshirts', 'Accessories']
 
@@ -98,11 +13,11 @@ const CATEGORIES = ['All', 'T-Shirts', 'Hoodies', 'Sweatshirts', 'Accessories']
 function ProductCard({
   product,
   index,
-  onSelect,
+  onClick,
 }: {
-  product: ProductDetailData
+  product: ProductData
   index: number
-  onSelect: (p: ProductDetailData) => void
+  onClick: (p: ProductData) => void
 }) {
   const [hovered, setHovered] = useState(false)
   const prefersReducedMotion = useReducedMotion()
@@ -114,7 +29,7 @@ function ProductCard({
       exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -20 }}
       transition={{ delay: index * 0.05, duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       className="group cursor-pointer"
-      onClick={() => onSelect(product)}
+      onClick={() => onClick(product)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -166,7 +81,7 @@ function ProductCard({
         </div>
         <button
           className="mt-0.5 text-[#E8DDCA]/20 hover:text-[#E8DDCA]/60 transition-colors"
-          onClick={(e) => { e.stopPropagation(); onSelect(product) }}
+          onClick={(e) => { e.stopPropagation(); onClick(product) }}
         >
           <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
         </button>
@@ -188,7 +103,7 @@ export default function Drop1ProductGrid({
   activeCategory,
   setActiveCategory,
 }: Drop1ProductGridProps) {
-  const [selected, setSelected] = useState<ProductDetailData | null>(null)
+  const navigate = useNavigate()
 
   const filteredProducts = DROP1_PRODUCTS.filter(
     (p) => activeCategory === 'All' || p.category === activeCategory
@@ -255,7 +170,7 @@ export default function Drop1ProductGrid({
                     key={product.id}
                     product={product}
                     index={i}
-                    onSelect={setSelected}
+                    onClick={(p) => navigate(`/product/${p.slug}`)}
                   />
                 ))}
               </motion.div>
@@ -283,16 +198,7 @@ export default function Drop1ProductGrid({
         </div>
       </section>
 
-      {/* Universal Product Detail Overlay — rendered at root level so it escapes the section */}
-      <AnimatePresence>
-        {selected && (
-          <ProductDetail
-            product={selected}
-            theme={DROP1_THEME}
-            onClose={() => setSelected(null)}
-          />
-        )}
-      </AnimatePresence>
+
     </>
   )
 }
