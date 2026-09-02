@@ -42,6 +42,7 @@ function ProductCard({
   const [picking, setPicking] = useState(false)
   const [added, setAdded]     = useState<string | null>(null)
   const [imgIndex, setImgIndex] = useState(0)
+  const [hovered, setHovered] = useState(false)
   const prefersReducedMotion = useReducedMotion()
 
   const images = product.images
@@ -73,135 +74,159 @@ function ProductCard({
     <motion.article
       initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.5, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
       className="group relative flex flex-col cursor-pointer"
       onClick={() => !picking && onClick(product)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => { setHovered(false); if (!added) setPicking(false); }}
     >
-      {/* Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#F0EAD9]">
-        <motion.div
-          className="w-full h-full cursor-grab active:cursor-grabbing"
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={(_, { offset, velocity }) => {
-            const swipe = Math.abs(offset.x) * velocity.x
-            if (swipe < -100 || offset.x < -40) {
-              if (imgIndex < images.length - 1) setImgIndex(imgIndex + 1)
-            } else if (swipe > 100 || offset.x > 40) {
-              if (imgIndex > 0) setImgIndex(imgIndex - 1)
-            }
-          }}
-        >
+      {/* Image Container */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-transparent">
+        
+        {/* Swipeable Gallery (All Devices) */}
+        <div className="w-full h-full relative">
           <motion.div
-            className="flex w-full h-full"
-            animate={{ x: `-${imgIndex * 100}%` }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="w-full h-full cursor-grab active:cursor-grabbing"
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(_, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) * velocity.x
+              if (swipe < -100 || offset.x < -40) {
+                if (imgIndex < images.length - 1) setImgIndex(imgIndex + 1)
+              } else if (swipe > 100 || offset.x > 40) {
+                if (imgIndex > 0) setImgIndex(imgIndex - 1)
+              }
+            }}
           >
-            {images.map((img, i) => (
-              <motion.img
-                key={i}
-                src={img}
-                alt={`${product.name} — view ${i + 1}`}
-                className="w-full h-full flex-shrink-0 object-cover pointer-events-none"
-                whileHover={prefersReducedMotion ? {} : { scale: 1.04 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
-              />
-            ))}
+            <motion.div
+              className="flex w-full h-full"
+              animate={{ x: `-${imgIndex * 100}%` }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              {images.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`${product.name} — view ${i + 1}`}
+                  className="w-full h-full flex-shrink-0 object-cover pointer-events-none"
+                  onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
+                />
+              ))}
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </div>
 
-        {/* Carousel dots */}
-        {images.length > 1 && (
-          <div className={`absolute bottom-5 left-0 right-0 flex justify-center gap-1.5 z-10 pointer-events-none transition-all duration-400 ease-out ${picking ? 'opacity-0' : 'md:group-hover:-translate-y-14'}`}>
-            {images.map((_, i) => (
-              <div
-                key={i}
-                className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
-                  i === imgIndex ? 'bg-[#1B3C34]' : 'bg-[#1B3C34]/25'
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Wishlist — desktop only */}
-        <button
-          className="hidden md:flex absolute top-3 right-3 p-1.5 text-[#1B3C34]/30 hover:text-[#1B3C34] transition-colors z-10"
+        {/* Wishlist — elegant fade in on hover */}
+        <motion.button
+          animate={{ opacity: hovered ? 1 : 0 }}
+          initial={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="hidden md:flex absolute top-3 right-3 p-2 text-[#1B3C34]/40 hover:text-[#1B3C34] transition-colors z-20 bg-[#FAF5E8]/60 hover:bg-[#FAF5E8]/95 backdrop-blur-md rounded-full"
           onClick={(e) => e.stopPropagation()}
           aria-label={`Wishlist ${product.name}`}
         >
-          <Heart className="w-4 h-4" />
-        </button>
+          <Heart className="w-3.5 h-3.5" />
+        </motion.button>
 
         {/* Badge */}
         {product.badge && (
-          <span className="hidden md:block absolute top-3 left-3 font-inter text-[9px] tracking-[0.3em] uppercase text-[#1B3C34]/55 bg-[#FAF5E8]/80 backdrop-blur-sm px-2 py-1">
+          <span className="hidden md:block absolute top-3 left-3 font-inter text-[9px] tracking-[0.3em] uppercase text-[#1B3C34]/70 bg-[#FAF5E8]/80 backdrop-blur-md px-2.5 py-1">
             {product.badge}
           </span>
         )}
 
-        {/* Quick Add overlay — desktop hover, separated from swipe area */}
+        {/* Quick Add icon - visible on mobile, positioned down right */}
+        <button
+          onClick={handleQuickAdd}
+          className="md:hidden absolute bottom-3 right-3 p-2 text-[#1B3C34]/80 bg-[#FAF5E8]/70 hover:bg-[#FAF5E8]/95 backdrop-blur-md rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.05)] z-20"
+          aria-label={`Quick Add ${product.name}`}
+        >
+          <ShoppingBag className="w-4 h-4" />
+        </button>
+
+        {/* Elegant Quick Add Drawer */}
         <div
-          className={`hidden md:block absolute inset-x-0 bottom-0 transition-transform duration-400 ease-out ${
-            picking ? 'translate-y-0' : 'translate-y-full group-hover:translate-y-0'
+          className={`absolute inset-x-0 bottom-0 transition-transform duration-500 ease-[0.16,1,0.3,1] z-30 ${
+            picking ? 'translate-y-0' : 'translate-y-full md:group-hover:translate-y-0'
           }`}
         >
-          {!picking ? (
-            <button
-              onClick={handleQuickAdd}
-              className="w-full py-3.5 bg-[#FAF5E8]/96 backdrop-blur-sm font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34] hover:bg-[#1B3C34] hover:text-[#FAF5E8] transition-colors duration-200 flex items-center justify-center gap-2"
-            >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              Quick Add
-            </button>
-          ) : (
-            <div className="bg-[#FAF5E8]/97 backdrop-blur-sm px-3 pt-2.5 pb-3" onClick={(e) => e.stopPropagation()}>
-              {added ? (
-                <p className="text-center font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34] py-2">
-                  Size {added} added ✓
-                </p>
-              ) : (
-                <>
-                  <p className="font-inter text-[9px] tracking-[0.4em] uppercase text-[#1B3C34]/40 text-center mb-2">
-                    Select Size
+          <div className="bg-[#FAF5E8]/80 backdrop-blur-xl border-t border-[#1B3C34]/10 w-full">
+            {!picking ? (
+              <button
+                onClick={handleQuickAdd}
+                className="w-full py-4 hidden md:flex font-inter text-[10px] tracking-[0.3em] uppercase text-[#1B3C34] hover:bg-[#1B3C34]/5 transition-colors duration-200 items-center justify-center gap-2"
+              >
+                <ShoppingBag className="w-3.5 h-3.5" />
+                Quick Add
+              </button>
+            ) : (
+              <div className="px-4 pt-3 pb-4" onClick={(e) => e.stopPropagation()}>
+                {added ? (
+                  <p className="text-center font-inter text-[10px] tracking-[0.35em] uppercase text-[#1B3C34] py-3">
+                    Size {added} Added
                   </p>
-                  <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                    {product.sizes.map((size) => (
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="font-inter text-[9px] tracking-[0.4em] uppercase text-[#1B3C34]/50">
+                        Select Size
+                      </p>
                       <button
-                        key={size}
-                        onClick={(e) => handlePickSize(e, size)}
-                        className="w-9 h-9 border border-[#1B3C34]/20 font-inter text-[11px] text-[#1B3C34] hover:bg-[#1B3C34] hover:text-[#FAF5E8] hover:border-[#1B3C34] transition-colors duration-150"
+                        onClick={handleCancel}
+                        className="font-inter text-[9px] tracking-[0.2em] uppercase text-[#1B3C34]/40 hover:text-[#1B3C34] transition-colors"
                       >
-                        {size}
+                        Close
                       </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={handleCancel}
-                    className="w-full mt-2 font-inter text-[9px] tracking-[0.3em] uppercase text-[#1B3C34]/30 hover:text-[#1B3C34]/60 transition-colors py-1"
-                  >
-                    Cancel
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+                    </div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {product.sizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={(e) => handlePickSize(e, size)}
+                          className="flex-1 min-w-[36px] h-9 border border-[#1B3C34]/15 font-inter text-[10px] tracking-wider text-[#1B3C34] hover:bg-[#1B3C34] hover:text-[#FAF5E8] transition-colors duration-200"
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Info */}
-      <div className="pt-3 pb-4 px-0">
-        <h3 className="font-inter text-[11px] md:text-[12px] tracking-[0.08em] uppercase text-[#1B3C34] leading-snug mb-0.5">
-          {product.name}
-        </h3>
-        <p className="font-cormorant text-[16px] md:text-[18px] text-[#1B3C34] leading-none">
-          {product.price}
-        </p>
-        <p className="font-inter text-[9px] text-[#1B3C34]/35 mt-1 tracking-wide hidden md:block">
-          View details →
-        </p>
+      {/* Seamless Progress Line (Moved below image) */}
+      {images.length > 1 && (
+        <div className="flex gap-0.5 pt-1.5 px-0">
+          {images.map((_, i) => (
+            <div
+              key={i}
+              className={`flex-1 h-[2px] rounded-full transition-colors duration-300 ${
+                i === imgIndex ? 'bg-[#1B3C34]/70' : 'bg-[#1B3C34]/15'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Info Layout */}
+      <div className="pt-3 pb-5 px-0 flex flex-col md:flex-row md:items-start justify-between gap-2 md:gap-4">
+        <div className="flex flex-col flex-1">
+          <h3 className="font-inter font-medium text-[11px] md:text-[12px] tracking-[0.08em] uppercase text-[#1B3C34] leading-snug">
+            {product.name}
+          </h3>
+          <p className="font-inter text-[9px] text-[#1B3C34]/40 mt-1 tracking-wide hidden md:block uppercase">
+            {product.category}
+          </p>
+        </div>
+        <div className="text-left md:text-right flex flex-col items-start md:items-end flex-shrink-0">
+          <p className="font-cormorant text-[16px] md:text-[18px] font-medium text-[#1B3C34] leading-none">
+            {product.price}
+          </p>
+        </div>
       </div>
     </motion.article>
   )

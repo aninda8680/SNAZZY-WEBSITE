@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Instagram, Twitter } from 'lucide-react'
+import logo from '../../assets/logo1.png'
 
 const SHOP_LINKS = [
   { label: "Men's T-Shirts", href: '/collections' },
@@ -22,6 +23,8 @@ const SUPPORT_LINKS = [
 ]
 
 export default function Footer({ transparent = false }: { transparent?: boolean } = {}) {
+  const logoFilter = transparent ? 'brightness-0' : 'brightness-0'
+  // using brightness-0 since background is light and text is dark
   return (
     <footer className={`${transparent ? 'bg-transparent' : 'bg-[#FAF5E8]'} border-t border-[#1B3C34]/10`}>
 
@@ -31,9 +34,13 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
 
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <p className="font-cormorant font-semibold text-[1.6rem] tracking-tight text-[#1B3C34] uppercase mb-2">
-              Snazzy
-            </p>
+            <Link to="/" className="inline-block mb-3">
+              <img
+                src={logo}
+                alt="Snazzy"
+                className="h-10 md:h-12 w-auto object-contain scale-125 origin-left -translate-x-1 brightness-0 opacity-90"
+              />
+            </Link>
             <p className="font-inter font-light text-[12px] leading-[1.8] text-[#1B3C34]/50 max-w-[200px] mb-5">
               Premium embroidered streetwear. Handcrafted in India, worn by the world.
             </p>
