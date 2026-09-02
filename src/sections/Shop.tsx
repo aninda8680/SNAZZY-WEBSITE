@@ -109,7 +109,7 @@ function ProductCard({
                   key={i}
                   src={img}
                   alt={`${product.name} — view ${i + 1}`}
-                  className="w-full h-full flex-shrink-0 object-cover pointer-events-none"
+                  className="w-full h-full flex-shrink-0 object-cover object-top pointer-events-none"
                   onError={(e) => ((e.target as HTMLImageElement).style.opacity = '0')}
                 />
               ))}
