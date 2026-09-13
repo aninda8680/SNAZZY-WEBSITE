@@ -11,6 +11,7 @@ const SHOP_LINKS = [
 
 const ABOUT_LINKS = [
   { label: 'Our Story', href: '/about' },
+  { label: 'Our Heritage', href: '/heritage' },
   { label: 'The Craft', href: '/about#brand' },
   { label: 'Drop Calendar', href: '/#drops' },
 ]
@@ -41,7 +42,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
                 className="h-10 md:h-12 w-auto object-contain scale-125 origin-left -translate-x-1 brightness-0 opacity-90"
               />
             </Link>
-            <p className="font-inter font-light text-[12px] leading-[1.8] text-[#1B3C34]/50 max-w-[200px] mb-5">
+            <p className="font-inter font-medium text-[12px] leading-[1.8] text-[#1B3C34]/80 max-w-[200px] mb-5">
               Premium embroidered streetwear. Handcrafted in India, worn by the world.
             </p>
             {/* Social */}
@@ -49,14 +50,14 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
               <a
                 href="#"
                 aria-label="Instagram"
-                className="text-[#1B3C34]/35 hover:text-[#1B3C34] transition-colors duration-200"
+                className="text-[#1B3C34]/70 hover:text-[#1B3C34] transition-colors duration-200"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
                 href="#"
                 aria-label="Twitter / X"
-                className="text-[#1B3C34]/35 hover:text-[#1B3C34] transition-colors duration-200"
+                className="text-[#1B3C34]/70 hover:text-[#1B3C34] transition-colors duration-200"
               >
                 <Twitter className="w-4 h-4" />
               </a>
@@ -65,7 +66,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
 
           {/* Shop */}
           <div>
-            <p className="font-inter text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/40 mb-4">
+            <p className="font-inter font-semibold text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/80 mb-4">
               Shop
             </p>
             <ul className="space-y-2.5">
@@ -73,7 +74,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
                 <li key={l.label}>
                   <Link
                     to={l.href}
-                    className="font-inter text-[12px] text-[#1B3C34]/60 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
+                    className="font-inter font-medium text-[12px] text-[#1B3C34]/80 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
                   >
                     {l.label}
                   </Link>
@@ -84,7 +85,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
 
           {/* About */}
           <div>
-            <p className="font-inter text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/40 mb-4">
+            <p className="font-inter font-semibold text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/80 mb-4">
               Brand
             </p>
             <ul className="space-y-2.5">
@@ -92,7 +93,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
                 <li key={l.label}>
                   <Link
                     to={l.href}
-                    className="font-inter text-[12px] text-[#1B3C34]/60 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
+                    className="font-inter font-medium text-[12px] text-[#1B3C34]/80 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
                   >
                     {l.label}
                   </Link>
@@ -103,7 +104,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
 
           {/* Support */}
           <div>
-            <p className="font-inter text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/40 mb-4">
+            <p className="font-inter font-semibold text-[9px] tracking-[0.45em] uppercase text-[#1B3C34]/80 mb-4">
               Support
             </p>
             <ul className="space-y-2.5">
@@ -111,7 +112,7 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
                 <li key={l.label}>
                   <Link
                     to={l.href}
-                    className="font-inter text-[12px] text-[#1B3C34]/60 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
+                    className="font-inter font-medium text-[12px] text-[#1B3C34]/80 hover:text-[#1B3C34] transition-colors duration-200 tracking-wide"
                   >
                     {l.label}
                   </Link>
@@ -123,14 +124,14 @@ export default function Footer({ transparent = false }: { transparent?: boolean 
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-[#1B3C34]/8 px-5 md:px-8 py-4 flex items-center justify-between flex-wrap gap-3">
-        <span className="font-inter text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/30">
+      <div className="border-t border-[#1B3C34]/15 px-5 md:px-8 py-4 flex items-center justify-between flex-wrap gap-3">
+        <span className="font-inter font-medium text-[9px] tracking-[0.35em] uppercase text-[#1B3C34]/60">
           © {new Date().getFullYear()} Snazzy — Vizianagram, India
         </span>
         <div className="flex items-center gap-3 text-[#1B3C34]/20">
           {/* Payment icons — minimal text placeholders */}
           {['VISA', 'MC', 'UPI', 'RZP'].map((p) => (
-            <span key={p} className="font-inter text-[8px] tracking-[0.2em] border border-[#1B3C34]/15 px-1.5 py-0.5 text-[#1B3C34]/35">
+            <span key={p} className="font-inter font-medium text-[8px] tracking-[0.2em] border border-[#1B3C34]/30 px-1.5 py-0.5 text-[#1B3C34]/70">
               {p}
             </span>
           ))}

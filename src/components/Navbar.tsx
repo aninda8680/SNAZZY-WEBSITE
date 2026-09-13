@@ -89,7 +89,7 @@ export default function Navbar({
         {/* Desktop nav links */}
         <ul className={`hidden md:flex items-center gap-10 text-xs tracking-[0.25em] uppercase font-inter font-medium transition-colors duration-300 ${linkColor}`}>
           {NAVIGATION_ITEMS.map((item) => {
-            const href = item === 'Collections' ? '/collections' : `#${item.toLowerCase()}`
+            const href = item === 'Collections' ? '/collections' : item === 'Heritage' ? '/heritage' : item === 'Gallery' ? '/gallery' : item === 'Craft' ? '/craft' : `#${item.toLowerCase()}`
             return (
               <li key={item}>
                 <a href={href} className={`transition-colors duration-300 ${linkHover}`}>
@@ -187,7 +187,7 @@ export default function Navbar({
         {/* Nav links */}
         <ul className="flex flex-col px-6 pt-2 pb-4">
           {MOBILE_NAVIGATION_ITEMS.map((item, i) => {
-            const href = item === 'Collections' ? '/collections' : `#${item.toLowerCase()}`
+            const href = item === 'Collections' ? '/collections' : item === 'Heritage' ? '/heritage' : item === 'Gallery' ? '/gallery' : item === 'Craft' ? '/craft' : `#${item.toLowerCase()}`
             return (
               <li key={item}>
                 <a

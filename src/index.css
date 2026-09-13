@@ -71,7 +71,43 @@ body.mobile-preview {
   background-color: #555;
 }
 
-/* Scrollbar */
+/* ── Global focus-visible ring (WCAG audit fix) ──────────────────────────────
+   Default ring: pine (#1B3C34) 2px — visible on light/cream surfaces.
+   On dark-surface containers (.on-pine, [data-bg="pine"]):
+   ring flips to cream (#FAF5E8), implemented per-component via data attribute.
+   Never rely on browser default blue ring — it fails on coloured backgrounds.
+─────────────────────────────────────────────────────────────────────────── */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: 2px solid #1B3C34;
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Dark-bg surfaces: cream ring so it's legible against #1B3C34 */
+[data-bg="pine"] *:focus-visible,
+.on-pine *:focus-visible {
+  outline-color: #FAF5E8;
+}
+
+/* Scrollbar — on heritage/light pages the track is parchment */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #000; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+
+/* Heritage page animations */
+@keyframes heritage-kenburns {
+  0%   { transform: scale(1.0); }
+  100% { transform: scale(1.06); }
+}
+
+/* Smooth clip-path for image reveals (used via Framer Motion) */
+.clip-image {
+  will-change: clip-path;
+}
+
+/* Staggered entrance for heritage text blocks */
+@keyframes heritage-settle {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
