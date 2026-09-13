@@ -204,18 +204,18 @@ function GalleryHero({ reduced }: { reduced: boolean }) {
 function GalleryStats() {
   return (
     <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24 pb-20 md:pb-32">
-      <div className="grid grid-cols-3 gap-4 md:gap-12 py-10" style={{ borderTop: `1px solid ${C.pine}15`, borderBottom: `1px solid ${C.pine}15` }}>
+      <div className="grid grid-cols-3 gap-4 md:gap-12 py-12 rounded-2xl" style={{ background: C.pine }}>
         <div className="text-center">
-          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.pine }}>08</p>
-          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogCream }}>Images</p>
+          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.parchment }}>08</p>
+          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogPine }}>Images</p>
         </div>
-        <div className="text-center" style={{ borderLeft: `1px solid ${C.pine}10`, borderRight: `1px solid ${C.pine}10` }}>
-          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.pine }}>04</p>
-          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogCream }}>Categories</p>
+        <div className="text-center" style={{ borderLeft: `1px solid ${C.parchment}20`, borderRight: `1px solid ${C.parchment}20` }}>
+          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.parchment }}>04</p>
+          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogPine }}>Categories</p>
         </div>
         <div className="text-center">
-          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.pine }}>SS26</p>
-          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogCream }}>Collection</p>
+          <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.parchment }}>SS26</p>
+          <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogPine }}>Collection</p>
         </div>
       </div>
     </div>
@@ -758,7 +758,7 @@ export default function Gallery() {
                     {/* Tablet Top */}
                     <div className="hidden md:grid lg:hidden" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
                       {visibleItems.slice(0, 4).map((item, i) => (
-                        <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ gridColumn: item.tabletCol, minHeight: item.id === 'image_1' || item.id === 'image_3' ? 380 : 220 }}>
+                        <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ gridColumn: item.tabletCol, height: item.id === 'image_1' || item.id === 'image_3' ? 380 : 220 }}>
                           <GalleryTile item={item} index={i} totalItems={visibleItems.length} reduced={reduced} onClick={openLightbox} />
                         </div>
                       ))}
@@ -766,7 +766,7 @@ export default function Gallery() {
                     {/* Mobile Top */}
                     <div className="flex flex-col md:hidden" style={{ gap: '20px' }}>
                       {visibleItems.slice(0, 4).map((item, i) => (
-                        <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ minHeight: item.id === 'image_1' ? 340 : 220 }}>
+                        <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ height: item.id === 'image_1' ? 340 : 220 }}>
                           <GalleryTile item={item} index={i} totalItems={visibleItems.length} reduced={reduced} onClick={openLightbox} />
                         </div>
                       ))}
@@ -785,7 +785,7 @@ export default function Gallery() {
                     {/* Tablet Bottom */}
                     <div className="hidden md:grid lg:hidden mt-5" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
                       {visibleItems.slice(4).map((item, i) => (
-                        <div key={item.id} ref={el => { originTileRefs.current[i + 4] = el }} style={{ gridColumn: item.tabletCol, minHeight: item.id === 'image_8' ? 200 : 220 }}>
+                        <div key={item.id} ref={el => { originTileRefs.current[i + 4] = el }} style={{ gridColumn: item.tabletCol, height: item.id === 'image_8' ? 200 : 220 }}>
                           <GalleryTile item={item} index={i + 4} totalItems={visibleItems.length} reduced={reduced} onClick={openLightbox} />
                         </div>
                       ))}
@@ -793,7 +793,7 @@ export default function Gallery() {
                     {/* Mobile Bottom */}
                     <div className="flex flex-col md:hidden mt-5" style={{ gap: '20px' }}>
                       {visibleItems.slice(4).map((item, i) => (
-                        <div key={item.id} ref={el => { originTileRefs.current[i + 4] = el }} style={{ minHeight: item.id === 'image_8' ? 180 : 220 }}>
+                        <div key={item.id} ref={el => { originTileRefs.current[i + 4] = el }} style={{ height: item.id === 'image_8' ? 180 : 220 }}>
                           <GalleryTile item={item} index={i + 4} totalItems={visibleItems.length} reduced={reduced} onClick={openLightbox} />
                         </div>
                       ))}
@@ -804,7 +804,7 @@ export default function Gallery() {
                   /* ── REFLOWING GRID (FILTERED) ── */
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 pt-8">
                     {visibleItems.map((item, i) => (
-                      <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ minHeight: 380 }}>
+                      <div key={item.id} ref={el => { originTileRefs.current[i] = el }} style={{ height: 380 }}>
                         <GalleryTile item={item} index={i} totalItems={visibleItems.length} reduced={reduced} onClick={openLightbox} />
                       </div>
                     ))}
