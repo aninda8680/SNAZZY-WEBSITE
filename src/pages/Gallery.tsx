@@ -203,8 +203,9 @@ function GalleryHero({ reduced }: { reduced: boolean }) {
 
 function GalleryStats() {
   return (
-    <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24 pb-20 md:pb-32">
-      <div className="grid grid-cols-3 gap-4 md:gap-12 py-12 rounded-2xl" style={{ background: C.pine }}>
+    <div className="w-full mb-20 md:mb-32" style={{ background: C.pine }}>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24">
+        <div className="grid grid-cols-3 gap-4 md:gap-12 py-12">
         <div className="text-center">
           <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.parchment }}>08</p>
           <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogPine }}>Images</p>
@@ -217,6 +218,7 @@ function GalleryStats() {
           <p className="font-cormorant text-2xl md:text-4xl mb-1" style={{ color: C.parchment }}>SS26</p>
           <p className="font-inter text-[9px] md:text-[10px] tracking-[0.3em] uppercase" style={{ color: C.fogPine }}>Collection</p>
         </div>
+      </div>
       </div>
     </div>
   )
@@ -271,14 +273,15 @@ function FeaturedStory({ reduced }: { reduced: boolean }) {
 
 function GalleryFilters({ activeCategory, setActiveCategory }: { activeCategory: GalleryCategory, setActiveCategory: (c: GalleryCategory) => void }) {
   return (
-    <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24 pb-12">
-      <div className="flex items-center gap-8 overflow-x-auto no-scrollbar py-4" style={{ borderBottom: `1px solid ${C.pine}15` }}>
-        {GALLERY_CATEGORIES.map(category => (
+    <div className="w-full mb-12" style={{ background: C.pine }}>
+      <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24">
+        <div className="flex items-center gap-8 overflow-x-auto no-scrollbar py-5">
+          {GALLERY_CATEGORIES.map(category => (
           <button
             key={category}
             onClick={() => setActiveCategory(category)}
             className="relative whitespace-nowrap font-inter text-[10px] tracking-[0.25em] uppercase pb-2 transition-colors duration-300"
-            style={{ color: activeCategory === category ? C.pine : C.fogCream }}
+            style={{ color: activeCategory === category ? C.parchment : C.fogPine }}
           >
             {category}
             {activeCategory === category && (
@@ -290,6 +293,7 @@ function GalleryFilters({ activeCategory, setActiveCategory }: { activeCategory:
             )}
           </button>
         ))}
+      </div>
       </div>
     </div>
   )

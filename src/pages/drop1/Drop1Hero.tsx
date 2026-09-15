@@ -61,9 +61,10 @@ function ClawMark({ className, opacityTarget = 0.06 }: { className?: string, opa
 interface Drop1HeroProps {
   drop: DropConfig
   sectionRef: React.RefObject<HTMLElement>
+  onExploreClick?: () => void
 }
 
-export default function Drop1Hero({ drop, sectionRef }: Drop1HeroProps) {
+export default function Drop1Hero({ drop, sectionRef, onExploreClick }: Drop1HeroProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const prefersReducedMotion = useReducedMotion()
 
@@ -129,7 +130,10 @@ export default function Drop1Hero({ drop, sectionRef }: Drop1HeroProps) {
 
           {/* CTA Button */}
           <motion.div {...fadeUp(1.0)} className="relative">
-            <button className="group relative inline-flex items-center gap-3 border border-[#E8DDCA]/40 text-[#E8DDCA] px-7 py-3.5 text-[10px] tracking-[0.3em] uppercase font-inter overflow-hidden hover:border-[#E8DDCA]/80 transition-colors duration-300 cursor-pointer">
+            <button 
+              onClick={onExploreClick}
+              className="group relative inline-flex items-center gap-3 border border-[#E8DDCA]/40 text-[#E8DDCA] px-7 py-3.5 text-[10px] tracking-[0.3em] uppercase font-inter overflow-hidden hover:border-[#E8DDCA]/80 transition-colors duration-300 cursor-pointer"
+            >
               <span className="absolute inset-0 bg-[#E8DDCA]/5 translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)]" />
               <span className="relative">Explore Drop 1</span>
               <ArrowRight

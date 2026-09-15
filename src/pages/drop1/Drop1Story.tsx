@@ -91,17 +91,7 @@ export default function Drop1Story({ sectionRef }: Drop1StoryProps) {
             ))}
           </div>
 
-          {/* Sub-collection pills */}
-          <div className="flex flex-wrap gap-3 mt-10">
-            {['Pronoia', 'Valor', 'Maverick'].map((sc) => (
-              <span
-                key={sc}
-                className="font-inter text-[9px] tracking-[0.35em] uppercase text-[#E8DDCA]/40 border border-[#E8DDCA]/10 px-4 py-2"
-              >
-                {sc}
-              </span>
-            ))}
-          </div>
+
         </motion.div>
       </div>
     </section>

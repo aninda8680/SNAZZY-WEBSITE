@@ -100,7 +100,7 @@ export default function Drop1Page({ drop }: Drop1PageProps) {
       <SectionProgress labels={sectionLabels} activeIndex={activeSection} />
 
       {/* Sections */}
-      <Drop1Hero drop={drop} sectionRef={heroRef} />
+      <Drop1Hero drop={drop} sectionRef={heroRef} onExploreClick={() => scrollToProducts('All')} />
       <Drop1CollectionPreview 
         sectionRef={collectionRef} 
         onCategoryClick={scrollToProducts}

@@ -306,8 +306,7 @@ export default function Contact() {
           <p className="font-inter text-sm tracking-[0.45em] text-white/80 uppercase">SNAZZY.</p>
           <div className="flex items-center gap-8 font-inter text-[9px] tracking-[0.3em] uppercase text-white/35">
             <a href="https://instagram.com/snazzy.dot" target="_blank" rel="noopener noreferrer" className="hover:text-white/70 transition-colors duration-200">Instagram</a>
-            <a href="#" className="hover:text-white/70 transition-colors duration-200">Journal</a>
-            <a href="#" className="hover:text-white/70 transition-colors duration-200">Legal</a>
+            <a href="/about" className="hover:text-white/70 transition-colors duration-200">About</a>
           </div>
           <p className="font-inter text-[9px] text-white/25 tracking-wide">
             © {new Date().getFullYear()} SNAZZY. All rights reserved.
