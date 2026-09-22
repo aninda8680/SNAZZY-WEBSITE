@@ -92,15 +92,21 @@ export default function Checkout() {
         },
         theme: { color: EMERALD },
         handler: async (response: any) => {
-          // Verify on backend — NEVER trust frontend alone
-          await api.post('/api/payments/verify', {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            order_id,
-          })
-          closeCart()
-          navigate(`/order-success?order=${order_id}`)
+          try {
+            // Verify on backend — NEVER trust frontend alone
+            await api.post('/api/payments/verify', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              order_id,
+            })
+            closeCart()
+            navigate(`/order-success?order=${order_id}`)
+          } catch (verifyErr) {
+            console.error('Frontend verification failed:', verifyErr)
+            setError('Payment captured but frontend verification failed. Please check your Orders page.')
+            setLoading(false)
+          }
         },
         modal: {
           ondismiss: () => setLoading(false),

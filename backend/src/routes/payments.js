@@ -7,17 +7,24 @@ import { authenticate } from '../middleware/auth.js'
 import { handleValidation } from '../middleware/validate.js'
 
 const router = Router()
-router.use(authenticate)
+const router = Router()
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+// Dynamic keys based on mode
+const isLive = process.env.RAZORPAY_MODE === 'live'
+const getKeyId = () => isLive ? process.env.RAZORPAY_LIVE_KEY_ID : process.env.RAZORPAY_TEST_KEY_ID
+const getKeySecret = () => isLive ? process.env.RAZORPAY_LIVE_KEY_SECRET : process.env.RAZORPAY_TEST_KEY_SECRET
+const getWebhookSecret = () => isLive ? process.env.RAZORPAY_LIVE_WEBHOOK_SECRET : process.env.RAZORPAY_TEST_WEBHOOK_SECRET
+
+const getRazorpayInstance = () => new Razorpay({
+  key_id: getKeyId(),
+  key_secret: getKeySecret(),
 })
 
 // POST /api/payments/create-order
 // Creates Razorpay order and saves pending order in DB
 router.post(
   '/create-order',
+  authenticate,
   [
     body('address_id').isUUID(),
     body('items').isArray({ min: 1 }),
@@ -65,7 +72,7 @@ router.post(
       }
 
       // Create Razorpay order
-      const rpOrder = await razorpay.orders.create({
+      const rpOrder = await getRazorpayInstance().orders.create({
         amount: totalPaise,
         currency: 'INR',
         receipt: `snazzy_${Date.now()}`,
@@ -104,7 +111,7 @@ router.post(
         amount: totalPaise,
         currency: 'INR',
         order_id: order.id,
-        key_id: process.env.RAZORPAY_KEY_ID,
+        key_id: getKeyId(),
       })
     } catch (err) {
       console.error(err)
@@ -117,6 +124,7 @@ router.post(
 // Verifies Razorpay signature — NEVER trust frontend for this
 router.post(
   '/verify',
+  authenticate,
   [
     body('razorpay_order_id').notEmpty(),
     body('razorpay_payment_id').notEmpty(),
@@ -130,7 +138,7 @@ router.post(
 
       // Verify the HMAC signature
       const expected = crypto
-        .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+        .createHmac('sha256', getKeySecret())
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex')
 
@@ -147,7 +155,7 @@ router.post(
         .single()
 
       if (!order) return res.status(404).json({ error: 'Order not found' })
-      if (order.status === 'paid') return res.json({ message: 'Already paid' })
+      if (order.status === 'paid') return res.json({ message: 'Already paid', order_id })
 
       // Mark order as paid
       await supabase
@@ -195,6 +203,104 @@ router.post(
     } catch (err) {
       console.error(err)
       res.status(500).json({ error: 'Verification failed' })
+    }
+  }
+)
+
+// POST /api/payments/webhook
+// Razorpay webhook endpoint for server-side verification and idempotency
+router.post(
+  '/webhook',
+  async (req, res) => {
+    try {
+      const webhookSignature = req.headers['x-razorpay-signature']
+      const webhookSecret = getWebhookSecret()
+
+      // Validate webhook signature
+      const expectedSignature = crypto
+        .createHmac('sha256', webhookSecret)
+        .update(JSON.stringify(req.body))
+        .digest('hex')
+
+      if (expectedSignature !== webhookSignature) {
+        console.error('Webhook signature mismatch')
+        return res.status(400).send('Invalid signature')
+      }
+
+      const { event, payload } = req.body
+
+      if (event === 'order.paid' || event === 'payment.captured') {
+        const paymentEntity = payload.payment.entity
+        const orderEntity = payload.order?.entity || { id: paymentEntity.order_id }
+
+        const razorpay_order_id = orderEntity.id
+        const razorpay_payment_id = paymentEntity.id
+
+        // Fetch payment record
+        const { data: paymentRecord } = await supabase
+          .from('payments')
+          .select('id, status, order_id')
+          .eq('razorpay_order_id', razorpay_order_id)
+          .single()
+
+        if (!paymentRecord) {
+          console.error(`Webhook: Payment record not found for razorpay_order_id: ${razorpay_order_id}`)
+          return res.status(200).send('Record not found, skipping')
+        }
+
+        // Idempotency check
+        if (paymentRecord.status === 'paid') {
+          console.log(`Webhook: Order ${paymentRecord.order_id} is already paid. Ignoring duplicate.`)
+          return res.status(200).send('Already processed')
+        }
+
+        // Mark order as paid
+        await supabase
+          .from('orders')
+          .update({ status: 'paid' })
+          .eq('id', paymentRecord.order_id)
+
+        // Update payment record
+        await supabase
+          .from('payments')
+          .update({
+            razorpay_payment_id,
+            status: 'paid',
+            verified_at: new Date().toISOString(),
+          })
+          .eq('id', paymentRecord.id)
+
+        // Atomically decrement stock
+        const { data: orderItems } = await supabase
+          .from('order_items')
+          .select('product_id, quantity')
+          .eq('order_id', paymentRecord.order_id)
+
+        if (orderItems?.length) {
+          await Promise.all(
+            orderItems.map(({ product_id, quantity }) =>
+              supabase.rpc('decrement_stock', { p_product_id: product_id, p_quantity: quantity })
+            )
+          )
+        }
+
+        console.log(`Webhook: Successfully processed payment for order ${paymentRecord.order_id}`)
+      } else if (event === 'payment.failed') {
+        const paymentEntity = payload.payment.entity
+        const razorpay_order_id = paymentEntity.order_id
+        
+        console.error(`Webhook: Payment failed for order ${razorpay_order_id}: ${paymentEntity.error_description}`)
+        
+        await supabase
+          .from('payments')
+          .update({ status: 'failed' })
+          .eq('razorpay_order_id', razorpay_order_id)
+      }
+
+      res.status(200).send('OK')
+    } catch (err) {
+      console.error('Webhook processing error:', err)
+      res.status(500).send('Internal Server Error')
     }
   }
 )

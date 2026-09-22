@@ -1,7 +1,8 @@
 import { type ProductData } from '../data/products'
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { X, ShoppingBag, Plus, Minus } from 'lucide-react'
+import { X, ShoppingBag, Plus, Minus, Check } from 'lucide-react'
+import { useCart } from '../context/CartContext'
 
 // ─── Data Contract ────────────────────────────────────────────────────────────
 
@@ -208,12 +209,14 @@ function ImageGallery({
 function SizeSelector({
   sizes,
   theme,
+  selected,
+  onSelect,
 }: {
   sizes: string[]
   theme: ProductDetailTheme
+  selected: string | null
+  onSelect: (s: string) => void
 }) {
-  const [selected, setSelected] = useState<string | null>(null)
-
   return (
     <div className="flex flex-wrap gap-2">
       {sizes.map((size) => {
@@ -221,7 +224,7 @@ function SizeSelector({
         return (
           <button
             key={size}
-            onClick={() => setSelected(size)}
+            onClick={() => onSelect(size)}
             className="font-inter text-[11px] tracking-wider w-14 h-12 border transition-all duration-200 cursor-pointer"
             style={{
               borderColor: isActive ? theme.text : theme.border,
@@ -241,6 +244,38 @@ function SizeSelector({
 
 export default function ProductDetail({ product, theme, onClose }: ProductDetailProps) {
   const prefersReducedMotion = useReducedMotion()
+  const { addItem } = useCart()
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [sizeError, setSizeError] = useState(false)
+  const [added, setAdded] = useState(false)
+
+  useEffect(() => {
+    setSelectedSize(null)
+    setSizeError(false)
+    setAdded(false)
+  }, [product?.id])
+
+  function handleAdd() {
+    if (!product) return
+    if (!selectedSize) {
+      setSizeError(true)
+      window.setTimeout(() => setSizeError(false), 2000)
+      return
+    }
+    addItem({
+      id: `${product.id}-${selectedSize}`,
+      name: product.name,
+      price: product.price,
+      priceNum: product.priceNum,
+      accent: theme.accent,
+      image: product.images?.[0],
+      size: selectedSize,
+      slug: product.slug,
+      category: product.category,
+    })
+    setAdded(true)
+    window.setTimeout(() => setAdded(false), 2000)
+  }
 
   // Close on Escape key
   useEffect(() => {
@@ -440,14 +475,15 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
             </p>
 
             {/* Size */}
-            <div className="mb-8 md:mb-10">
+            <div className="mb-4 md:mb-6">
               <span
                 className="font-inter font-semibold text-[9px] tracking-[0.35em] uppercase block mb-4"
                 style={{ color: theme.subtleText }}
               >
                 Select Size
               </span>
-              <SizeSelector sizes={product.sizes} theme={theme} />
+              <SizeSelector sizes={product.sizes} theme={theme} selected={selectedSize} onSelect={(s) => { setSelectedSize(s); setSizeError(false) }} />
+              {sizeError && (<p className="font-inter text-[10px] tracking-wide mt-3 text-red-500 animate-pulse">Please select a size first</p>)}
             </div>
 
             {/* Divider */}
@@ -455,25 +491,28 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 
             {/* Add to Bag */}
             <button
+              onClick={handleAdd}
               className="group relative w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase overflow-hidden transition-colors duration-300 flex items-center justify-center gap-3 cursor-pointer"
-              style={{
+              style={added ? { border: `1px solid ${theme.text}`, color: theme.bg, backgroundColor: theme.text } : {
                 border: `1px solid ${theme.text}`,
                 color: theme.text,
                 backgroundColor: 'transparent',
               }}
               onMouseEnter={(e) => {
+                if (added) return
                 const el = e.currentTarget as HTMLElement
                 el.style.backgroundColor = theme.text
                 el.style.color = theme.bg
               }}
               onMouseLeave={(e) => {
+                if (added) return
                 const el = e.currentTarget as HTMLElement
                 el.style.backgroundColor = 'transparent'
                 el.style.color = theme.text
               }}
             >
-              <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
-              <span>Add to Bag</span>
+              {added ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />}
+              {added ? 'Added to Bag' : 'Add to Bag'}
             </button>
 
             {/* Size guide */}
@@ -492,6 +531,29 @@ export default function ProductDetail({ product, theme, onClose }: ProductDetail
 }
 
 // ─── Reduced-motion fallback (no animations) ──────────────────────────────────
+
+function StaticBuyBox({ product, theme }: { product: ProductData; theme: ProductDetailTheme }) {
+  const { addItem } = useCart()
+  const [selected, setSelected] = useState<string | null>(null)
+  const [added, setAdded] = useState(false)
+  const [error, setError] = useState(false)
+  function handle() {
+    if (!selected) { setError(true); window.setTimeout(() => setError(false), 2000); return }
+    addItem({ id: `${product.id}-${selected}`, name: product.name, price: product.price, priceNum: product.priceNum, accent: theme.accent, image: product.images?.[0], size: selected, slug: product.slug, category: product.category })
+    setAdded(true)
+    window.setTimeout(() => setAdded(false), 2000)
+  }
+  return (
+    <>
+      <SizeSelector sizes={product.sizes} theme={theme} selected={selected} onSelect={(s) => { setSelected(s); setError(false) }} />
+      {error && (<p className="font-inter text-[10px] mt-3 text-red-500 animate-pulse">Please select a size first</p>)}
+      <button onClick={handle} className="mt-10 w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer transition-colors duration-300" style={added ? { border: `1px solid ${theme.text}`, color: theme.bg, backgroundColor: theme.text } : { border: `1px solid ${theme.text}`, color: theme.text, backgroundColor: 'transparent' }}>
+        {added ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />}
+        {added ? 'Added to Bag' : 'Add to Bag'}
+      </button>
+    </>
+  )
+}
 
 function StaticLayout({
   product,
@@ -551,24 +613,7 @@ function StaticLayout({
         className="flex flex-col justify-start md:justify-center w-full md:w-[28%] px-6 pt-4 pb-16 md:px-10 lg:px-14 md:py-16 flex-shrink-0 order-3"
       >
         <p className="font-cormorant font-semibold text-3xl md:text-4xl lg:text-5xl tracking-wide mb-8 md:mb-10" style={{ color: theme.text }}>{product.price}</p>
-        <SizeSelector sizes={product.sizes} theme={theme} />
-        <button 
-          className="mt-10 w-full py-4 font-inter font-semibold text-[10px] tracking-[0.35em] uppercase flex items-center justify-center gap-3 cursor-pointer transition-colors duration-300" 
-          style={{ border: `1px solid ${theme.text}`, color: theme.text, backgroundColor: 'transparent' }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLElement
-            el.style.backgroundColor = theme.text
-            el.style.color = theme.bg
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLElement
-            el.style.backgroundColor = 'transparent'
-            el.style.color = theme.text
-          }}
-        >
-          <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
-          Add to Bag
-        </button>
+        <StaticBuyBox product={product} theme={theme} />
       </div>
     </div>
   )

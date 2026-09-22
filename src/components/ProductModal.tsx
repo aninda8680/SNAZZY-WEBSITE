@@ -140,10 +140,13 @@ export default function ProductModal({ product, onClose }: Props) {
     if (!product) return
     addItem({
       id:       `${product.id}-${selectedSize}`,
-      name:     `${product.name} / ${selectedSize}`,
+      name:     `${product.name}`,
       price:    product.price,
       priceNum: product.priceNum,
       accent:   EMERALD,
+      image:    product.image,
+      size:     selectedSize,
+      category: product.category,
     })
     setAdded(true)
     if (addedTimerRef.current) clearTimeout(addedTimerRef.current)

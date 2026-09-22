@@ -193,10 +193,13 @@ export default function CollectionsShowcase() {
   function handlePickSize(size: string) {
     addItem({
       id:       `${col.productId}-${size}`,
-      name:     `${col.name} / ${size}`,
+      name:     `${col.name}`,
       price:    col.price,
       priceNum: col.priceNum,
       accent:   EMERALD,
+      image:    col.image,
+      size,
+      category: 'Collection',
     })
     setAddedSize(size)
     setTimeout(() => { closePicker() }, 1400)

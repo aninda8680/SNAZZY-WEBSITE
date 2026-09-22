@@ -17,6 +17,7 @@ import Register from './pages/auth/Register'
 
 // Shop pages
 import Checkout from './pages/Checkout'
+import Cart from './pages/Cart'
 import OrderSuccess from './pages/OrderSuccess'
 import Orders from './pages/Orders'
 import About from './pages/About'
@@ -63,7 +64,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
-            {/* Checkout (requires login) */}
+            {/* Cart + Checkout */}
+            <Route path="/cart" element={<Cart />} />
             <Route
               path="/checkout"
               element={

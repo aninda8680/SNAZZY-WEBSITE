@@ -56,10 +56,14 @@ function ProductCard({
     e.stopPropagation()
     addItem({
       id: `${product.id}-${size}`,
-      name: `${product.name} / ${size}`,
+      name: `${product.name}`,
       price: product.price,
       priceNum: product.priceNum,
       accent: '#1B3C34',
+      image: product.images?.[0],
+      size,
+      slug: product.slug,
+      category: product.category,
     })
     setAdded(size)
     setTimeout(() => { setPicking(false); setAdded(null) }, 1200)

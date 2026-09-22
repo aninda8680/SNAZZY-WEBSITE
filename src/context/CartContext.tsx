@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 export interface CartItem {
   id: string
@@ -7,6 +7,10 @@ export interface CartItem {
   priceNum: number
   accent: string
   quantity: number
+  image?: string
+  size?: string
+  slug?: string
+  category?: string
 }
 
 interface CartContextValue {
@@ -14,18 +18,42 @@ interface CartContextValue {
   addItem: (item: Omit<CartItem, 'quantity'>) => void
   removeItem: (id: string) => void
   updateQty: (id: string, qty: number) => void
+  clearCart: () => void
   isOpen: boolean
   openCart: () => void
   closeCart: () => void
   total: number
   count: number
+  subtotal: number
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
 
+const STORAGE_KEY = 'snazzy-cart-v1'
+
+function loadInitial(): CartItem[] {
+  try {
+    const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return parsed.filter((i) => i && typeof i.id === 'string' && typeof i.priceNum === 'number')
+  } catch {
+    return []
+  }
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
+  const [items, setItems] = useState<CartItem[]>(() => loadInitial())
   const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    } catch {
+      /* storage unavailable — ignore */
+    }
+  }, [items])
 
   function addItem(item: Omit<CartItem, 'quantity'>) {
     setItems((prev) => {
@@ -47,14 +75,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity: qty } : i))
   }
 
+  function clearCart() {
+    setItems([])
+  }
+
   const total = items.reduce((sum, i) => sum + i.priceNum * i.quantity, 0)
   const count = items.reduce((sum, i) => sum + i.quantity, 0)
 
   return (
     <CartContext.Provider value={{
-      items, addItem, removeItem, updateQty,
+      items, addItem, removeItem, updateQty, clearCart,
       isOpen, openCart: () => setIsOpen(true), closeCart: () => setIsOpen(false),
-      total, count,
+      total, subtotal: total, count,
     }}>
       {children}
     </CartContext.Provider>
@@ -66,3 +98,4 @@ export function useCart() {
   if (!ctx) throw new Error('useCart must be used inside CartProvider')
   return ctx
 }
+
